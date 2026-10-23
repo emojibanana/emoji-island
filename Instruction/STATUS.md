@@ -21,7 +21,7 @@
 | **M0** | **Foundation** | | |
 | T-001 | Scaffold & Verify | done | 96d198b |
 | T-002 | Tooling & Environment | done | 57d117d |
-| T-003 | Types & Zod Schemas | todo | - |
+| T-003 | Types & Zod Schemas | done | c08137e |
 | T-004 | Preload islandApi | todo | - |
 | T-005 | webUtils drop verification | todo | - |
 | T-006 | Storage Service & Migration | todo | - |
