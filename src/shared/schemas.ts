@@ -33,7 +33,11 @@ export const IpcErrorSchema = z.object({
   message: z.string(),
 })
 
-export const ipcEnvelope = <T extends z.ZodTypeAny>(dataSchema: T) =>
+export const ipcEnvelope = <T extends z.ZodTypeAny>(dataSchema: T): z.ZodObject<{
+  ok: z.ZodBoolean
+  data: z.ZodNullable<T>
+  error: z.ZodNullable<typeof IpcErrorSchema>
+}> =>
   z.object({
     ok: z.boolean(),
     data: dataSchema.nullable(),
@@ -53,7 +57,7 @@ const aiEndpointSchema = z
     (url) => {
       if (url.startsWith('https://')) return true
       if (url.startsWith('http://')) {
-        const host = new URL(url).hostname
+        const host = new URL(url).hostname.replace(/^\[|\]$/g, '')
         return host === 'localhost' || host === '127.0.0.1' || host === '::1'
       }
       return false
