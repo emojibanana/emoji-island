@@ -1,0 +1,44 @@
+{
+  "name": "emoji-island",
+  "version": "0.1.0",
+  "description": "A Windows HUD overlay for emoji and utilities.",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@typescript-eslint/eslint-plugin": "^8.72.0",
+    "@typescript-eslint/parser": "^8.72.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "autoprefixer": "^10.4.18",
+    "electron": "^25.9.8",
+    "electron-builder": "^24.13.3",
+    "electron-vite": "^2.1.0",
+    "eslint": "^8.57.0",
+    "jsdom": "^24.0.0",
+    "postcss": "^8.4.35",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.4.2",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.0",
+    "electron-log": "^5.1.2",
+    "electron-store": "^8.2.0",
+    "lucide-react": "^0.358.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.1",
+    "zod": "^3.22.4"
+  }
+}
