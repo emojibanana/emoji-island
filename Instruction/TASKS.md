@@ -197,7 +197,7 @@
 
 ### T-020-La: Media Bridge Service (Locked Variant)
 *   **Depends On:** T-016
-*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
+*   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-015), This task card.
 *   **Files:** `src/main/services/media.ts`, `src/main/services/media-bridge.ts`, `src/main/services/media-bridge.test.ts`
@@ -208,7 +208,7 @@
 
 ### T-020-Lb: Media Card UI & IPC Handlers (Locked Variant)
 *   **Depends On:** T-020-La
-*   **Hours:** Agent: 1.0 | Review: 1.0 | Est: 2.0
+*   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-015), This task card.
 *   **Files:** `src/renderer/src/components/MediaCard.tsx`, `src/main/ipcHandlers.ts`
