@@ -30,72 +30,87 @@ export interface IpcEnvelope<T = null> {
 }
 
 // ---------------------------------------------------------------------------
-// Weather  (D-016: Open-Meteo, metric, 30-min cache)
+// Settings
+// ---------------------------------------------------------------------------
+
+export interface AppSettings {
+  schemaVersion: number
+  locationMode: 'preset' | 'manual'
+  latitude: number
+  longitude: number
+  locationLabel: string
+  hotkey: string
+  aiEndpoint: string | null
+  aiModel: string | null
+  aiKeyPersisted: boolean
+  reducedMotion: boolean
+  createdAt: number
+  updatedAt: number
+}
+
+export interface SettingsView extends AppSettings {
+  aiKeyPresent: boolean
+}
+
+// ---------------------------------------------------------------------------
+// Weather
 // ---------------------------------------------------------------------------
 
 export type WeatherStatus = 'fresh' | 'stale' | 'offline'
 
-export interface WeatherData {
-  tempC: number
+export interface WeatherCache {
+  latitude: number
+  longitude: number
+  temperature: number
+  apparentTemperature: number
   weatherCode: number
-  windKph: number
-  fetchedAt: number   // epoch ms
+  humidity: number
+  updatedAt: number
+}
+
+export interface WeatherResult {
+  data: WeatherCache | null
   status: WeatherStatus
 }
 
 // ---------------------------------------------------------------------------
-// Media  (D-008: SMTC; variant set after spike)
+// Shelf
 // ---------------------------------------------------------------------------
 
-export type PlaybackState = 'playing' | 'paused' | 'stopped' | 'unknown'
-
-export interface MediaInfo {
-  title: string
-  artist: string
-  album: string
-  artUrl: string | null
-  playbackState: PlaybackState
-  updatedAt: number   // epoch ms
-}
-
-// ---------------------------------------------------------------------------
-// Shelf  (D-005: 50 items, 500 MB total, 100 MB per file)
-// ---------------------------------------------------------------------------
-
-export type ShelfItemType = 'file' | 'image'
-
-export interface ShelfItem {
+export interface ShelfItemMetadata {
   id: string
-  type: ShelfItemType
-  name: string
-  originalPath: string
-  storedPath: string
+  originalName: string
+  storedFileName: string
+  relativePath: string
+  mimeType: string
   sizeBytes: number
-  addedAt: number     // epoch ms
+  createdAt: number
+  sourcePathHash: string
 }
 
 // ---------------------------------------------------------------------------
-// AI Chat  (D-006: MockProvider default, v0.1)
+// Chat
 // ---------------------------------------------------------------------------
 
-export type ChatRole = 'user' | 'assistant'
+export type ChatRole = 'user' | 'assistant' | 'system'
 
 export interface ChatMessage {
   id: string
   role: ChatRole
   content: string
-  createdAt: number   // epoch ms
+  createdAt: number
+  provider: 'mock' | 'openai-compatible'
+  model: string
+  tokenEstimate?: number
 }
 
 // ---------------------------------------------------------------------------
-// Settings  (D-011: hotkey, D-016: location, D-010: reducedMotion)
+// Media
 // ---------------------------------------------------------------------------
 
-export interface AppSettings {
-  hotkey: string                    // default 'Ctrl+Alt+Space'
-  locationLat: number               // default -6.2 (Jakarta)
-  locationLon: number               // default 106.8
-  reducedMotion: boolean
-  logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent'
-  schemaVersion: number             // for electron-store migration
+export interface MediaState {
+  title: string | null
+  artist: string | null
+  status: 'playing' | 'paused' | 'stopped' | 'unavailable'
+  canControl: boolean
 }
