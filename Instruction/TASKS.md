@@ -96,9 +96,9 @@
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-008), This task card.
 *   **Files:** `docs/DECISIONS.md`
-*   **read_files:** `SPIKE_RESULT.md`
+*   **read_files:** `docs/spike/SPIKE_RESULT.md`
 *   **commit:** `docs(decisions): record SMTC spike result and clean up`
-*   **Steps:** Set D-008 Locked or Degraded; add chosen dependency (if any) to D-003; remove throwaway scripts.
+*   **Steps:** Set D-008 Locked or Degraded; add chosen dependency (if any) to D-003; move throwaway scripts to `docs/spike/` (kept — T-020-La reuses them).
 *   **Verification:** `automated_command`: `cat docs/DECISIONS.md`
 
 ### T-009: Wrap Milestone 0
@@ -195,15 +195,26 @@
 ---
 ## Milestone 2 (Media & File Shelf)
 
-### T-020-L: Media Service & UI (Locked Variant)
+### T-020-La: Media Bridge Service (Locked Variant)
 *   **Depends On:** T-016
-*   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
 *   **Tier:** strong
-*   **Context Pack:** AGENTS.md, DECISIONS (D-008), This task card.
-*   **Files:** `src/main/services/media.ts`, `src/renderer/src/components/MediaCard.tsx`, `src/main/ipcHandlers.ts`
-*   **read_files:** `src/shared/types.ts`
-*   **commit:** `feat(media): implement smtc media service and ui`
-*   **Steps:** Run ONLY if D-008 Locked. Implement chosen SMTC dependency. Push `media:stateChanged`. Build `MediaCard` UI and emit `media:control`.
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-015), This task card.
+*   **Files:** `src/main/services/media.ts`, `src/main/services/media-bridge.ts`, `src/main/services/media-bridge.test.ts`
+*   **read_files:** `src/shared/types.ts`, `docs/spike/spike-smtc-a.ps1`
+*   **commit:** `feat(media): implement persistent smtc bridge service`
+*   **Steps:** Run ONLY if D-008 Locked. Turn the spike script into the shipped bridge: fixed bundled file, no user-supplied arguments, unpacked from asar when packaged (T-032), run as ONE persistent `powershell.exe` **5.1** child process (never `pwsh`) speaking newline-delimited JSON over stdio. Session selection: `PlaybackStatus == Playing` first, then AUMID allowlist — never `GetCurrentSession()` alone. Poll every 3 s only while a session exists; re-poll status ~700 ms after a control command. Never log media titles. Push `media:stateChanged`. Child exit or no session: `MEDIA_UNAVAILABLE` with `canControl:false`, bounded restart, never crash.
+*   **Verification:** `manual_check_id`: M-008
+
+### T-020-Lb: Media Card UI & IPC Handlers (Locked Variant)
+*   **Depends On:** T-020-La
+*   **Hours:** Agent: 1.0 | Review: 1.0 | Est: 2.0
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-015), This task card.
+*   **Files:** `src/renderer/src/components/MediaCard.tsx`, `src/main/ipcHandlers.ts`
+*   **read_files:** `src/shared/schemas.ts`
+*   **commit:** `feat(media): add media card ui and ipc handlers`
+*   **Steps:** Run ONLY if D-008 Locked. Render title/artist/status from `media:stateChanged`; emit `media:control` (play/pause/next/previous) with zod-validated payloads. Render a disabled card when the bridge reports unavailable.
 *   **Verification:** `manual_check_id`: M-008
 
 ### T-020-D: Media Service & UI (Degraded Variant)
