@@ -66,13 +66,15 @@ const EXPECTED_KEYS = [
   'clearAiHistory',
   // Helper
   'getDroppedFilePath',
+  // T-005 TEMPORARY
+  'testLogDropPath',
 ] as const
 
 const FORBIDDEN_KEYS = ['ipcRenderer', 'require', 'process', 'send', 'invoke', 'on']
 
 describe('islandApi surface', () => {
-  it('exposes exactly 22 keys (20 IPC channels + getDroppedFilePath + onMediaStateChanged)', () => {
-    // 20 channels per spec + onMediaStateChanged (event sub) + getDroppedFilePath (helper)
+  it('exposes exactly 23 keys (20 IPC channels + 2 helpers + 1 temporary)', () => {
+    // 20 channels per spec + onMediaStateChanged (event sub) + getDroppedFilePath (helper) + testLogDropPath (T-005 temporary)
     expect(Object.keys(islandApi)).toHaveLength(EXPECTED_KEYS.length)
   })
 
