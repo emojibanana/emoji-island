@@ -3,7 +3,7 @@
 **Legend:** `todo` | `doing` | `done` | `manual-pending` | `skipped` | `n/a` | `conditional` | `deferred (v0.2)`
 
 ## Milestones
-*   `m0-done`: pending
+*   `m0-done`: pending (tag created by owner after this commit)
 *   `m1-done`: pending
 *   `m2-done`: pending
 *   `m3-done`: pending
@@ -28,7 +28,7 @@
 | T-007a | SMTC spike, primary | done | ccba972 |
 | T-007b | SMTC spike, fallback | skipped | - |
 | T-008 | Record Spike Result | done | - |
-| T-009 | Wrap M0 | todo | - |
+| T-009 | Wrap M0 | done | 60d0896 |
 | **M1** | **Island Shell + Weather** | | |
 | T-010a | Window Shell & Tray | todo | - |
 | T-010b | Minimal IslandPill | todo | - |
@@ -66,3 +66,4 @@
 *   T-003 follow-up: schemas.test.ts rewritten against corrected Settings/Weather/Media/Shelf/AI shapes; covers lat/lon bounds, hotkey regex, endpoint rule (https + http localhost/127.0.0.1/[::1]), uuid shelf ids, path length 3..1024, ai:send trim+4000 cap, all 20 channel input schemas, SettingsPatch omits schemaVersion. schemas.ts: [::1] hostname bracket-strip in endpoint validator; explicit return type on ipcEnvelope. .eslintrc.cjs: varsIgnorePattern '^_' so destructure-to-discard stays warning-free. Verify: typecheck OK, vitest 72/72, lint 0 warnings, build OK, grep for locationLat|locationLon|originalPath|addedAt|logLevel|storedPath|AppSettingsSchema|WeatherData|MediaInfo = empty.
 *   T-006 redo: split store into src/main/services/store-logic.ts (PURE: defaults, zod validation via shared schemas, migration by schemaVersion, chat cap 50, corrupt->defaults; no electron import) and src/main/services/store.ts (electron-store + safeStorage wrappers; CryptoProvider injected). Shelf only stores/lists — no eviction (cap = T-021/T-022). API key never in electron-store; memory fallback sets aiKeyPersisted=false. Tests: store-logic.test.ts (10 cases incl. lat/lon/hotkey/endpoint/migration/corrupt/chat-cap), store.test.ts (5 cases with vi.mock('electron'), os.tmpdir()). Verify: typecheck OK, vitest 15/15, lint 0 warnings, build OK, grep deprecated fields empty. All files < 120 lines.
 *   T-008: D-008 **Locked** on the T-007a PASS — PowerShell 5.1 WinRT bridge (`powershell.exe` child, newline-delimited JSON over stdio), no npm package, so D-003 is unchanged and T-007b (fallback) is skipped per D-021. Spike numbers: 22-33 ms per control command, 7.66 ms avg / 53 ms max session read, 0.6 % of one core polling every 3 s while playing, no crash with zero sessions. Spike artifacts were kept and moved to `Instruction/spike/` (the doc folder; TASKS.md cards refer to it as `docs/`). **T-020-La reuses `spike-smtc-a.ps1`** as the shipped bridge (fixed path, no user arguments, unpacked from asar in T-032). T-020-L was split into T-020-La (bridge service, Est 2.5) + T-020-Lb (UI & IPC, Est 2.0) = 4.5 h vs 3.0 h before; the +1.5 h is the extra review boundary from the split.
+*   T-009: M0 wrap committed. T-009 verification (`git tag -l "m0-done"`) is deferred — the `m0-done` tag is deliberately NOT created by the agent and is created by the owner after this commit.
