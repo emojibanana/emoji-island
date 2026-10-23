@@ -3,9 +3,9 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import type {
   IpcEnvelope,
-  WeatherData,
-  MediaInfo,
-  ShelfItem,
+  WeatherResult,
+  MediaState,
+  ShelfItemMetadata,
   ChatMessage,
   AppSettings,
 } from '../shared/types'
@@ -19,15 +19,6 @@ type Env<T> = Promise<IpcEnvelope<T>>
 type WindowMode = 'collapsed' | 'expanded'
 
 type SettingsWithKeyInfo = AppSettings & { aiKeyPresent: boolean; aiKeyPersisted: boolean }
-
-type MediaState = {
-  title: string | null
-  artist: string | null
-  status: 'playing' | 'paused' | 'stopped' | 'unavailable'
-  canControl: boolean
-}
-
-type WeatherResponse = { data: WeatherData | null; status: 'fresh' | 'stale' | 'offline' }
 
 type PreviewResponse = {
   dataUrl: string
@@ -62,10 +53,10 @@ const islandApi = {
     ipcRenderer.invoke('settings:update', patch),
 
   // -- Weather ---------------------------------------------------------------
-  getWeather: (): Env<WeatherResponse> =>
+  getWeather: (): Env<WeatherResult> =>
     ipcRenderer.invoke('weather:get'),
 
-  refreshWeather: (): Env<WeatherResponse> =>
+  refreshWeather: (): Env<WeatherResult> =>
     ipcRenderer.invoke('weather:refresh'),
 
   // -- Media -----------------------------------------------------------------
@@ -76,17 +67,17 @@ const islandApi = {
     ipcRenderer.invoke('media:control', { action }),
 
   /** Subscribe to Main→Renderer media state push events. Returns unsubscribe fn. */
-  onMediaStateChanged: (cb: (state: MediaInfo) => void): (() => void) => {
-    const listener = (_: Electron.IpcRendererEvent, state: MediaInfo): void => cb(state)
+  onMediaStateChanged: (cb: (state: MediaState) => void): (() => void) => {
+    const listener = (_: Electron.IpcRendererEvent, state: MediaState): void => cb(state)
     ipcRenderer.on('media:stateChanged', listener)
     return () => ipcRenderer.removeListener('media:stateChanged', listener)
   },
 
   // -- Shelf -----------------------------------------------------------------
-  listShelf: (): Env<ShelfItem[]> =>
+  listShelf: (): Env<ShelfItemMetadata[]> =>
     ipcRenderer.invoke('shelf:list'),
 
-  addFromDrop: (sourcePath: string): Env<ShelfItem> =>
+  addFromDrop: (sourcePath: string): Env<ShelfItemMetadata> =>
     ipcRenderer.invoke('shelf:addFromDrop', { sourcePath }),
 
   removeShelfItem: (id: string): Env<void> =>

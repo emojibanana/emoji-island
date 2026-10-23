@@ -1,7 +1,7 @@
 // src/preload/index.test.ts
 // Verifies islandApi surface: exactly the 20 IPC channels, no forbidden keys.
 // Uses vi.mock to stub Electron — preload cannot run in jsdom without it.
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 
 // ---------------------------------------------------------------------------
 // Mock Electron before importing the preload
