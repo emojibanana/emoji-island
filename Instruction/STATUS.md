@@ -23,7 +23,7 @@
 | T-002 | Tooling & Environment | done | 57d117d |
 | T-003 | Types & Zod Schemas | done | c08137e |
 | T-004 | Preload islandApi | done | 4678ac0 |
-| T-005 | webUtils drop verification | manual-pending | 5dc684c |
+| T-005 | webUtils drop verification | done | b50bdd4 |
 | T-006 | Storage Service & Migration | todo | - |
 | T-007a | SMTC spike, primary | todo | - |
 | T-007b | SMTC spike, fallback | conditional | - |
