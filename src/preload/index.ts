@@ -118,11 +118,6 @@ const islandApi = {
   /** Get the absolute filesystem path for a dropped File object. */
   getDroppedFilePath: (file: File): string =>
     webUtils.getPathForFile(file),
-
-  // -- T-005 TEMPORARY -------------------------------------------------------
-  /** Temporary: log dropped path to main process for verification. */
-  testLogDropPath: (path: string): void =>
-    ipcRenderer.send('test:logDropPath', { path }),
 } as const
 
 contextBridge.exposeInMainWorld('islandApi', islandApi)

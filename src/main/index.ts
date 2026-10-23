@@ -1,10 +1,5 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
-
-// T-005 TEMPORARY: Log dropped file paths
-ipcMain.on('test:logDropPath', (_event, payload: { path: string }) => {
-  console.log('[T-005 DROP TEST] Absolute path from webUtils:', payload.path)
-})
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
