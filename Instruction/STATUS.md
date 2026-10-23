@@ -19,7 +19,7 @@
 | ID | Title | Status | Last Commit |
 | :--- | :--- | :--- | :--- |
 | **M0** | **Foundation** | | |
-| T-001 | Scaffold & Verify | todo | - |
+| T-001 | Scaffold & Verify | done | 96d198b |
 | T-002 | Tooling & Environment | todo | - |
 | T-003 | Types & Zod Schemas | todo | - |
 | T-004 | Preload islandApi | todo | - |
