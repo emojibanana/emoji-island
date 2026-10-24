@@ -30,8 +30,8 @@
 | T-008 | Record Spike Result | done | - |
 | T-009 | Wrap M0 | done | 60d0896 |
 | **M1** | **Island Shell + Weather** | | |
-| T-010a | Window Shell & Tray | manual-pending | a002f51 |
-| T-010b | Minimal IslandPill | todo | - |
+| T-010a | Window Shell & Tray | done | a002f51 |
+| T-010b | Minimal IslandPill | manual-pending | - |
 | T-011 | Single Instance & Hotkey | todo | - |
 | T-012 | Focus Model & Drag-Expand | todo | - |
 | T-013 | UI Shell & Transitions | todo | - |

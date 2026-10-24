@@ -1,5 +1,7 @@
+import { IslandPill } from './components/IslandPill'
+
 function App(): JSX.Element {
-  return <main>Emoji Island</main>
+  return <IslandPill />
 }
 
 export default App
