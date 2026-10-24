@@ -3,7 +3,7 @@
 **Legend:** `todo` | `doing` | `done` | `manual-pending` | `skipped` | `n/a` | `conditional` | `deferred (v0.2)`
 
 ## Milestones
-*   `m0-done`: pending (tag created by owner after this commit)
+*   `m0-done`: done
 *   `m1-done`: pending
 *   `m2-done`: pending
 *   `m3-done`: pending
@@ -30,7 +30,7 @@
 | T-008 | Record Spike Result | done | - |
 | T-009 | Wrap M0 | done | 60d0896 |
 | **M1** | **Island Shell + Weather** | | |
-| T-010a | Window Shell & Tray | todo | - |
+| T-010a | Window Shell & Tray | manual-pending | a002f51 |
 | T-010b | Minimal IslandPill | todo | - |
 | T-011 | Single Instance & Hotkey | todo | - |
 | T-012 | Focus Model & Drag-Expand | todo | - |
