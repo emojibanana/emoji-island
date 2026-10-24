@@ -20,7 +20,7 @@ For features excluded from automated coverage, verification relies on this manua
 
 | Check ID | Category | Steps to Verify | Expected Outcome |
 | :--- | :--- | :--- | :--- |
-| `M-001` | Overlay | Launch app. Open an exclusive-fullscreen game/app. | Island is top-center, frameless, transparent. May be covered by the fullscreen app. |
+| `M-001` | Overlay | Launch app. Open an exclusive-fullscreen game/app. | Island is top-center, frameless, transparent. May be covered by the fullscreen app. | ✅
 | `M-002` | Hotkey | Press `Ctrl+Alt+Space` globally. | Island expands and collapses reliably. |
 | `M-003` | Hotkey Conflict | Bind `Ctrl+Alt+Space` in another app first, then launch Island. | Island shows "Hotkey unavailable" notice, doesn't crash, uses Tray to toggle. |
 | `M-004` | Focus/Blur | Expand island. Click desktop background. | Island collapses after exactly 300 ms. |
