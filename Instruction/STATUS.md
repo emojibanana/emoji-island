@@ -32,7 +32,7 @@
 | **M1** | **Island Shell + Weather** | | |
 | T-010a | Window Shell & Tray | done | a002f51 |
 | T-010b | Minimal IslandPill | done | - |
-| T-011 | Single Instance & Hotkey | manual-pending | - |
+| T-011 | Single Instance & Hotkey | done | c5e04f7 |
 | T-012 | Focus Model & Drag-Expand | todo | - |
 | T-013 | UI Shell & Transitions | todo | - |
 | T-014 | Weather Service (Main) | todo | - |
