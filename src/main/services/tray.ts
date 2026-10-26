@@ -4,7 +4,12 @@ import { join } from 'path'
 
 let tray: Tray | null = null
 
-export function createTray(win: BrowserWindow): void {
+// T-011: allow index.ts to change the tooltip when the hotkey fails.
+export function setTrayTooltip(tooltip: string): void {
+  tray?.setToolTip(tooltip)
+}
+
+export function createTray(win: BrowserWindow, onToggle: () => void): void {
   // Placeholder icon: 16x16 gray circle PNG bundled in resources/.
   // ponytail: replace with a real icon in T-033 / final branding pass.
   const iconPath = join(__dirname, '../../resources/tray-icon.png')
@@ -12,6 +17,9 @@ export function createTray(win: BrowserWindow): void {
 
   tray = new Tray(icon.isEmpty() ? nativeImage.createEmpty() : icon)
   tray.setToolTip('Emoji Island')
+
+  // T-011: clicking the tray icon toggles the island — working fallback when the hotkey is unavailable.
+  tray.on('click', onToggle)
 
   const buildMenu = (): void => {
     const visible = win.isVisible()
