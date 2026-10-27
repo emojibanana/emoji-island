@@ -156,7 +156,7 @@
 *   **Files:** `src/renderer/src/App.tsx`, `src/renderer/src/index.css`
 *   **read_files:** `src/renderer/src/App.tsx`, `src/renderer/src/index.css`
 *   **commit:** `feat(ui): implement main panel layout and transitions`
-*   **Steps:** Apply Tailwind glass tokens. Map React state to window modes (Collapsed 280x40, Expanded 420x360). Add CSS transitions (`ease-out` / `ease-in`).
+*   **Steps:** Apply Tailwind glass tokens. Map React state to window modes (Collapsed 280x40, Expanded 420x360). Add CSS transition(`ease-out` / `ease-in`). Derive the collapsed or expanded view from the window size (window.innerWidth and the 'resize' event), not from renderer state. Main changes the size on blur-collapse, hotkey, tray and drag, and there is no main-to-renderer mode channel in IPC_SPEC.
 *   **Verification:** `manual_check_id`: M-012, M-002
 
 ### T-014: Weather Service (Main)
