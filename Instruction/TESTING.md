@@ -21,9 +21,9 @@ For features excluded from automated coverage, verification relies on this manua
 | Check ID | Category | Steps to Verify | Expected Outcome |
 | :--- | :--- | :--- | :--- |
 | `M-001` | Overlay | Launch app. Open an exclusive-fullscreen game/app. | Island is top-center, frameless, transparent. May be covered by the fullscreen app. | ✅
-| `M-002` | Hotkey | Press `Ctrl+Alt+Space` globally. | Island expands and collapses reliably. |
-| `M-003` | Hotkey Conflict | Bind `Ctrl+Alt+Space` in another app first, then launch Island. | Island shows "Hotkey unavailable" notice, doesn't crash, uses Tray to toggle. |
-| `M-004` | Focus/Blur | Expand island. Click desktop background. | Island collapses after exactly 300 ms. |
+| `M-002` | Hotkey | Press `Ctrl+Alt+Space` globally. | Island expands and collapses reliably. | ✅
+| `M-003` | Hotkey Conflict | Bind `Ctrl+Alt+Space` in another app first, then launch Island. | Island shows "Hotkey unavailable" notice, doesn't crash, uses Tray to toggle. | ✅
+| `M-004` | Focus/Blur | Expand island. Click desktop background. | Island collapses after exactly 300 ms. | ✅
 | `M-005` | Single Instance | Launch app. Double-click executable again. | Second instance quits immediately; first instance expands/focuses. |
 | `M-006` | Tray | Right-click tray icon. | Shows Show/Hide and Quit. Quit unregisters hotkeys and kills process. |
 | `M-007` | Weather | Disconnect internet. | Weather UI displays offline badge. |
@@ -35,7 +35,7 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). |
 | `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in ~10s seamlessly. |
 | `M-015` | webUtils | Drop a file; check log. | Absolute path received, sandbox still true. |
-| `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. |
+| `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | **M-016 menunggu T-024. Belum terbukti apakah Windows mengirim event drag ke jendela non-focusable.**
 | `M-017` | Shelf limits | Drop 51st item; drop file > 100 MB. | Rejected with error banner, nothing copied. |
 | `M-018` | Symlink | Drop a symlink/junction. | Rejected (`PATH_INVALID`). |
 | `M-019` | AI errors | No key; stop 9router; wrong model. | Inline error text, app stays responsive. |

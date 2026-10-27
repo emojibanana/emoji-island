@@ -33,7 +33,7 @@
 | T-010a | Window Shell & Tray | done | a002f51 |
 | T-010b | Minimal IslandPill | done | - |
 | T-011 | Single Instance & Hotkey | done | c5e04f7 |
-| T-012 | Focus Model & Drag-Expand | manual-pending | - |
+| T-012 | Focus Model & Drag-Expand | done | - |
 | T-013 | UI Shell & Transitions | todo | - |
 | T-014 | Weather Service (Main) | todo | - |
 | T-015 | Clock & Weather UI | todo | - |
