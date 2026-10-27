@@ -1,5 +1,7 @@
 // T-010a: Overlay window shell and tray.
-// T-011: Single instance lock, window modes (collapsed/expanded), global hotkey.
+// T-011: Single instance lock, global hotkey.
+// T-012 / D-010: FocusController is the single source of truth for island mode;
+//                 blur auto-collapse (300 ms), drag auto-expand (immediate).
 // D-009: frameless, transparent, always-on-top BrowserWindow; top-center, 12 px top margin.
 // D-017: collapsed 280x40, expanded 420x360.
 import { app, BrowserWindow, screen, globalShortcut } from 'electron'
@@ -8,13 +10,14 @@ import log from 'electron-log'
 import { AppStore } from './services/store'
 import { createTray, destroyTray, setTrayTooltip } from './services/tray'
 import { registerHotkey, unregisterHotkey } from './services/hotkey'
+import { FocusController, type IslandMode } from './services/focus-controller'
+import { registerWindowHandlers } from './ipcHandlers'
 
 const COLLAPSED = { width: 280, height: 40 } as const
 const EXPANDED = { width: 420, height: 360 } as const
-type IslandMode = 'collapsed' | 'expanded'
 
-let islandMode: IslandMode = 'collapsed'
 let mainWindow: BrowserWindow | null = null
+let focusController: FocusController | null = null
 
 // Singleton store — initialized once on app ready.
 export let store: AppStore
@@ -27,21 +30,26 @@ function getTopCenterBounds(width: number): { x: number; y: number } {
   return { x, y }
 }
 
-// Resize the SAME window between modes (no animation).
-function setIslandMode(mode: IslandMode): void {
+// Apply a mode change coming from the FocusController (single source of truth).
+function applyIslandMode(mode: IslandMode): void {
   if (!mainWindow || mainWindow.isDestroyed()) return
-  islandMode = mode
   const size = mode === 'collapsed' ? COLLAPSED : EXPANDED
   const { x, y } = getTopCenterBounds(size.width)
   mainWindow.setBounds({ x, y, width: size.width, height: size.height })
+  mainWindow.webContents.send('window:modeChanged', { mode })
+  if (mode === 'collapsed') {
+    mainWindow.setFocusable(false)
+  } else {
+    mainWindow.setFocusable(true)
+    mainWindow.focus()
+  }
 }
 
 function toggleIsland(): void {
-  if (!mainWindow || mainWindow.isDestroyed()) return
+  if (!mainWindow || mainWindow.isDestroyed() || !focusController) return
   if (mainWindow.isMinimized()) mainWindow.restore()
   if (!mainWindow.isVisible()) mainWindow.show()
-  setIslandMode(islandMode === 'collapsed' ? 'expanded' : 'collapsed')
-  mainWindow.focus()
+  focusController.setMode(focusController.getMode() === 'collapsed' ? 'expanded' : 'collapsed')
 }
 
 function createWindow(): BrowserWindow {
@@ -59,6 +67,7 @@ function createWindow(): BrowserWindow {
     resizable: false,
     hasShadow: false,
     show: false,
+    focusable: false, // start collapsed; FocusController flips this on expand
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
@@ -73,6 +82,12 @@ function createWindow(): BrowserWindow {
   // Block renderer-initiated navigation and new window opens.
   win.webContents.on('will-navigate', (e) => e.preventDefault())
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' as const }))
+
+  // T-012 / D-010: route native focus/blur through the controller.
+  win.on('focus', () => focusController?.onFocus())
+  win.on('blur', () => focusController?.onBlur())
+  // Hidden via the tray: drop any pending collapse timer.
+  win.on('hide', () => focusController?.dispose())
 
   win.on('ready-to-show', () => win.show())
 
@@ -90,17 +105,23 @@ if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
   app.on('second-instance', () => {
-    if (!mainWindow || mainWindow.isDestroyed()) return
+    if (!mainWindow || mainWindow.isDestroyed() || !focusController) return
     if (mainWindow.isMinimized()) mainWindow.restore()
-    setIslandMode('expanded')
     mainWindow.show()
-    mainWindow.focus()
+    focusController.setMode('expanded')
   })
 
   app.whenReady().then(() => {
     app.setAppUserModelId('com.electron.emoji-island')
 
     store = new AppStore()
+
+    focusController = new FocusController({
+      setTimeout: (fn, ms) => setTimeout(fn, ms),
+      clearTimeout: (id) => clearTimeout(id as ReturnType<typeof setTimeout>),
+      setMode: applyIslandMode,
+    })
+    registerWindowHandlers(focusController)
 
     mainWindow = createWindow()
     createTray(mainWindow, toggleIsland)
