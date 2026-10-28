@@ -26,6 +26,8 @@ const staleCache: WeatherCache = {
 
 const freshCache: WeatherCache = { ...staleCache, updatedAt: NOW - 60 * 1000 }
 
+const dayOldCache: WeatherCache = { ...staleCache, updatedAt: NOW - 24 * 60 * 60 * 1000 - 1 }
+
 const apiBody = {
   current: {
     temperature_2m: 32.4,
@@ -115,8 +117,16 @@ describe('weather:get', () => {
 
   // DATA_MODEL: Settings "determines location" — the cache belongs to one coordinate pair.
   it('ignores a cache recorded for another location', () => {
-    const s = setup([ok(apiBody)], staleCache, { latitude: -7.25, longitude: 112.75 }) // Surabaya
+    const s = setup([ok(apiBody)], freshCache, { latitude: -7.25, longitude: 112.75 }) // Surabaya
     expect(s.service.getWeather()).toEqual({ data: null, status: 'offline' })
+    expect(s.fetchMock).not.toHaveBeenCalled()
+  })
+
+  // Finding A: `offline` carries no data — a 25 h-old value is not displayable.
+  it('drops a cache older than 24 h instead of pairing it with an offline status', () => {
+    const s = setup([ok(apiBody)], dayOldCache)
+    expect(s.service.getWeather()).toEqual({ data: null, status: 'offline' })
+    expect(s.fetchMock).not.toHaveBeenCalled()
   })
 })
 
@@ -159,12 +169,15 @@ describe('weather:refresh — happy path', () => {
     expect(s.setSpy).not.toHaveBeenCalled()
   })
 
-  it('refetches instead of serving a cache from another location', async () => {
-    const s = setup([ok(apiBody)], freshCache, { latitude: -7.25, longitude: 112.75 })
+  it('refetches a stale cache recorded for another location and persists the new coordinates', async () => {
+    const s = setup([ok(apiBody)], staleCache, { latitude: -7.25, longitude: 112.75 })
     const res = await s.service.refreshWeather()
 
     expect(s.fetchMock).toHaveBeenCalledTimes(1)
     expect(res.status).toBe('fresh')
+    expect(res.data).toEqual(
+      expect.objectContaining({ latitude: -7.25, longitude: 112.75, temperature: 32.4 })
+    )
     expect(s.setSpy).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ latitude: -7.25, longitude: 112.75 })
     )
@@ -188,6 +201,13 @@ describe('weather:refresh — failure paths', () => {
     expect(s.fetchMock).toHaveBeenCalledTimes(2)
     expect(s.setSpy).not.toHaveBeenCalled()
     expect(res).toEqual({ data: staleCache, status: 'stale' })
+  })
+
+  it('is offline with no data when both attempts fail on a > 24 h cache', async () => {
+    const s = setup([new Error('ECONNRESET')], dayOldCache)
+    expect(await s.service.refreshWeather()).toEqual({ data: null, status: 'offline' })
+    expect(s.fetchMock).toHaveBeenCalledTimes(2)
+    expect(s.setSpy).not.toHaveBeenCalled()
   })
 
   it('is offline when both attempts fail and no cache exists', async () => {

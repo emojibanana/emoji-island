@@ -54,6 +54,13 @@ export function deriveStatus(cache: WeatherCache | null, now: number): WeatherSt
   return 'offline'
 }
 
+// IPC_SPEC payload. `offline` means "no trustworthy data", so it never carries a cache:
+// a value older than 24 h would otherwise look displayable to the renderer (owner decision).
+export function toResult(cache: WeatherCache | null, now: number): WeatherResult {
+  const status = deriveStatus(cache, now)
+  return status === 'offline' ? { data: null, status } : { data: cache, status }
+}
+
 export function createWeatherService(deps: WeatherDeps): WeatherService {
   // Re-validate on read: a corrupt store value must never reach the renderer.
   // DATA_MODEL: Settings "determines location" — a cache for other coordinates is another
@@ -95,10 +102,7 @@ export function createWeatherService(deps: WeatherDeps): WeatherService {
     }
   }
 
-  const getWeather = (): WeatherResult => {
-    const data = readCache()
-    return { data, status: deriveStatus(data, deps.now()) }
-  }
+  const getWeather = (): WeatherResult => toResult(readCache(), deps.now())
 
   const refreshWeather = async (): Promise<WeatherResult> => {
     const cached = readCache()
@@ -114,8 +118,8 @@ export function createWeatherService(deps: WeatherDeps): WeatherService {
       deps.cache.set(fresh)
       return { data: fresh, status: 'fresh' }
     }
-    // FR-007: keep showing the cached value while it is < 24 h old, otherwise offline.
-    return { data: cached, status: deriveStatus(cached, deps.now()) }
+    // FR-007: keep showing the cached value while it is < 24 h old, otherwise offline (data: null).
+    return toResult(cached, deps.now())
   }
 
   return { getWeather, refreshWeather }
