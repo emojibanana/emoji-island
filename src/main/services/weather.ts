@@ -56,9 +56,14 @@ export function deriveStatus(cache: WeatherCache | null, now: number): WeatherSt
 
 export function createWeatherService(deps: WeatherDeps): WeatherService {
   // Re-validate on read: a corrupt store value must never reach the renderer.
+  // DATA_MODEL: Settings "determines location" — a cache for other coordinates is another
+  // city's weather, so a location change invalidates it (getWeather reports offline, refresh refetches).
   const readCache = (): WeatherCache | null => {
     const parsed = WeatherCacheSchema.safeParse(deps.cache.get())
-    return parsed.success ? parsed.data : null
+    if (!parsed.success) return null
+    const { latitude, longitude } = deps.location()
+    if (parsed.data.latitude !== latitude || parsed.data.longitude !== longitude) return null
+    return parsed.data
   }
 
   // One HTTP attempt. Returns null on timeout, network error, non-200, invalid JSON
