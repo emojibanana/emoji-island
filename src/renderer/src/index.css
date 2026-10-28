@@ -10,3 +10,38 @@ body,
   overflow: hidden;
   background: transparent;
 }
+
+/* T-013 / UI_SPEC 4: expand <= 200 ms ease-out, collapse <= 180 ms ease-in.
+   The window itself is resized by main in one step, so the transition is the
+   content's enter animation. */
+@keyframes island-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes island-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.island-enter-expanded {
+  animation: island-enter 200ms ease-out;
+}
+
+.island-enter-collapsed {
+  animation: island-enter 180ms ease-in;
+}
+
+/* UI_SPEC 4 (Reduced Motion): transform/scale animations become opacity-only. */
+@media (prefers-reduced-motion: reduce) {
+  .island-enter-expanded {
+    animation: island-fade 200ms ease-out;
+  }
+
+  .island-enter-collapsed {
+    animation: island-fade 180ms ease-in;
+  }
+}
