@@ -165,7 +165,7 @@
 *   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-016), This task card.
-*   **Files:** `src/main/services/weather.ts`, `src/main/services/weather.test.ts`, `src/main/ipcHandlers.ts`
+*   **Files:** `src/main/services/weather.ts`, `src/main/services/weather.test.ts`, `src/main/ipcHandlers.ts`, `src/main/index.ts` *(corrected in T-014: the handler had no call site without index.ts — approved by the owner)*
 *   **read_files:** `src/shared/types.ts`
 *   **commit:** `feat(weather): implement open-meteo fetch and caching`
 *   **Steps:** Native `fetch` to Open-Meteo. Cache and state derivation logic. Expose `weather:get` and `weather:refresh` handlers yielding `WeatherResult`.

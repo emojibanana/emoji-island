@@ -11,7 +11,7 @@ import { AppStore } from './services/store'
 import { createTray, destroyTray, setTrayTooltip } from './services/tray'
 import { registerHotkey, unregisterHotkey } from './services/hotkey'
 import { FocusController, type IslandMode } from './services/focus-controller'
-import { registerWindowHandlers } from './ipcHandlers'
+import { registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
 
 const COLLAPSED = { width: 280, height: 40 } as const
 const EXPANDED = { width: 420, height: 360 } as const
@@ -122,6 +122,7 @@ if (!app.requestSingleInstanceLock()) {
       setMode: applyIslandMode,
     })
     registerWindowHandlers(focusController)
+    registerWeatherHandlers(store)
 
     mainWindow = createWindow()
     createTray(mainWindow, toggleIsland)
