@@ -66,3 +66,22 @@
 1.  **0.0s:** User presses `Ctrl+Alt+Space`. The window expands (`<= 200 ms`).
 2.  **0.5s:** User clicks the Media tab. The UI explicitly shows "Media unavailable" (or read-only data). Controls are disabled.
 3.  **2.5s - 7.0s:** The rest of the file drop and AI steps execute exactly as Scenario A. The demo passes.
+
+## Weather code mapping
+| Codes | Label | iconKey |
+| 0 | Clear sky | sun |
+| 1 | Mainly clear | sun |
+| 2 | Partly cloudy | cloud-sun |
+| 3 | Overcast | cloud |
+| 45, 48 | Fog | cloud-fog |
+| 51 / 53 / 55 | Light drizzle / Drizzle / Dense drizzle | cloud-drizzle |
+| 56, 57 | Freezing drizzle | cloud-drizzle |
+| 61 / 63 / 65 | Light rain / Rain / Heavy rain | cloud-rain |
+| 66, 67 | Freezing rain | cloud-rain |
+| 71 / 73 / 75 | Light snow / Snow / Heavy snow | cloud-snow |
+| 77 | Snow grains | snowflake |
+| 80 / 81 / 82 | Light showers / Showers / Heavy showers | cloud-rain |
+| 85 / 86 | Light snow showers / Heavy snow showers | cloud-snow |
+| 95 | Thunderstorm | cloud-lightning |
+| 96, 99 | Thunderstorm with hail | cloud-hail |
+| anything else, NaN | Unknown | unknown |

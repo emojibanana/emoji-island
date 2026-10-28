@@ -36,7 +36,8 @@
 | T-012 | Focus Model & Drag-Expand | done | - |
 | T-013 | UI Shell & Transitions | done | - |
 | T-014 | Weather Service (Main) | done | - |
-| T-015 | Clock & Weather UI | todo | - |
+| T-015a | Clock & Weather UI | todo | - |
+| T-015b | Tab bar & Expanded View Wiring | todo | - |
 | T-016 | Wrap M1 | todo | - |
 | **M2** | **Media & File Shelf** | | |
 | T-020 | Media (active variant: L) | todo | - |

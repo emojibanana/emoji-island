@@ -171,19 +171,41 @@
 *   **Steps:** Native `fetch` to Open-Meteo. Cache and state derivation logic. Expose `weather:get` and `weather:refresh` handlers yielding `WeatherResult`.
 *   **Verification:** `automated_command`: `npx vitest run src/main/services/weather.test.ts`
 
-### T-015: Clock & Weather UI
+### T-015a: Weather Code Mapping, ClockCard and WeatherCard
 *   **Depends On:** T-014
-*   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
 *   **Tier:** any
-*   **Context Pack:** AGENTS.md, UI_SPEC, This task card.
-*   **Files:** `src/renderer/src/components/ClockCard.tsx`, `src/renderer/src/components/WeatherCard.tsx`, `src/renderer/src/components/TabBar.tsx`
-*   **read_files:** `src/renderer/src/App.tsx`
-*   **commit:** `feat(ui): build clock, weather card, and tab bar`
-*   **Steps:** Build Clock (renderer Date), WeatherCard, and TabBar components. Wire `useEffect` to poll Main process.
-*   **Verification:** `manual_check_id`: M-007
+*   **Context Pack:** AGENTS.md, UI_SPEC (Weather code mapping, Components, View states), This task card.
+*   **Files:** `src/renderer/src/lib/weather-code.ts`, `src/renderer/src/lib/weather-code.test.ts`, `src/renderer/src/components/ClockCard.tsx`, `src/renderer/src/components/WeatherCard.tsx`
+*   **read_files:** `src/shared/types.ts`
+*   **commit:** `feat(ui): add weather code mapping, clock card and weather card`
+*   **Steps:**
+    1. `weather-code.ts` (pure, no React or lucide import): export `WeatherIconKey` and `describeWeatherCode(code: number): { label; iconKey }` following the UI_SPEC table. Non-integers and NaN return Unknown. If the Open-Meteo docs differ from the table, the docs win; record it in STATUS.md notes.
+    2. `weather-code.test.ts`: every code in the table returns its label and iconKey; -1, 4, 100, 1.5 and NaN return Unknown.
+    3. `WeatherCard` props `{ result: WeatherResult | null; loading: boolean; error: string | null }`. No fetch or IPC inside. Map iconKey to `lucide-react` icons in a Record (use `Cloud` if an icon is missing in the installed version). States: loading "Loading weather"; error "Error: <message>"; offline with null data "Weather unavailable (offline)" plus an "Offline" badge; success shows icon, temperature rounded with °C, label, "Feels like N°C", "Humidity N%"; stale adds an amber "Stale" badge. Badges carry text, never color only. State text uses `role="status"`. Tokens: text #F5F5F5, muted #A3A3A3, warning #F5B342.
+    4. `ClockCard` (no props): HH:MM (24-hour) plus a date line from `Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })` [ASSUMPTION]. Update with a `setTimeout` to the next minute boundary, cleared on unmount.
+    5. Do not touch `App.tsx`, `TabBar.tsx`, `IslandPill.tsx`, `src/main`, `src/preload`, `src/shared` or `package.json`.
+*   **Acceptance Criteria:** mapping tests pass; components render every state; typecheck, lint and build pass.
+*   **Verification:** `automated_command`: `npx vitest run src/renderer/src/lib/weather-code.test.ts`
+
+### T-015b: Tab Bar, Weather Hook and Expanded View Wiring
+*   **Depends On:** T-015a
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
+*   **Tier:** any
+*   **Context Pack:** AGENTS.md, UI_SPEC (Components, Animations, Accessibility), This task card.
+*   **Files:** `src/renderer/src/components/TabBar.tsx`, `src/renderer/src/hooks/use-weather.ts`, `src/renderer/src/App.tsx`
+*   **read_files:** `src/renderer/src/App.tsx`, `src/preload/index.ts`, `src/main/services/weather.ts`
+*   **commit:** `feat(ui): add tab bar and weather polling to expanded view`
+*   **Steps:**
+    1. `TabBar`: driven by an exported `TABS` array with one entry (clock and weather); later tasks append entries. `role="tablist"`, each button `role="tab"` with `aria-selected` and `aria-label`, ArrowLeft/ArrowRight navigation, visible focus ring, tab switch fade <= 120 ms, disabled under `prefers-reduced-motion`.
+    2. `use-weather.ts`: used only inside the expanded view, so it polls only while the island is expanded and never calls IPC while collapsed. Call `weather:get` on mount and every 60 s. Read `weather.ts` and follow what T-014 implemented: if `get` does not refetch stale data, call `refresh` when status is not `fresh`, at most once per 5 minutes. On an envelope error set the error message. Clear timers on unmount and ignore results that arrive after unmount. Use only methods that exist in the preload; never invent names.
+    3. `App.tsx`: keep the pill/expanded view derived from the window size. In the expanded view render `TabBar` and, for the active tab, `ClockCard` and `WeatherCard` fed by the hook.
+    4. Do not touch `IslandPill.tsx`, `src/main`, `src/preload`, `src/shared` or `package.json`.
+*   **Acceptance Criteria:** weather and clock show in the expanded view; offline shows the offline state without a crash; no IPC calls while collapsed; typecheck, lint and build pass.
+*   **Verification:** `manual_check_id`: M-007 (plus M-002 for expand/collapse); repo gates `npm run typecheck` and `npx vitest run`.
 
 ### T-016: Wrap Milestone 1
-*   **Depends On:** T-015
+*   **Depends On:** T-015b
 *   **Hours:** Agent: 0.5 | Review: 1.0 | Est: 1.5
 *   **Tier:** any
 *   **Context Pack:** AGENTS.md, This task card.
