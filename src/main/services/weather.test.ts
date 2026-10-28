@@ -54,7 +54,11 @@ interface Setup {
 }
 
 // responses: one entry per attempt (last entry repeats). Error entries reject the fetch.
-function setup(responses: Array<Response | Error>, cached: WeatherCache | null = null): Setup {
+function setup(
+  responses: Array<Response | Error>,
+  cached: WeatherCache | null = null,
+  location = { latitude: LAT, longitude: LON }
+): Setup {
   let call = 0
   const fetchMock = vi.fn<FetchLike>(async () => {
     const next = responses[Math.min(call++, responses.length - 1)]
@@ -67,7 +71,7 @@ function setup(responses: Array<Response | Error>, cached: WeatherCache | null =
     fetch: fetchMock,
     now: () => NOW,
     sleep: sleepSpy,
-    location: () => ({ latitude: LAT, longitude: LON }),
+    location: () => location,
     cache: { get: () => cached, set: setSpy },
   }
   return { service: createWeatherService(deps), fetchMock, setSpy, sleepSpy }
@@ -106,6 +110,12 @@ describe('weather:get', () => {
 
   it('treats a corrupt cached value as offline', () => {
     const s = setup([ok(apiBody)], { temperature: 'hot' } as unknown as WeatherCache)
+    expect(s.service.getWeather()).toEqual({ data: null, status: 'offline' })
+  })
+
+  // DATA_MODEL: Settings "determines location" — the cache belongs to one coordinate pair.
+  it('ignores a cache recorded for another location', () => {
+    const s = setup([ok(apiBody)], staleCache, { latitude: -7.25, longitude: 112.75 }) // Surabaya
     expect(s.service.getWeather()).toEqual({ data: null, status: 'offline' })
   })
 })
@@ -147,6 +157,17 @@ describe('weather:refresh — happy path', () => {
     expect(await s.service.refreshWeather()).toEqual({ data: freshCache, status: 'fresh' })
     expect(s.fetchMock).not.toHaveBeenCalled()
     expect(s.setSpy).not.toHaveBeenCalled()
+  })
+
+  it('refetches instead of serving a cache from another location', async () => {
+    const s = setup([ok(apiBody)], freshCache, { latitude: -7.25, longitude: 112.75 })
+    const res = await s.service.refreshWeather()
+
+    expect(s.fetchMock).toHaveBeenCalledTimes(1)
+    expect(res.status).toBe('fresh')
+    expect(s.setSpy).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ latitude: -7.25, longitude: 112.75 })
+    )
   })
 })
 
