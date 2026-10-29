@@ -23,7 +23,7 @@ body,
 
 @keyframes island-fade {
   from {
-    opacity: 0;
+    opacity: 1;
   }
 }
 

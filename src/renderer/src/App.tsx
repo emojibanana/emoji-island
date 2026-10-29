@@ -36,7 +36,7 @@ function ExpandedView(): JSX.Element {
   return (
     <main aria-label="Emoji Island panel" className="flex h-full w-full flex-col overflow-hidden rounded-[16px] border border-white/[0.12] bg-[rgba(15,15,15,0.88)] text-[14px] text-[#F5F5F5]">
       <TabBar activeTab={activeTab} onSelectTab={setActiveTab} />
-      <section key={activeTab} role="tabpanel" aria-label={TABS.find((tab) => tab.id === activeTab)?.label} className="flex flex-1 flex-col gap-4 p-4 transition-opacity duration-100 motion-reduce:transition-none">
+      <section key={activeTab} role="tabpanel" aria-label={TABS.find((tab) => tab.id === activeTab)?.label} className="flex flex-1 flex-col gap-4 p-4 animate-[island-fade_100ms_ease-out] motion-reduce:animate-none">
         <ClockCard />
         <WeatherCard {...weather} />
       </section>

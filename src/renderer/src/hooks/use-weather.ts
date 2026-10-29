@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { WeatherResult } from '@shared/types'
 
 export interface UseWeatherResult {
@@ -12,16 +12,16 @@ export function useWeather(): UseWeatherResult {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const inFlightRef = useRef<boolean>(false)
-  const lastRefreshRef = useRef<number>(0)
-
   useEffect(() => {
+    // Keep poller guards local to the effect to avoid stranded loading state under StrictMode double-mount.
     let cancelled = false
+    let inFlight = false
+    let lastRefreshAt = 0
     const isMounted = (): boolean => !cancelled
 
     const fetchWeather = async (): Promise<void> => {
-      if (inFlightRef.current) return
-      inFlightRef.current = true
+      if (inFlight) return
+      inFlight = true
 
       try {
         if (!window.islandApi) {
@@ -47,9 +47,9 @@ export function useWeather(): UseWeatherResult {
           const now = Date.now()
           if (
             getResult.status !== 'fresh' &&
-            now - lastRefreshRef.current >= 5 * 60 * 1000
+            now - lastRefreshAt >= 5 * 60 * 1000
           ) {
-            lastRefreshRef.current = now
+            lastRefreshAt = now
             const refreshEnv = await window.islandApi.refreshWeather()
             if (!isMounted()) return
 
@@ -68,8 +68,8 @@ export function useWeather(): UseWeatherResult {
       } finally {
         if (isMounted()) {
           setLoading(false)
-          inFlightRef.current = false
         }
+        inFlight = false
       }
     }
 
