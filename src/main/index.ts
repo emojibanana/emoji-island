@@ -11,7 +11,8 @@ import { AppStore } from './services/store'
 import { createTray, destroyTray, setTrayTooltip } from './services/tray'
 import { registerHotkey, unregisterHotkey } from './services/hotkey'
 import { FocusController, type IslandMode } from './services/focus-controller'
-import { registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
+import { registerMediaHandlers, registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
+import { createMediaService } from './services/media'
 
 const COLLAPSED = { width: 280, height: 40 } as const
 const EXPANDED = { width: 420, height: 360 } as const
@@ -125,6 +126,14 @@ if (!app.requestSingleInstanceLock()) {
     registerWeatherHandlers(store)
 
     mainWindow = createWindow()
+
+    // T-020-Lb / D-008 Locked: create media service after the window is created so
+    // getSender() can reference mainWindow. Corrected scope: owner-approved per T-020-Lb.
+    const mediaService = createMediaService(() =>
+      mainWindow && !mainWindow.isDestroyed() ? mainWindow.webContents : null
+    )
+    registerMediaHandlers(mediaService)
+
     createTray(mainWindow, toggleIsland)
 
     // FR-003 / D-011: register the global hotkey; on failure keep running with a tray fallback.
