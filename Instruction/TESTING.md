@@ -21,13 +21,13 @@ For features excluded from automated coverage, verification relies on this manua
 | Check ID | Category | Steps to Verify | Expected Outcome | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `M-001` | Overlay | Launch app. Open a normal app (browser or VS Code). | Island is top-center, frameless, transparent, and stays above the normal app. | ✅ | |
-| `M-001b` | Overlay (info) | Open an exclusive-fullscreen game/app. | Record whether the island is covered. Informational, not pass/fail. | pending | |
+| `M-001b` | Overlay (info) | Open an exclusive-fullscreen game/app. | Record whether the island is covered. Informational, not pass/fail. | ✅ | |
 | `M-002` | Hotkey | Press `Ctrl+Alt+Space` globally. | Island expands and collapses reliably, centered. | ✅ | Bug B-001: expanded not centered, fix in T-012c |
 | `M-003` | Hotkey Conflict | Bind `Ctrl+Alt+Space` in another app first, then launch Island. | Island shows "Hotkey unavailable" notice, doesn't crash, uses Tray to toggle. | ✅ | |
 | `M-004` | Focus/Blur | Expand island. Click desktop background. | Island collapses after about 300 ms. | ✅ | |
-| `M-005` | Single Instance | Launch app. Launch it again. | Second instance quits immediately; first instance expands/focuses. | | |
-| `M-006` | Tray | Right-click tray icon. | Shows Show/Hide and Quit. Quit unregisters hotkeys and kills process. | | |
-| `M-007` | Weather | Disconnect internet. | Weather UI displays offline badge. | | |
+| `M-005` | Single Instance | Launch app. Launch it again. | Second instance quits immediately; first instance expands/focuses. | ✅ | |
+| `M-006` | Tray | Right-click tray icon. | Shows Show/Hide and Quit. Quit unregisters hotkeys and kills process. | ✅ | |
+| `M-007` | Weather | Disconnect internet. | Weather UI displays offline badge. | ✅ | |
 | `M-008` | Media (Locked) | Play music in Spotify. Test play, pause, next, previous. | UI updates within 2 s. Controls work. | | |
 | `M-009` | Media (Degraded) | Close media app. | UI states "Media unavailable" or "No media playing". Buttons disabled. | | |
 | `M-010` | Shelf Drop | Drag file <100 MB over pill. Drop. | Island expands on dragenter. File appears in list with preview. | | |
