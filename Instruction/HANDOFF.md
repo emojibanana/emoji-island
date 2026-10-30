@@ -30,10 +30,9 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-- Done: T-001 to T-013 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb).
-- Next: T-014 (Weather Service (Main)).
+- Done: T-001 to T-015b (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb).
+- Next: T-016 (Wrap M1).
 - Waiting: M-016 needs T-024. It is unproven that Windows sends drag events to a non-focusable window.
-- Known open point: the expanded island looks shifted left because the pill is narrower than the window. T-013 must make the root fill 100% of the window width.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.

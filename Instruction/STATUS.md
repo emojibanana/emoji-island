@@ -37,7 +37,7 @@
 | T-013 | UI Shell & Transitions | done | - |
 | T-014 | Weather Service (Main) | done | - |
 | T-015a | Clock & Weather UI | done | - |
-| T-015b | Tab bar & Expanded View Wiring | manual-pending | - |
+| T-015b | Tab bar & Expanded View Wiring | done | 6ea45f3 |
 | T-016 | Wrap M1 | todo | - |
 | **M2** | **Media & File Shelf** | | |
 | T-020 | Media (active variant: L) | todo | - |
