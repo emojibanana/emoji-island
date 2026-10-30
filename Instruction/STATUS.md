@@ -4,7 +4,7 @@
 
 ## Milestones
 *   `m0-done`: done
-*   `m1-done`: pending (tag created by owner after this commit)
+*   `m1-done`: done
 *   `m2-done`: pending
 *   `m3-done`: pending
 *   `m4-done`: pending

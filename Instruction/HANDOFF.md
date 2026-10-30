@@ -30,8 +30,8 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-- Done: T-001 to T-015b (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb).
-- Next: T-016 (Wrap M1).
+- Done: T-001 to T-016 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb).
+- Next: T-020 (Media active variant L).
 - Waiting: M-016 needs T-024. It is unproven that Windows sends drag events to a non-focusable window.
 
 ## Pitfalls already seen (check for them every time)
