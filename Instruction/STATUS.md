@@ -40,9 +40,9 @@
 | T-015b | Tab bar & Expanded View Wiring | done | 6ea45f3 |
 | T-016 | Wrap M1 | done | 2a96867 |
 | **M2** | **Media & File Shelf** | | |
-| T-020 | Media (active variant: L) | todo | - |
-| T-020-La | Media Bridge Service (Locked) | todo | - |
-| T-020-Lb | Media Card UI & IPC (Locked) | todo | - |
+| T-020 | Media (active variant: L) | pending | - |
+| T-020-La | Media Bridge Service (Locked) | done | - |
+| T-020-Lb | Media Card UI & IPC (Locked) | done | - |
 | T-020-D | Media Service (Degraded) | n/a | - |
 | T-021 | Shelf Sanitizer & Caps | todo | - |
 | T-022 | Shelf Copy & IPC Handlers | todo | - |

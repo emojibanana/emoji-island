@@ -236,7 +236,7 @@
 *   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-015), This task card.
 *   **Files:** `src/renderer/src/components/MediaCard.tsx`, `src/main/ipcHandlers.ts`
 *   **read_files:** `src/shared/schemas.ts`
-*   **commit:** `feat(media): add media card ui and ipc handlers`
+*   **commit:** `feat(media): tambah card ui untuk media dan ipc handlers`
 *   **Steps:** Run ONLY if D-008 Locked. Render title/artist/status from `media:stateChanged`; emit `media:control` (play/pause/next/previous) with zod-validated payloads. Render a disabled card when the bridge reports unavailable.
 *   **Verification:** `manual_check_id`: M-008
 
