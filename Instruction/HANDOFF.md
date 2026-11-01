@@ -31,8 +31,8 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 
-Done: T-001 to T-020-Lb (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb).
-Next: T-020-D (Media Service & UI (Degraded Variant)).
+Done: T-001 to T-020-Lb (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked).
+Next: T-021 (Shelf Sanitizer & Capacity Limits).
 Waiting: M-016 needs T-024. It is unproven that Windows sends drag events to a non-focusable window.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English, for example feat(media): tambahkan kartu media dan handler IPC.
 

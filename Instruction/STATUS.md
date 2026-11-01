@@ -40,7 +40,7 @@
 | T-015b | Tab bar & Expanded View Wiring | done | 6ea45f3 |
 | T-016 | Wrap M1 | done | 2a96867 |
 | **M2** | **Media & File Shelf** | | |
-| T-020 | Media (active variant: L) | pending | - |
+| T-020 | Media (active variant: L) | done | - |
 | T-020-La | Media Bridge Service (Locked) | done | e726a2b |
 | T-020-Lb | Media Card UI & IPC (Locked) | done | c4a473e |
 | T-020-D | Media Service (Degraded) | n/a | - |
@@ -75,3 +75,4 @@
 *   T-015b: Expanded view wires the accessible single-tab clock/weather panel to the guarded 60-second weather poller; collapsed mode never mounts the hook. Verify: typecheck, vitest 183/183, lint, build OK. Manual checks M-007 and M-002 remain pending.
 *   T-016: M1 wrap committed (wrap commit `2a96867` `chore: wrap milestone 1`; STATUS hash/note recorded in the two follow-up `docs(status)` commits). Only `Instruction/STATUS.md` changed — no source, test, config or `package.json` file was touched. Gates run on the wrap: typecheck OK, vitest 183/183 (8 files), lint 0 warnings, build OK, forbidden-names grep over `src` empty. T-016 verification (`git tag -l "m1-done"`) is deferred — the `m1-done` tag is deliberately NOT created by the agent and is created by the owner after this commit, same as `m0-done` in T-009.
 *   T-020-Lb: MediaCard subscribes to media:stateChanged and exposes play/pause/next/previous controls with disabled unavailable state; main IPC handlers validate media:control and enforce the 2-second timeout from IPC_SPEC. Owner-approved scope correction: src/main/index.ts was touched to instantiate and register the media service because the card Files list omitted the call site; TASKS.md was corrected to include src/main/index.ts. Owner-approved commit-language override: Indonesian commit descriptions are now used for this repo while keeping Conventional Commits type/scope in English. Verify: typecheck OK, vitest 193/193, lint OK, build OK, forbidden-names grep empty. Manual check M-008 passed by human.
+*   T-020-D: n/a because D-008 is Locked after the T-007a PASS. The degraded read-only media fallback is not implemented; T-020-La and T-020-Lb are the active media path. Manual check M-009 is not applicable while D-008 remains Locked. If D-008 ever changes to Degraded, update DECISIONS.md first, then reopen T-020-D in a new task session.
