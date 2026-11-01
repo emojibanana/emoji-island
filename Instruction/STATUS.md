@@ -41,8 +41,8 @@
 | T-016 | Wrap M1 | done | 2a96867 |
 | **M2** | **Media & File Shelf** | | |
 | T-020 | Media (active variant: L) | pending | - |
-| T-020-La | Media Bridge Service (Locked) | done | - |
-| T-020-Lb | Media Card UI & IPC (Locked) | done | - |
+| T-020-La | Media Bridge Service (Locked) | done | e726a2b |
+| T-020-Lb | Media Card UI & IPC (Locked) | done | c4a473e |
 | T-020-D | Media Service (Degraded) | n/a | - |
 | T-021 | Shelf Sanitizer & Caps | todo | - |
 | T-022 | Shelf Copy & IPC Handlers | todo | - |
@@ -74,3 +74,4 @@
 *   T-015a: `weather-code.ts` pure function maps all UI_SPEC codes to label & iconKey, returning Unknown for invalid/NaN/non-integers. `weather-code.test.ts` covers all 27 mapped conditions plus edge cases (-1, 4, 100, 1.5, NaN). `ClockCard` renders 24-hr time & formatted date with a timeout to the next minute boundary. `WeatherCard` handles loading, error, offline (null data), success with lucide icons, stale & offline badges, and aria roles without color-only indicators. Verify: typecheck OK, vitest 183/183 (8 files, 33 in weather-code.test.ts), lint 0 warnings, build OK. Status `done`.
 *   T-015b: Expanded view wires the accessible single-tab clock/weather panel to the guarded 60-second weather poller; collapsed mode never mounts the hook. Verify: typecheck, vitest 183/183, lint, build OK. Manual checks M-007 and M-002 remain pending.
 *   T-016: M1 wrap committed (wrap commit `2a96867` `chore: wrap milestone 1`; STATUS hash/note recorded in the two follow-up `docs(status)` commits). Only `Instruction/STATUS.md` changed — no source, test, config or `package.json` file was touched. Gates run on the wrap: typecheck OK, vitest 183/183 (8 files), lint 0 warnings, build OK, forbidden-names grep over `src` empty. T-016 verification (`git tag -l "m1-done"`) is deferred — the `m1-done` tag is deliberately NOT created by the agent and is created by the owner after this commit, same as `m0-done` in T-009.
+*   T-020-Lb: MediaCard subscribes to media:stateChanged and exposes play/pause/next/previous controls with disabled unavailable state; main IPC handlers validate media:control and enforce the 2-second timeout from IPC_SPEC. Owner-approved scope correction: src/main/index.ts was touched to instantiate and register the media service because the card Files list omitted the call site; TASKS.md was corrected to include src/main/index.ts. Owner-approved commit-language override: Indonesian commit descriptions are now used for this repo while keeping Conventional Commits type/scope in English. Verify: typecheck OK, vitest 193/193, lint OK, build OK, forbidden-names grep empty. Manual check M-008 passed by human.
