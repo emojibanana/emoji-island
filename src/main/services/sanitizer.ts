@@ -28,7 +28,8 @@ const RESERVED_NAMES = new Set([
   'LPT9',
 ])
 
-const ILLEGAL_CHARS_REGEX = /[<>:"/\\|?*]/g
+// eslint-disable-next-line no-control-regex
+const ILLEGAL_CHARS_REGEX = /[\u0000-\u001F<>:"/\\|?*]/g
 
 export interface CapacityCheckResult {
   ok: boolean

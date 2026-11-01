@@ -51,6 +51,13 @@ describe('sanitizeFilename', () => {
     expect(sanitizeFilename('   ')).toBe('file')
   })
 
+  it('removes Windows C0 control characters', () => {
+    expect(sanitizeFilename('file\u0000name.txt')).toBe('filename.txt')
+    expect(sanitizeFilename('file\tname.txt')).toBe('filename.txt')
+    expect(sanitizeFilename('file\nname.txt')).toBe('filename.txt')
+    expect(sanitizeFilename('file\rname.txt')).toBe('filename.txt')
+  })
+
   it('preserves valid filenames', () => {
     expect(sanitizeFilename('document.pdf')).toBe('document.pdf')
     expect(sanitizeFilename('image_2024.png')).toBe('image_2024.png')
