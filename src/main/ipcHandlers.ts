@@ -1,6 +1,7 @@
 // T-012 / D-010: Window IPC handlers. Fire-and-forget for input/drag, invoke for setMode.
 // T-014 / D-016: Weather IPC — handlers never throw; failures degrade to stale/offline.
 // T-020-Lb / D-008 Locked: Media IPC handlers — media:getState and media:control.
+// T-022 / D-012: Shelf IPC handlers — addFromDrop, list, remove, reveal, copyPath.
 import { ipcMain } from 'electron'
 import log from 'electron-log'
 import {
@@ -8,12 +9,15 @@ import {
   WindowSetInputActiveSchema,
   WindowSetModeSchema,
   MediaControlSchema,
+  ShelfAddFromDropSchema,
+  ShelfIdSchema,
 } from '../shared/schemas'
-import type { IpcEnvelope, MediaState, WeatherResult } from '../shared/types'
+import type { IpcEnvelope, MediaState, WeatherResult, ShelfItemMetadata } from '../shared/types'
 import type { FocusController } from './services/focus-controller'
 import type { AppStore } from './services/store'
 import { createWeatherService } from './services/weather'
 import type { MediaService } from './services/media'
+import * as shelf from './services/shelf'
 
 export function registerWindowHandlers(controller: FocusController): void {
   ipcMain.on('window:setInputActive', (_event, payload: unknown) => {
@@ -129,6 +133,71 @@ export function registerMediaHandlers(mediaService: MediaService): void {
           message: result.error === 'timeout' ? 'Media control timed out' : 'Media control failed',
         },
       }
+    }
+    return { ok: true, data: null, error: null }
+  })
+}
+
+// T-022 / D-012: Shelf IPC handlers.
+export function registerShelfHandlers(store: AppStore): void {
+  ipcMain.handle('shelf:list', (): IpcEnvelope<ShelfItemMetadata[]> => {
+    try {
+      return { ok: true, data: shelf.listItems(store), error: null }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'unknown'
+      log.error(`shelf:list failed: ${message}`)
+      return { ok: false, data: null, error: { code: 'STORAGE_ERROR', message: 'List failed' } }
+    }
+  })
+
+  ipcMain.handle('shelf:addFromDrop', async (_event, payload: unknown): Promise<IpcEnvelope<ShelfItemMetadata>> => {
+    const parsed = ShelfAddFromDropSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid sourcePath' } }
+    }
+
+    const result = await shelf.addFromDrop(store, parsed.data.sourcePath)
+    if (!result.ok) {
+      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+    }
+    return { ok: true, data: result.data, error: null }
+  })
+
+  ipcMain.handle('shelf:remove', async (_event, payload: unknown): Promise<IpcEnvelope<void>> => {
+    const parsed = ShelfIdSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
+    }
+
+    const result = await shelf.removeItem(store, parsed.data.id)
+    if (!result.ok) {
+      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+    }
+    return { ok: true, data: null, error: null }
+  })
+
+  ipcMain.handle('shelf:reveal', async (_event, payload: unknown): Promise<IpcEnvelope<void>> => {
+    const parsed = ShelfIdSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
+    }
+
+    const result = await shelf.revealItem(store, parsed.data.id)
+    if (!result.ok) {
+      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+    }
+    return { ok: true, data: null, error: null }
+  })
+
+  ipcMain.handle('shelf:copyPath', async (_event, payload: unknown): Promise<IpcEnvelope<void>> => {
+    const parsed = ShelfIdSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
+    }
+
+    const result = await shelf.copyItemPath(store, parsed.data.id)
+    if (!result.ok) {
+      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
     }
     return { ok: true, data: null, error: null }
   })
