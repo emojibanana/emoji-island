@@ -64,15 +64,13 @@ const EXPECTED_KEYS = [
   'getAiHistory',
   'sendAiMessage',
   'clearAiHistory',
-  // Helper
-  'getDroppedFilePath',
 ] as const
 
 const FORBIDDEN_KEYS = ['ipcRenderer', 'require', 'process', 'send', 'invoke', 'on']
 
 describe('islandApi surface', () => {
-  it('exposes exactly 22 keys (20 IPC channels + getDroppedFilePath + onMediaStateChanged)', () => {
-    // 20 channels per spec + onMediaStateChanged (event sub) + getDroppedFilePath (helper)
+  it('exposes exactly 20 keys (19 IPC channels + onMediaStateChanged)', () => {
+    // 19 channels per spec + onMediaStateChanged (event sub)
     expect(Object.keys(islandApi)).toHaveLength(EXPECTED_KEYS.length)
   })
 
@@ -142,9 +140,11 @@ describe('islandApi invoke channels', () => {
     expect(mockInvoke).toHaveBeenCalledWith('shelf:list')
   })
 
-  it('addFromDrop calls invoke with shelf:addFromDrop', async () => {
-    await (islandApi.addFromDrop as (p: string) => Promise<unknown>)('C:/file.txt')
-    expect(mockInvoke).toHaveBeenCalledWith('shelf:addFromDrop', { sourcePath: 'C:/file.txt' })
+  it('addFromDrop calls webUtils.getPathForFile then invokes shelf:addFromDrop', async () => {
+    const fakeFile = {} as File
+    await (islandApi.addFromDrop as (f: File) => Promise<unknown>)(fakeFile)
+    expect(mockGetPathForFile).toHaveBeenCalledWith(fakeFile)
+    expect(mockInvoke).toHaveBeenCalledWith('shelf:addFromDrop', { sourcePath: 'C:/Users/User/file.txt' })
   })
 
   it('removeShelfItem calls invoke with shelf:remove', async () => {
@@ -226,18 +226,5 @@ describe('onMediaStateChanged', () => {
     const unsub = (islandApi.onMediaStateChanged as (cb: unknown) => () => void)(cb)
     unsub()
     expect(mockRemoveListener).toHaveBeenCalledWith('media:stateChanged', expect.any(Function))
-  })
-})
-
-// ---------------------------------------------------------------------------
-// Behaviour: getDroppedFilePath helper
-// ---------------------------------------------------------------------------
-
-describe('getDroppedFilePath', () => {
-  it('delegates to webUtils.getPathForFile', () => {
-    const fakeFile = {} as File
-    const result = (islandApi.getDroppedFilePath as (f: File) => string)(fakeFile)
-    expect(mockGetPathForFile).toHaveBeenCalledWith(fakeFile)
-    expect(result).toBe('C:/Users/User/file.txt')
   })
 })

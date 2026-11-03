@@ -77,8 +77,11 @@ const islandApi = {
   listShelf: (): Env<ShelfItemMetadata[]> =>
     ipcRenderer.invoke('shelf:list'),
 
-  addFromDrop: (sourcePath: string): Env<ShelfItemMetadata> =>
-    ipcRenderer.invoke('shelf:addFromDrop', { sourcePath }),
+  /** D-012: Accept File object, derive path in preload via webUtils. */
+  addFromDrop: (file: File): Env<ShelfItemMetadata> => {
+    const sourcePath = webUtils.getPathForFile(file)
+    return ipcRenderer.invoke('shelf:addFromDrop', { sourcePath })
+  },
 
   removeShelfItem: (id: string): Env<void> =>
     ipcRenderer.invoke('shelf:remove', { id }),
@@ -104,11 +107,6 @@ const islandApi = {
 
   clearAiHistory: (): Env<void> =>
     ipcRenderer.invoke('ai:clear'),
-
-  // -- File helper (D-012) ---------------------------------------------------
-  /** Get the absolute filesystem path for a dropped File object. */
-  getDroppedFilePath: (file: File): string =>
-    webUtils.getPathForFile(file),
 } as const
 
 contextBridge.exposeInMainWorld('islandApi', islandApi)
