@@ -5,7 +5,7 @@
 import { lstat, realpath, unlink, rename } from 'fs/promises'
 import { createReadStream, createWriteStream, mkdirSync, existsSync } from 'fs'
 import { createHash, randomUUID } from 'crypto'
-import { join, extname, basename } from 'path'
+import { join, extname, basename, resolve } from 'path'
 import { app, shell, clipboard } from 'electron'
 import type { ShelfItemMetadata } from '../../shared/types'
 import {
@@ -48,24 +48,35 @@ function hashPath(p: string): string {
 
 type Result<T> = { ok: true; data: T } | { ok: false; code: string; message: string }
 
-export async function addFromDrop(
+function sameNormalizedPath(a: string, b: string): boolean {
+  const na = resolve(a).replace(/\//g, '\\')
+  const nb = resolve(b).replace(/\//g, '\\')
+  return na.toLowerCase() === nb.toLowerCase()
+}
+
+let addQueue = Promise.resolve()
+
+async function addFromDropInner(
   store: AppStore,
   sourcePath: string
 ): Promise<Result<ShelfItemMetadata>> {
+  let tempPath: string | null = null
+  let destPath: string | null = null
+
   try {
     // 1. Validate: lstat + realpath, reject symlinks/dirs per D-012
     const stats = await lstat(sourcePath)
-
-    if (!stats.isFile()) {
-      return { ok: false, code: 'PATH_INVALID', message: 'Not a file' }
-    }
 
     if (stats.isSymbolicLink()) {
       return { ok: false, code: 'PATH_INVALID', message: 'Symlinks rejected' }
     }
 
+    if (!stats.isFile()) {
+      return { ok: false, code: 'PATH_INVALID', message: 'Not a file' }
+    }
+
     const realPath = await realpath(sourcePath)
-    if (realPath !== sourcePath) {
+    if (!sameNormalizedPath(realPath, sourcePath)) {
       return { ok: false, code: 'PATH_INVALID', message: 'Junctions rejected' }
     }
 
@@ -100,12 +111,12 @@ export async function addFromDrop(
     }
 
     // 5. Stream-copy to temp, atomic rename
-    const destPath = join(shelfDir(), storedFileName)
-    const tempPath = `${destPath}.tmp`
+    destPath = join(shelfDir(), storedFileName)
+    tempPath = `${destPath}.${randomUUID()}.tmp`
 
     await new Promise<void>((resolve, reject) => {
       const rd = createReadStream(sourcePath)
-      const wr = createWriteStream(tempPath)
+      const wr = createWriteStream(tempPath!)
       rd.on('error', reject)
       wr.on('error', reject)
       wr.on('finish', () => resolve())
@@ -113,6 +124,7 @@ export async function addFromDrop(
     })
 
     await rename(tempPath, destPath)
+    tempPath = null
 
     // 6. Create metadata and store
     const item: ShelfItemMetadata = {
@@ -127,17 +139,15 @@ export async function addFromDrop(
     }
 
     store.addShelf(item)
+    destPath = null
 
     return { ok: true, data: item }
   } catch (err) {
-    // Clean up temp file if exists
-    try {
-      const temp = join(shelfDir(), `${basename(sourcePath)}.tmp`)
-      await unlink(temp).catch(() => {
-        // Ignore cleanup errors
-      })
-    } catch {
-      // Ignore cleanup errors
+    // Clean up temp or dest file if exists
+    if (tempPath) {
+      await unlink(tempPath).catch(() => {})
+    } else if (destPath) {
+      await unlink(destPath).catch(() => {})
     }
 
     if ((err as NodeJS.ErrnoException).code === 'EACCES') {
@@ -146,6 +156,15 @@ export async function addFromDrop(
 
     return { ok: false, code: 'STORAGE_ERROR', message: 'Copy failed' }
   }
+}
+
+export async function addFromDrop(
+  store: AppStore,
+  sourcePath: string
+): Promise<Result<ShelfItemMetadata>> {
+  return new Promise((resolve) => {
+    addQueue = addQueue.then(() => addFromDropInner(store, sourcePath).then(resolve))
+  })
 }
 
 export function listItems(store: AppStore): ShelfItemMetadata[] {
