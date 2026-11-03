@@ -158,7 +158,7 @@ export function registerShelfHandlers(store: AppStore): void {
 
     const result = await shelf.addFromDrop(store, parsed.data.sourcePath)
     if (!result.ok) {
-      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+      return { ok: false, data: null, error: { code: result.code, message: result.message } }
     }
     return { ok: true, data: result.data, error: null }
   })
@@ -171,7 +171,7 @@ export function registerShelfHandlers(store: AppStore): void {
 
     const result = await shelf.removeItem(store, parsed.data.id)
     if (!result.ok) {
-      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+      return { ok: false, data: null, error: { code: result.code, message: result.message } }
     }
     return { ok: true, data: null, error: null }
   })
@@ -184,7 +184,7 @@ export function registerShelfHandlers(store: AppStore): void {
 
     const result = await shelf.revealItem(store, parsed.data.id)
     if (!result.ok) {
-      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+      return { ok: false, data: null, error: { code: result.code, message: result.message } }
     }
     return { ok: true, data: null, error: null }
   })
@@ -197,7 +197,7 @@ export function registerShelfHandlers(store: AppStore): void {
 
     const result = await shelf.copyItemPath(store, parsed.data.id)
     if (!result.ok) {
-      return { ok: false, data: null, error: { code: result.code as never, message: result.message } }
+      return { ok: false, data: null, error: { code: result.code, message: result.message } }
     }
     return { ok: true, data: null, error: null }
   })

@@ -7,7 +7,7 @@ import { createReadStream, createWriteStream, mkdirSync, existsSync } from 'fs'
 import { createHash, randomUUID } from 'crypto'
 import { join, extname, basename, resolve } from 'path'
 import { app, shell, clipboard } from 'electron'
-import type { ShelfItemMetadata } from '../../shared/types'
+import type { ShelfItemMetadata, ErrorCode } from '../../shared/types'
 import {
   sanitizeFilename,
   validatePathLength,
@@ -46,7 +46,7 @@ function hashPath(p: string): string {
   return createHash('sha256').update(p).digest('hex').slice(0, 16)
 }
 
-type Result<T> = { ok: true; data: T } | { ok: false; code: string; message: string }
+type Result<T> = { ok: true; data: T } | { ok: false; code: ErrorCode; message: string }
 
 function sameNormalizedPath(a: string, b: string): boolean {
   const na = resolve(a).replace(/\//g, '\\')
