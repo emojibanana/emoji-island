@@ -267,7 +267,7 @@
 *   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-012), This task card.
-*   **Files:** `src/main/services/shelf.ts`, `src/main/ipcHandlers.ts`
+*   **Files:** `src/main/services/shelf.ts`, `src/main/ipcHandlers.ts`, `src/main/index.ts`, `src/preload/index.ts`, `src/shared/types.ts`
 *   **read_files:** `src/main/services/sanitizer.ts`, `src/shared/types.ts`
 *   **commit:** `feat(shelf): implement shelf copy service and ipc handlers`
 *   **Steps:** Stream-copy to temp file in `userData/shelf`, atomic rename. Wire IPC handlers for `addFromDrop`, `list`, `remove`, `reveal`, `copyPath`.
