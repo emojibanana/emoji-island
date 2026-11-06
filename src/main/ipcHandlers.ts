@@ -2,6 +2,7 @@
 // T-014 / D-016: Weather IPC — handlers never throw; failures degrade to stale/offline.
 // T-020-Lb / D-008 Locked: Media IPC handlers — media:getState and media:control.
 // T-022 / D-012: Shelf IPC handlers — addFromDrop, list, remove, reveal, copyPath.
+// T-023 / D-013: shelf:getPreview handler.
 import { ipcMain } from 'electron'
 import log from 'electron-log'
 import {
@@ -13,6 +14,7 @@ import {
   ShelfIdSchema,
 } from '../shared/schemas'
 import type { IpcEnvelope, MediaState, WeatherResult, ShelfItemMetadata } from '../shared/types'
+import * as shelfPreview from './services/shelfPreview'
 import type { FocusController } from './services/focus-controller'
 import type { AppStore } from './services/store'
 import { createWeatherService } from './services/weather'
@@ -201,4 +203,21 @@ export function registerShelfHandlers(store: AppStore): void {
     }
     return { ok: true, data: null, error: null }
   })
+
+  // T-023 / D-013: shelf:getPreview — data URL for PNG/JPEG/WebP/GIF <= 2 MB.
+  ipcMain.handle(
+    'shelf:getPreview',
+    async (_event, payload: unknown): Promise<IpcEnvelope<{ dataUrl: string; mimeType: string }>> => {
+      const parsed = ShelfIdSchema.safeParse(payload)
+      if (!parsed.success) {
+        return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
+      }
+
+      const result = await shelfPreview.getPreview(store, parsed.data.id)
+      if (!result.ok) {
+        return { ok: false, data: null, error: { code: result.code, message: result.message } }
+      }
+      return { ok: true, data: result.data, error: null }
+    }
+  )
 }

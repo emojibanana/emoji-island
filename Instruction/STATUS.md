@@ -46,7 +46,7 @@
 | T-020-D | Media Service (Degraded) | n/a | - |
 | T-021 | Shelf Sanitizer & Caps | done | 35b83b0 |
 | T-022 | Shelf Copy & IPC Handlers | manual-pending | ee2329c |
-| T-023 | Shelf Preview & UI List | todo | - |
+| T-023 | Shelf Preview & UI List | manual-pending | - |
 | T-024 | Drop Zone Auto-Expand | todo | - |
 | T-025 | Wrap M2 | todo | - |
 | **M3** | **AI Chat & Settings** | | |
@@ -93,3 +93,4 @@
 - no as never casts.
 - preload uses webUtils.getPathForFile.
 - typecheck, vitest, lint, build pass.
+*   T-023: `shelfPreview.ts` (new) — `getPreview()` pure service: lstat validate (no symlink, regular file only), 2 MB limit, PNG/JPEG/WebP/GIF allow-list, returns data URL base64. `ipcHandlers.ts` — `shelf:getPreview` handler added inside `registerShelfHandlers`. `ShelfItem.tsx` (new) — renders item with accessible action menu (Reveal, Copy Path, Remove, Preview image-only); keyboard-reachable, aria roles, focus-visible ring. `ShelfList.tsx` (new) — fetches via `listShelf()`, shows loading/empty/error/preview-modal states; preview modal shows image in-window. `TabBar.tsx` — added Files tab with FolderOpen icon. `App.tsx` — tab-conditional render: clock-weather panel or ShelfList. Verify: typecheck OK, vitest 215/215, lint 0 warnings, build OK, forbidden-names grep empty. Status manual-pending — M-010 (Files tab visible, all 4 actions functional, preview opens for image) and M-011 (shelf:list envelope ok:true, all actions return ok:true) need human confirmation.
