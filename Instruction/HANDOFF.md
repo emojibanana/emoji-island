@@ -32,10 +32,10 @@ One task per session, one commit per task. The agent never creates milestone tag
 ## Progress snapshot (the human updates this after each task)
 
 Done: T-001 to T-021 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked).
-Next: T-023 (Shelf Preview & UI List) under owner-approved dependency waiver; T-022 remains manual-pending.
+Next: T-024 (Drop Zone Auto-Expand) under owner-approved dependency waiver; T-022 and T-023 remain manual-pending.
 Waiting: M-016 needs T-024. It is unproven that Windows sends drag events to a non-focusable window.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known verification gap: T-022 official manual checks are deferred. M-011 requires shelf UI actions from T-023. M-018 requires real drag-drop symlink/junction behavior from T-024 and is provisionally treated as a Windows Shell platform limitation for drag-dropped symlinks until real drop evidence exists or the owner updates D-012/TESTING.md.
+Known verification gap: T-022 M-011 may become verifiable after T-023/T-024 UI actions, but M-018 remains deferred to T-024 real drag-drop and is provisionally treated as a Windows Shell platform limitation for drag-dropped symlinks until real drop evidence exists or the owner updates D-012/TESTING.md. T-023 M-010/M-011 remain manual-pending because preview and full shelf actions require real drop-added items from T-024.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
