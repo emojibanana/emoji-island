@@ -78,3 +78,18 @@
 *   T-020-D: n/a because D-008 is Locked after the T-007a PASS. The degraded read-only media fallback is not implemented; T-020-La and T-020-Lb are the active media path. Manual check M-009 is not applicable while D-008 remains Locked. If D-008 ever changes to Degraded, update DECISIONS.md first, then reopen T-020-D in a new task session.
 *   T-021: Pure shelf sanitizer and capacity checker. sanitizeFilename strips visible Windows-illegal characters, trailing dots/spaces, and prefixes reserved device names; validatePathLength rejects full paths over 240 characters without truncation; canAddItem enforces 50 items, 100 MB per file, and 500 MB total; resolveUniqueFilename performs case-insensitive duplicate resolution while preserving extension. Known point: sanitizeFilename does not yet strip C0 control characters U+0000-U+001F; harden before T-022 uses sanitized names as stored filenames. Verify: typecheck OK, vitest 215/215 with 22 sanitizer tests, lint OK, build OK, forbidden-names grep empty. Automated verification: npx vitest run src/main/services/sanitizer.test.ts.
 *   T-022: Shelf copy service and IPC handlers implemented. Post-review fixes: registerShelfHandlers is called from the main bootstrap; temp cleanup uses the actual temp path and removes orphan final files if metadata storage fails; addFromDrop is serialized to prevent concurrent multi-drop races; symlink/path validation is hardened; IPC error-code casts are removed. Owner-approved scope correction: src/main/index.ts was touched to register shelf IPC handlers because the card Files list omitted the call site. Owner-approved security correction: src/preload/index.ts and src/shared/types.ts were touched so the shelf drop path is derived from webUtils.getPathForFile in preload instead of accepting an arbitrary sourcePath string from renderer. Verify: typecheck OK, vitest 216/216, lint OK, build OK, forbidden-names grep empty. Manual checks M-011 and M-018 remain pending by human.
+*   T-022: Shelf copy service and IPC handlers implemented. Post-review fixes landed: shelf IPC handlers are registered from the main bootstrap; temp cleanup uses the actual temp path and removes orphan final files if metadata storage fails; addFromDrop is serialized to prevent concurrent multi-drop races; symlink/path validation is hardened; preload shelf drop path is derived through webUtils.getPathForFile; IPC error-code casts are removed. Automated gates pass: typecheck OK, vitest OK, lint OK, build OK, forbidden-names grep empty. Official manual checks remain incomplete: M-011 requires shelf UI actions from T-023, and M-018 requires real drag-drop symlink/junction behavior from T-024. File-input symlink diagnostic resolved the symlink to its target and is not valid M-018 evidence; drag-drop symlink rejection is provisionally treated as a Windows Shell platform limitation until real drop evidence exists or the owner updates D-012/TESTING.md. Status manual-pending. Do not mark T-022 done until M-011 passes and M-018 is either proven, replaced by an owner-approved spec/decision update, or formally deferred with a known limitation.
+- shelf:list returns envelope ok:true.
+- addFromDrop accepts a valid file and stores metadata.
+- duplicate filename resolution works.
+- removeShelfItem removes metadata via IPC.
+- invalid UUID is rejected with VALIDATION_ERROR.
+- file > 100 MB is rejected with FILE_TOO_LARGE.
+- revealShelfItem IPC returns ok:true for an existing item.
+- copyShelfPath IPC returns ok:true for an existing item.
+- no .tmp files observed in checked runs.
+- log grep did not reveal sensitive source paths/file names.
+- registerShelfHandlers is called.
+- no as never casts.
+- preload uses webUtils.getPathForFile.
+- typecheck, vitest, lint, build pass.

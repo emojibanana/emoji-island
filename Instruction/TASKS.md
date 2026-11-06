@@ -278,7 +278,7 @@
 *   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-013), UI_SPEC, This task card.
-*   **Files:** `src/main/services/shelfPreview.ts`, `src/renderer/src/components/ShelfList.tsx`, `src/renderer/src/components/ShelfItem.tsx`
+*   **Files:** `src/main/services/shelfPreview.ts`, `src/main/ipcHandlers.ts`, `src/main/index.ts`, `src/renderer/src/components/ShelfList.tsx`, `src/renderer/src/components/ShelfItem.tsx`, `src/renderer/src/App.tsx`, `src/renderer/src/components/TabBar.tsx`
 *   **read_files:** `src/preload/index.ts`, `src/renderer/src/App.tsx`
 *   **commit:** `feat(shelf): build preview handler and shelf ui`
 *   **Steps:** `shelf:getPreview` generates base64 data URL. Render `ShelfList` and `ShelfItem` components with action menus.
