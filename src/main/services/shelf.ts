@@ -5,7 +5,7 @@
 import { lstat, realpath, unlink, rename } from 'fs/promises'
 import { createReadStream, createWriteStream, mkdirSync, existsSync } from 'fs'
 import { createHash, randomUUID } from 'crypto'
-import { join, extname, basename, resolve } from 'path'
+import { join, extname, basename, resolve, sep } from 'path'
 import { app, shell, clipboard } from 'electron'
 import type { ShelfItemMetadata, ErrorCode } from '../../shared/types'
 import {
@@ -15,6 +15,13 @@ import {
   resolveUniqueFilename,
 } from './sanitizer'
 import type { AppStore } from './store'
+
+function isInsideShelfDir(root: string, candidate: string): boolean {
+  const normalizedRoot = resolve(root)
+  const normalizedCandidate = resolve(normalizedRoot, candidate)
+  if (normalizedCandidate === normalizedRoot) return false
+  return normalizedCandidate.toLowerCase().startsWith(normalizedRoot.toLowerCase() + sep.toLowerCase())
+}
 
 const shelfDir = () => join(app.getPath('userData'), 'shelf')
 
@@ -181,6 +188,9 @@ export async function removeItem(store: AppStore, id: string): Promise<Result<vo
     }
 
     const filePath = join(shelfDir(), item.storedFileName)
+    if (!isInsideShelfDir(shelfDir(), item.storedFileName)) {
+      return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
+    }
     await unlink(filePath).catch((err) => {
       // File already gone? Still remove from store
       if (err.code !== 'ENOENT') throw err
@@ -202,6 +212,9 @@ export async function revealItem(store: AppStore, id: string): Promise<Result<vo
   }
 
   const filePath = join(shelfDir(), item.storedFileName)
+  if (!isInsideShelfDir(shelfDir(), item.storedFileName)) {
+    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
+  }
   shell.showItemInFolder(filePath)
 
   return { ok: true, data: undefined }
@@ -216,6 +229,9 @@ export async function copyItemPath(store: AppStore, id: string): Promise<Result<
   }
 
   const filePath = join(shelfDir(), item.storedFileName)
+  if (!isInsideShelfDir(shelfDir(), item.storedFileName)) {
+    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
+  }
   clipboard.writeText(filePath)
 
   return { ok: true, data: undefined }

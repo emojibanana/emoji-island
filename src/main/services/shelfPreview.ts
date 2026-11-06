@@ -4,10 +4,17 @@
 // Never log file paths or file contents.
 import { lstat } from 'fs/promises'
 import { readFileSync } from 'fs'
-import { join } from 'path'
+import { join, resolve, sep } from 'path'
 import { app } from 'electron'
 import type { ShelfItemMetadata, ErrorCode } from '../../shared/types'
 import type { AppStore } from './store'
+
+function isInsideShelfDir(root: string, candidate: string): boolean {
+  const normalizedRoot = resolve(root)
+  const normalizedCandidate = resolve(normalizedRoot, candidate)
+  if (normalizedCandidate === normalizedRoot) return false
+  return normalizedCandidate.toLowerCase().startsWith(normalizedRoot.toLowerCase() + sep.toLowerCase())
+}
 
 const PREVIEW_MAX_BYTES = 2 * 1024 * 1024 // 2 MB per D-013
 
@@ -38,9 +45,13 @@ export async function getPreview(store: AppStore, id: string): Promise<PreviewRe
     return { ok: false, code: 'UNSUPPORTED_TYPE', message: 'Preview not available for this file type' }
   }
 
-  // 3. Resolve stored path from metadata (relativePath = storedFileName, per shelf.ts convention)
+  // 3. Resolve stored path and enforce containment per hardening fix
   const shelfDir = join(app.getPath('userData'), 'shelf')
   const filePath = join(shelfDir, item.relativePath)
+
+  if (!isInsideShelfDir(shelfDir, item.relativePath)) {
+    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
+  }
 
   // 4. lstat: validate regular file, reject symlinks/dirs per D-013
   let stats: Awaited<ReturnType<typeof lstat>>
