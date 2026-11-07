@@ -29,43 +29,41 @@ export function ShelfItem({ item, onReveal, onCopyPath, onRemove, onPreview }: S
 
   return (
     <li
-      className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-[13px] text-[#F5F5F5] hover:bg-white/[0.07] transition-colors motion-reduce:transition-none"
+      className="rounded-lg border border-white/[0.08] bg-white/[0.04] text-[13px] text-[#F5F5F5] overflow-hidden"
       aria-label={`Shelf item: ${item.originalName}`}
     >
-      {/* File type icon */}
-      <span className="shrink-0 text-[#A3A3A3]" aria-hidden="true">
-        {image ? <Image className="h-4 w-4" /> : <File className="h-4 w-4" />}
-      </span>
+      {/* Main item row */}
+      <div className="flex items-center gap-2 px-3 py-2 hover:bg-white/[0.07] transition-colors motion-reduce:transition-none">
+        {/* File type icon */}
+        <span className="shrink-0 text-[#A3A3A3]" aria-hidden="true">
+          {image ? <Image className="h-4 w-4" /> : <File className="h-4 w-4" />}
+        </span>
 
-      {/* Name + size */}
-      <span className="min-w-0 flex-1 truncate" title={item.originalName}>
-        {item.originalName}
-      </span>
-      <span className="shrink-0 text-[11px] text-[#A3A3A3]">{formatBytes(item.sizeBytes)}</span>
+        {/* Name + size */}
+        <span className="min-w-0 flex-1 truncate" title={item.originalName}>
+          {item.originalName}
+        </span>
+        <span className="shrink-0 text-[11px] text-[#A3A3A3]">{formatBytes(item.sizeBytes)}</span>
 
-      {/* Action menu toggle */}
-      <div className="relative shrink-0">
+        {/* Action menu toggle */}
         <button
           aria-label={`Actions for ${item.originalName}`}
           aria-expanded={menuOpen}
           aria-haspopup="menu"
           onClick={() => setMenuOpen((v) => !v)}
-          onBlur={(e) => {
-            // Close menu when focus leaves the entire action area
-            if (!e.currentTarget.parentElement?.contains(e.relatedTarget as Node)) {
-              setMenuOpen(false)
-            }
-          }}
-          className="rounded px-1.5 py-0.5 text-[#A3A3A3] hover:bg-white/[0.1] hover:text-[#F5F5F5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C9CFF]"
+          className="shrink-0 rounded px-1.5 py-0.5 text-[#A3A3A3] hover:bg-white/[0.1] hover:text-[#F5F5F5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C9CFF]"
         >
           •••
         </button>
+      </div>
 
-        {menuOpen && (
+      {/* Inline action panel */}
+      {menuOpen && (
+        <div className="border-t border-white/[0.08] bg-white/[0.02]">
           <ul
             role="menu"
             aria-label={`Actions for ${item.originalName}`}
-            className="absolute right-0 top-7 z-10 min-w-[9rem] overflow-hidden rounded-lg border border-white/[0.12] bg-[rgba(25,25,25,0.96)] py-1 shadow-lg"
+            className="py-1"
           >
             <ActionItem
               icon={<FolderOpen className="h-3.5 w-3.5" />}
@@ -92,8 +90,8 @@ export function ShelfItem({ item, onReveal, onCopyPath, onRemove, onPreview }: S
               onClick={() => { onRemove(item.id); setMenuOpen(false) }}
             />
           </ul>
-        )}
-      </div>
+        </div>
+      )}
     </li>
   )
 }
