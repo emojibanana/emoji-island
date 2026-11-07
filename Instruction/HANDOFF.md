@@ -32,10 +32,10 @@ One task per session, one commit per task. The agent never creates milestone tag
 ## Progress snapshot (the human updates this after each task)
 
 Done: T-001 to T-021 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked).
-Next: T-024 (Drop Zone Auto-Expand) under owner-approved dependency waiver; T-022 and T-023 remain manual-pending.
-Waiting: M-016 needs T-024. It is unproven that Windows sends drag events to a non-focusable window.
+Next: manual check T-024 (M-016), then related manual checks M-010/M-011/M-018 for T-022/T-023, then T-025 Wrap M2 if all pass.
+Waiting: M-016 was pending on T-024. It remains unproven whether Windows sends drag events to a non-focusable collapsed pill; human verification required.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known verification gap: T-022 M-011 may become verifiable after T-023/T-024 UI actions, but M-018 remains deferred to T-024 real drag-drop and is provisionally treated as a Windows Shell platform limitation for drag-dropped symlinks until real drop evidence exists or the owner updates D-012/TESTING.md. T-023 M-010/M-011 remain manual-pending because preview and full shelf actions require real drop-added items from T-024.
+Known verification gap: T-022, T-023, and T-024 remain manual-pending. T-024 enables real drag-drop, so M-016, M-010, M-011, and M-018 should be executed before M2 wrap. Symlink/junction drag-drop rejection may be platform-limited if Windows Shell resolves symlinks before Electron receives the File object; real drop evidence is now required.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
