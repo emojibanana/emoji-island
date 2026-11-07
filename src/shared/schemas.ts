@@ -117,6 +117,7 @@ export const MediaStateSchema = z.object({
   artist: z.string().nullable(),
   status: z.enum(['playing', 'paused', 'stopped', 'unavailable']),
   canControl: z.boolean(),
+  artworkDataUrl: z.string().max(300000).nullable().optional(),
 }) satisfies z.ZodType<MediaState>
 
 // ---------------------------------------------------------------------------

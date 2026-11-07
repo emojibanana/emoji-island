@@ -11,6 +11,7 @@ const UNAVAILABLE_STATE: MediaState = {
   artist: null,
   status: 'unavailable',
   canControl: false,
+  artworkDataUrl: null,
 }
 
 export interface MediaService {

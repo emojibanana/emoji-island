@@ -11,6 +11,7 @@ const UNAVAILABLE: MediaState = {
   artist: null,
   status: 'unavailable',
   canControl: false,
+  artworkDataUrl: null,
 }
 
 type ControlAction = 'play' | 'pause' | 'next' | 'previous'
@@ -70,9 +71,17 @@ export function MediaCard(): JSX.Element {
       <div className="flex items-center gap-3">
         <div
           aria-hidden="true"
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[6px] bg-white/[0.08]"
+          className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-md bg-white/[0.08] transition-opacity duration-200 motion-reduce:transition-none"
         >
-          <Music className="h-5 w-5 text-[#A3A3A3]" />
+          {state.artworkDataUrl ? (
+            <img
+              src={state.artworkDataUrl}
+              alt="Album artwork"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <Music className="h-6 w-6 text-[#A3A3A3]" />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           {unavailable ? (

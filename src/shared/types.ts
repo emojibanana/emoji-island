@@ -113,4 +113,5 @@ export interface MediaState {
   artist: string | null
   status: 'playing' | 'paused' | 'stopped' | 'unavailable'
   canControl: boolean
+  artworkDataUrl?: string | null
 }

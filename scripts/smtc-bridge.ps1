@@ -112,6 +112,71 @@ function Select-Session {
 }
 
 # ---------------------------------------------------------------------------
+# Helper: Extract artwork thumbnail as a data URL (T-025d).
+# Returns a data URL string or $null if missing/oversized/unsupported.
+# ---------------------------------------------------------------------------
+function Get-ArtworkDataUrl {
+    param($MediaProperties)
+    try {
+        $thumbnail = $MediaProperties.Thumbnail
+        if ($null -eq $thumbnail) { return $null }
+
+        # Open stream
+        $streamType = [Windows.Storage.Streams.IRandomAccessStreamWithContentType, Windows.Storage.Streams, ContentType = WindowsRuntime]
+        $stream = Invoke-Await -Operation $thumbnail.OpenReadAsync() -ResultType $streamType
+        if ($null -eq $stream) { return $null }
+
+        $size = $stream.Size
+        # D-025d: hard limit 200 KiB (204800 bytes)
+        if ($size -eq 0 -or $size -gt 204800) {
+            $stream.Dispose()
+            return $null
+        }
+
+        # Convert WinRT stream to .NET stream
+        $asStreamForRead = ([System.IO.WindowsRuntimeStreamExtensions].GetMethods() | Where-Object {
+            $_.Name -eq 'AsStreamForRead' -and $_.GetParameters().Count -eq 1
+        })[0]
+        $netStream = $asStreamForRead.Invoke($null, @($stream))
+
+        # Read bytes
+        $bytes = New-Object byte[] $size
+        $bytesRead = $netStream.Read($bytes, 0, $size)
+
+        # Detect MIME from magic bytes
+        $mime = 'image/jpeg'  # default fallback
+        if ($bytesRead -ge 4) {
+            $magic = '{0:X2}{1:X2}{2:X2}{3:X2}' -f $bytes[0],$bytes[1],$bytes[2],$bytes[3]
+            $mime = switch -Regex ($magic) {
+                '^89504E47' { 'image/png' }
+                '^FFD8FF'   { 'image/jpeg' }
+                '^52494646' { 'image/webp' }
+                '^474946'   { 'image/gif' }
+                default {
+                    # Unsupported format → reject
+                    $netStream.Dispose()
+                    $stream.Dispose()
+                    return $null
+                }
+            }
+        }
+
+        # Base64 encode
+        $base64 = [Convert]::ToBase64String($bytes, 0, $bytesRead)
+        $dataUrl = "data:$mime;base64,$base64"
+
+        # Cleanup
+        $netStream.Dispose()
+        $stream.Dispose()
+
+        return $dataUrl
+    } catch {
+        # Any error → gracefully return null
+        return $null
+    }
+}
+
+# ---------------------------------------------------------------------------
 # Read state from a session. Returns a hashtable safe to serialise.
 # Title/artist are data payload fields only — never used in diagnostic output.
 # ---------------------------------------------------------------------------
@@ -130,13 +195,18 @@ function Read-SessionState {
             'paused'  { 'paused'  }
             default   { 'stopped' }
         }
+
+        # T-025d: Extract artwork (null if missing/oversized/unsupported)
+        $artworkDataUrl = Get-ArtworkDataUrl -MediaProperties $props
+
         return @{
-            ok         = $true
-            hasSession = $true
-            title      = if ($props.Title)  { $props.Title }  else { $null }
-            artist     = if ($props.Artist) { $props.Artist } else { $null }
-            status     = $status
-            canControl = $true
+            ok             = $true
+            hasSession     = $true
+            title          = if ($props.Title)  { $props.Title }  else { $null }
+            artist         = if ($props.Artist) { $props.Artist } else { $null }
+            status         = $status
+            canControl     = $true
+            artworkDataUrl = $artworkDataUrl
         }
     } catch {
         return @{ ok = $false; error = 'read_failed' }

@@ -31,7 +31,7 @@ const UNAVAILABLE_STATE: MediaState = {
 // Parsed response from the PS1 bridge.
 type BridgeResponse =
   | { ok: true; hasSession: false }
-  | { ok: true; hasSession: true; title: string | null; artist: string | null; status: 'playing' | 'paused' | 'stopped'; canControl: boolean }
+  | { ok: true; hasSession: true; title: string | null; artist: string | null; status: 'playing' | 'paused' | 'stopped'; canControl: boolean; artworkDataUrl?: string | null }
   | { ok: true; accepted: boolean }
   | { ok: false; error: string }
 
@@ -94,11 +94,22 @@ export function createMediaBridge(onStateChanged: MediaStateChangedCallback): Me
     if (!resp.ok) return UNAVAILABLE_STATE
     if ('hasSession' in resp) {
       if (!resp.hasSession) return UNAVAILABLE_STATE
+      
+      // T-025d: Validate and sanitize artworkDataUrl
+      let artworkDataUrl: string | null | undefined = resp.artworkDataUrl
+      if (artworkDataUrl !== null && artworkDataUrl !== undefined) {
+        // Degrade to null if invalid (malformed, oversized, or empty)
+        if (typeof artworkDataUrl !== 'string' || artworkDataUrl === '' || artworkDataUrl.length > 300000) {
+          artworkDataUrl = null
+        }
+      }
+      
       return {
         title: resp.title ?? null,
         artist: resp.artist ?? null,
         status: resp.status,
         canControl: true,
+        artworkDataUrl,
       }
     }
     return UNAVAILABLE_STATE
