@@ -31,12 +31,11 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 
-Done: T-001 to T-024 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; T-022, T-023, and T-024 manual checks passed by human).
-Next: T-025 (Wrap M2).
-Waiting: none for M2 wrap, except owner decision on optional shelf action-menu overlay polish.
+Done: T-001 to T-025 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete).
+Next: T-026a (MockProvider & History).
+Waiting: none for M2. Optional future polish: shelf action menu may be converted to a floating overlay if desired, but current behavior passed M-010/M-011.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known follow-up: shelf action menu currently behaves like inline/disclosure list rather than floating overlay; acceptable for T-023 because M-010/M-011 passed, but may be polished later.
-Known platform limitation: drag-dropped symlinks may be resolved by Windows Shell/Electron to their target before main-process validation. If M-018 confirmed this, D-012 symlink rejection is best-effort for drag-dropped symlinks and must be recorded in STATUS/DECISIONS if owner accepts it.
+Known limitations: browser image drags are ignored because only File drops are accepted; media bridge may log max-restarts warnings in some dev sessions but M-008 passed for Locked media path; drag-dropped symlink rejection passed M-018 for tested symlink file.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
