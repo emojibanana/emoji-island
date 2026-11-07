@@ -323,6 +323,40 @@
 *   **Acceptance Criteria:** Media tab appears; MediaCard renders; unavailable state works; controls work; artwork appears only if already safely provided by existing MediaState; no new IPC channels; no CSP change; no media metadata logging.
 *   **Verification:** `manual_check_id`: M-008
 
+### T-025c: Media Bridge UTF-8 Encoding Hotfix
+
+*   **Depends On:** T-025b
+*   **Hours:** Agent: 0.5 | Review: 0.5 | Est: 1.0
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008), This task card.
+*   **Files:** `scripts/smtc-bridge.ps1`, `src/main/services/media-bridge.ts`
+*   **read_files:** `src/shared/types.ts`, `src/main/services/media.ts`, `Instruction/IPC_SPEC.md`, `Instruction/DECISIONS.md`
+*   **commit:** `fix(media): pakai UTF-8 untuk bridge PowerShell dan stdout`
+*   **Steps:** Ensure PowerShell bridge emits newline-delimited JSON as UTF-8 without BOM and Node decodes child stdout as UTF-8. Do not change D-008 process model, polling, session selection, IPC schema, renderer, preload, shared, CSP, or dependencies.
+*   **Acceptance Criteria:** Non-ASCII media title/artist no longer renders as ?????; media controls still work; no media metadata logged; gates pass.
+*   **Verification:** `manual_check_id`: M-008
+
+### T-025d: Media Artwork Support
+
+*   **Depends On:** T-025c, T-025d-inv
+*   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-013, D-015), UI_SPEC, IPC_SPEC, Instruction/INVESTIGATION_T025d_ARTWORK.md, This task card.
+*   **Files:** `scripts/smtc-bridge.ps1`, `src/main/services/media-bridge.ts`, `src/main/services/media.ts`, `src/shared/types.ts`, `src/shared/schemas.ts`, `src/renderer/src/components/MediaCard.tsx`
+*   **read_files:** `Instruction/IPC_SPEC.md`, `Instruction/DATA_MODEL.md`, `Instruction/UI_SPEC.md`, `Instruction/DECISIONS.md`, `src/main/ipcHandlers.ts`, `src/preload/index.ts`, `src/main/index.ts`, `src/renderer/index.html`
+*   **commit:** `feat(media): tambahkan artwork data URL untuk media card`
+*   **Steps:**
+    1. Add optional nullable `artworkDataUrl` to `MediaState`.
+    2. Extend PowerShell bridge to read SMTC thumbnail only from selected session, enforce 200 KiB raw limit, detect supported MIME types, and emit `artworkDataUrl` only as a data URL.
+    3. Keep D-008 process model unchanged: one persistent PowerShell 5.1 child, newline-delimited JSON stdio, no pwsh, no polling/re-poll changes.
+    4. Validate optional artwork in main bridge/media service and degrade to null on missing, zero-size, oversized, unsupported, or malformed artwork.
+    5. Render artwork in MediaCard with fallback Music icon.
+    6. Never log title, artist, album, artwork URL, artwork data, or media metadata.
+    7. Do not add new IPC channels.
+    8. Do not change CSP unless owner separately approves; if current CSP blocks data URL images, stop and report.
+*   **Acceptance Criteria:** Artwork appears when available; fallback appears when missing; oversized/unsupported/zero-size artwork degrades safely; non-ASCII title/artist still works; controls still work; no metadata logged; gates pass.
+*   **Verification:** `manual_check_id`: M-008
+
 # Tasks: Milestone 3 & 4
 
 ---
