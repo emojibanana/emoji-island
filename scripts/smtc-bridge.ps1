@@ -126,18 +126,19 @@ function Get-ArtworkDataUrl {
         $stream = Invoke-Await -Operation $thumbnail.OpenReadAsync() -ResultType $streamType
         if ($null -eq $stream) { return $null }
 
-        $size = $stream.Size
-        # D-025d: hard limit 200 KiB (204800 bytes)
-        if ($size -eq 0 -or $size -gt 204800) {
-            $stream.Dispose()
-            return $null
-        }
-
-        # Convert WinRT stream to .NET stream
+        # Convert WinRT stream to .NET stream (must happen before reading size)
         $asStreamForRead = ([System.IO.WindowsRuntimeStreamExtensions].GetMethods() | Where-Object {
             $_.Name -eq 'AsStreamForRead' -and $_.GetParameters().Count -eq 1
         })[0]
         $netStream = $asStreamForRead.Invoke($null, @($stream))
+
+        # Read size from .NET stream (WinRT $stream.Size returns empty string in PowerShell)
+        $size = $netStream.Length
+        # D-025d: hard limit 200 KiB (204800 bytes)
+        if ($size -eq 0 -or $size -gt 204800) {
+            $netStream.Dispose()
+            return $null
+        }
 
         # Read bytes
         $bytes = New-Object byte[] $size
@@ -167,7 +168,6 @@ function Get-ArtworkDataUrl {
 
         # Cleanup
         $netStream.Dispose()
-        $stream.Dispose()
 
         return $dataUrl
     } catch {
