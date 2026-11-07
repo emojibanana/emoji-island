@@ -51,8 +51,8 @@
 | T-025 | Wrap M2 | done | ba8376d |
 | T-025b | Media Tab Wiring | done | 67e879c |
 | T-025c | Media Bridge UTF-8 Encoding Hotfix | done | 36de383 |
-| T-025d-inv | Media Artwork Feasibility Investigation | done | - |
-| T-025d | Media Artwork Support | todo | - |
+| T-025d-inv | Media Artwork Feasibility Investigation | done | c298a34 |
+| T-025d | Media Artwork Support | doing | - |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
 | T-026b | AiChat UI & Focus active | todo | - |
