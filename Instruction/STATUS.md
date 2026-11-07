@@ -45,10 +45,10 @@
 | T-020-Lb | Media Card UI & IPC (Locked) | done | c4a473e |
 | T-020-D | Media Service (Degraded) | n/a | - |
 | T-021 | Shelf Sanitizer & Caps | done | 35b83b0 |
-| T-022 | Shelf Copy & IPC Handlers | manual-pending | ee2329c |
+| T-022 | Shelf Copy & IPC Handlers | done | ee2329c |
 | T-023 | Shelf Preview & UI List | done | c656f98 |
 | T-024 | Drop Zone Auto-Expand | done | 2bdc483 |
-| T-025 | Wrap M2 | todo | - |
+| T-025 | Wrap M2 | done | - |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
 | T-026b | AiChat UI & Focus active | todo | - |
@@ -94,3 +94,4 @@
 - typecheck, vitest, lint, build pass.
 *   T-023: shelfPreview.ts adds getPreview() for registered shelf images only: lstat validation rejects symlinks/directories, PNG/JPEG/WebP/GIF allow-list, 2 MB limit, base64 data URL. ipcHandlers.ts registers shelf:getPreview inside registerShelfHandlers with ShelfIdSchema validation and IpcEnvelope responses. ShelfItem.tsx and ShelfList.tsx render the Files tab list with accessible action menu: Reveal in Explorer, Copy Path, Remove, and Preview for supported images. TabBar.tsx adds Files tab; App.tsx conditionally renders ShelfList in expanded view. Post-review hardening: stored-path containment is enforced in shelfPreview.ts and shelf.ts so relativePath/storedFileName cannot escape userData/shelf. Owner-approved process deviation: the original T-023 implementation commit also updated Instruction/STATUS.md although STATUS.md was not in the card Files list; the change was limited to marking T-023 manual-pending and is accepted by the owner. Verify: typecheck OK, vitest 215/215, lint OK, build OK, forbidden-names grep empty. Manual checks M-010 and M-011 passed by human. Known follow-up: action menu currently behaves like an inline/disclosure list rather than a floating overlay; this is acceptable for T-023 because actions are reachable without confusing scroll, but future UI polish may convert it to an overlay menu.
 *   T-024: Drop zone wiring added in App.tsx. Drag state is managed with native window listeners for dragenter/dragover/dragleave/drop/dragend/blur, reset on mode collapsed, and ShelfList receives shelfVersion so the Files tab refreshes without manual tab remount. Additional hardening: dragover heartbeat resets stale drag state when external Windows drag leave/cancel does not produce a timely dragleave/dragend event. Automated gates pass: typecheck OK, vitest OK, lint OK, build OK, forbidden-names grep empty. M-016 human retest passed: auto-expand from collapsed pill works, overlay appears and clears on drag leave/cancel/blur/collapse, single and multiple drops work, Files tab refreshes immediately, no .tmp files remain, non-file drops do not crash, browser image drags are ignored as expected. Commit-message deviation: card message was feat(shelf): wire drag and drop auto-expand zone; actual landed implementation/fix messages use Indonesian owner override and ui scope where appropriate; owner accepts this as a commit-language/scope deviation. Status done.
+*   T-025: M2 wrap committed. Only `Instruction/STATUS.md` changed — no source, test, config or `package.json` file was touched. Gates run on the wrap: typecheck OK, vitest OK, lint 0 warnings, build OK, forbidden-names grep over `src` empty. T-025 verification (`git tag -l "m2-done"`) is deferred — the `m2-done` tag is deliberately NOT created by the agent and is created by the owner after this commit, same as `m0-done` (T-009) and `m1-done` (T-016).
