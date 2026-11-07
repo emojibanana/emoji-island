@@ -289,7 +289,7 @@
 *   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-010, D-012), This task card.
-*   **Files:** `src/renderer/src/App.tsx`
+*   **Files:** `src/renderer/src/App.tsx`, `src/renderer/src/components/ShelfList.tsx`
 *   **read_files:** `src/renderer/src/App.tsx`, `src/preload/index.ts`
 *   **commit:** `feat(shelf): wire drag and drop auto-expand zone`
 *   **Steps:** Attach global dragenter/dragleave/drop handlers in App.tsx sending `window:setDragActive`.

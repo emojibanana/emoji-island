@@ -47,7 +47,7 @@
 | T-021 | Shelf Sanitizer & Caps | done | 35b83b0 |
 | T-022 | Shelf Copy & IPC Handlers | manual-pending | ee2329c |
 | T-023 | Shelf Preview & UI List | manual-pending | - |
-| T-024 | Drop Zone Auto-Expand | manual-pending | 0480efd |
+| T-024 | Drop Zone Auto-Expand | doing | 0480efd |
 | T-025 | Wrap M2 | todo | - |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
