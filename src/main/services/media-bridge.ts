@@ -15,8 +15,8 @@ function scriptPath(): string {
   if (app.isPackaged) {
     return join(process.resourcesPath, 'scripts', 'smtc-bridge.ps1')
   }
-  // dev: __dirname is dist/main, project root is three levels up.
-  return join(__dirname, '..', '..', '..', 'scripts', 'smtc-bridge.ps1')
+  // dev: __dirname is out/main, project root is two levels up.
+  return join(__dirname, '..', '..', 'scripts', 'smtc-bridge.ps1')
 }
 
 const MAX_RESTARTS = 3
