@@ -31,11 +31,12 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 
-Done: T-001 to T-021 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked).
-Next: retest T-024 M-016 after drag-state and shelf-refresh fix; then M-010/M-011/M-018 for T-022/T-023; then T-025 Wrap M2 if all pass.
-Waiting: M-016 was pending on T-024. It remains unproven whether Windows sends drag events to a non-focusable collapsed pill; human verification required.
+Done: T-001 to T-024 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; T-022, T-023, and T-024 manual checks passed by human).
+Next: T-025 (Wrap M2).
+Waiting: none for M2 wrap, except owner decision on optional shelf action-menu overlay polish.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known verification gap: T-022, T-023, and T-024 remain manual-pending. T-024 enables real drag-drop, so M-016, M-010, M-011, and M-018 should be executed before M2 wrap. Symlink/junction drag-drop rejection may be platform-limited if Windows Shell resolves symlinks before Electron receives the File object; real drop evidence is now required. T-024 initial M-016 failed due to stuck drag overlay and ShelfList not refreshing after drop. Fix landed; human retest required. Dragging images from browser is expected to be ignored because non-file drops are out of D-012/T-024 scope. Duplicate originalName in Files tab is expected because storedFileName is uniquified on disk.
+Known follow-up: shelf action menu currently behaves like inline/disclosure list rather than floating overlay; acceptable for T-023 because M-010/M-011 passed, but may be polished later.
+Known platform limitation: drag-dropped symlinks may be resolved by Windows Shell/Electron to their target before main-process validation. If M-018 confirmed this, D-012 symlink rejection is best-effort for drag-dropped symlinks and must be recorded in STATUS/DECISIONS if owner accepts it.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
