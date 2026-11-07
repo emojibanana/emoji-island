@@ -25,6 +25,9 @@ Rules enforced here:
 [CmdletBinding()]
 param()
 
+# Keep the newline-delimited JSON protocol UTF-8 without a BOM.
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+
 $ErrorActionPreference = 'Stop'
 
 # ---------------------------------------------------------------------------
