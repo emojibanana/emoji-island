@@ -5,3 +5,4 @@ out/
 !.env.example
 .review/
 prompt/
+docs/
