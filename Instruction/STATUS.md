@@ -49,6 +49,7 @@
 | T-023 | Shelf Preview & UI List | done | c656f98 |
 | T-024 | Drop Zone Auto-Expand | done | 87223b2 |
 | T-025 | Wrap M2 | done | ba8376d |
+| T-025b | Media Tab Wiring & Artwork (post-M2) | todo | - |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
 | T-026b | AiChat UI & Focus active | todo | - |

@@ -306,6 +306,23 @@
 *   **Steps:** Update STATUS.md. Commit changes first, then create git tag `m2-done`.
 *   **Verification:** `automated_command`: `git tag -l "m2-done"`
 
+### T-025b: Media Tab Wiring & Artwork (Post-M2 Correction)
+*   **Depends On:** T-020-Lb, T-025
+*   **Hours:** Agent: 0.5 | Review: 0.5 | Est: 1.0
+*   **Tier:** any
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008, D-015), UI_SPEC, This task card.
+*   **Files:** `src/renderer/src/components/TabBar.tsx`, `src/renderer/src/App.tsx`, `src/renderer/src/components/MediaCard.tsx`
+*   **read_files:** `src/shared/types.ts`, `src/shared/schemas.ts`, `src/main/services/media.ts`, `src/main/services/media-bridge.ts`, `scripts/smtc-bridge.ps1`, `Instruction/IPC_SPEC.md`, `Instruction/UI_SPEC.md`, `Instruction/DECISIONS.md`
+*   **commit:** `fix(ui): tambahkan tab media dan artwork jika tersedia`
+*   **Steps:**
+    1. Add a `media` tab to `TAB` in `TabBar.tsx`, ordered after Clock & Weather and before Files.
+    2. Import and render `MediaCard` in `App.tsx` when `activeTab === 'media'`.
+    3. If `MediaState` already exposes a safe artwork field such as `artworkDataUrl`, render it in `MediaCard` with a fallback icon.
+    4. If artwork is not already safely available in `MediaState`, do not modify main/preload/shared/scripts/CSP. Report artwork as a separate blocker.
+    5. Do not log title, artist, album, artwork URL, or media metadata.
+*   **Acceptance Criteria:** Media tab appears; MediaCard renders; unavailable state works; controls work; artwork appears only if already safely provided by existing MediaState; no new IPC channels; no CSP change; no media metadata logging.
+*   **Verification:** `manual_check_id`: M-008
+
 # Tasks: Milestone 3 & 4
 
 ---

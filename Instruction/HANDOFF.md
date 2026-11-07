@@ -30,12 +30,12 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-
 Done: T-001 to T-025 (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete).
-Next: T-026a (MockProvider & History).
-Waiting: none for M2. Optional future polish: shelf action menu may be converted to a floating overlay if desired, but current behavior passed M-010/M-011.
+Next: T-025b (Media Tab Wiring & Artwork, post-M2 correction).
+Waiting: none for M2 wrap. T-025b fixes missing user-facing Media tab discovered after m2-done.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known limitations: browser image drags are ignored because only File drops are accepted; media bridge may log max-restarts warnings in some dev sessions but M-008 passed for Locked media path; drag-dropped symlink rejection passed M-018 for tested symlink file.
+Known follow-up: shelf action menu may be polished later into a floating overlay; current behavior passed M-010/M-011.
+Known M2 correction: MediaCard backend/component existed but was not wired into TabBar/App. T-025b adds the missing Media tab and renders MediaCard. Artwork is conditional on existing safe MediaState support.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
