@@ -75,15 +75,36 @@ function App(): JSX.Element {
   const [shelfVersion, setShelfVersion] = useState(0)
   const dragEnterCount = useRef(0)
   const dragActive = useRef(false)
+  const lastDragOverAt = useRef(0)
+  const dragHeartbeat = useRef<number | null>(null)
+
+  const stopDragHeartbeat = useCallback(() => {
+    if (dragHeartbeat.current !== null) {
+      window.clearInterval(dragHeartbeat.current)
+      dragHeartbeat.current = null
+    }
+    lastDragOverAt.current = 0
+  }, [])
 
   const resetDragState = useCallback(() => {
     dragEnterCount.current = 0
     setIsDragOver(false)
+    stopDragHeartbeat()
     if (dragActive.current) {
       dragActive.current = false
       window.islandApi.setDragActive(false)
     }
-  }, [])
+  }, [stopDragHeartbeat])
+
+  const startDragHeartbeat = useCallback(() => {
+    if (dragHeartbeat.current !== null) return
+    dragHeartbeat.current = window.setInterval(() => {
+      if (!dragActive.current) return
+      if (Date.now() - lastDragOverAt.current > 300) {
+        resetDragState()
+      }
+    }, 100)
+  }, [resetDragState])
 
   // Native window drag listeners for robust state cleanup
   useEffect(() => {
@@ -94,6 +115,8 @@ function App(): JSX.Element {
       if (!dragActive.current) {
         dragActive.current = true
         setIsDragOver(true)
+        lastDragOverAt.current = Date.now()
+        startDragHeartbeat()
         window.islandApi.setDragActive(true)
       }
     }
@@ -101,6 +124,7 @@ function App(): JSX.Element {
     const handleDragOver = (e: DragEvent): void => {
       if (!e.dataTransfer?.types.includes('Files')) return
       e.preventDefault()
+      lastDragOverAt.current = Date.now()
     }
 
     const handleDragLeave = (e: DragEvent): void => {
@@ -145,8 +169,9 @@ function App(): JSX.Element {
       window.removeEventListener('drop', handleDrop)
       window.removeEventListener('dragend', handleDragEnd)
       window.removeEventListener('blur', handleBlur)
+      stopDragHeartbeat()
     }
-  }, [resetDragState])
+  }, [resetDragState, startDragHeartbeat, stopDragHeartbeat])
 
   // Reset drag state when mode collapses
   useEffect(() => {
