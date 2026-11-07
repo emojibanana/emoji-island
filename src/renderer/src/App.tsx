@@ -34,7 +34,7 @@ function useIslandMode(): IslandMode {
   return mode
 }
 
-function ExpandedView(): JSX.Element {
+function ExpandedView({ shelfVersion }: { shelfVersion: number }): JSX.Element {
   const [activeTab, setActiveTab] = useState<string>(TABS[0].id)
   const weather = useWeather()
 
@@ -48,7 +48,7 @@ function ExpandedView(): JSX.Element {
             <WeatherCard {...weather} />
           </>
         )}
-        {activeTab === 'files' && <ShelfList />}
+        {activeTab === 'files' && <ShelfList version={shelfVersion} />}
       </section>
     </main>
   )
@@ -72,52 +72,88 @@ function DropOverlay(): JSX.Element {
 function App(): JSX.Element {
   const mode = useIslandMode()
   const [isDragOver, setIsDragOver] = useState(false)
-  // ponytail: dragEnterCount prevents false dragleave when cursor moves over child elements
+  const [shelfVersion, setShelfVersion] = useState(0)
   const dragEnterCount = useRef(0)
+  const dragActive = useRef(false)
 
-  const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    // Only process if dragged item contains files (not text, links, etc.)
-    if (!e.dataTransfer.types.includes('Files')) return
-    e.preventDefault()
-    dragEnterCount.current += 1
-    if (dragEnterCount.current === 1) {
-      setIsDragOver(true)
-      window.islandApi.setDragActive(true)
-    }
-  }, [])
-
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    if (!e.dataTransfer.types.includes('Files')) return
-    e.preventDefault()
-    dragEnterCount.current -= 1
-    if (dragEnterCount.current <= 0) {
-      dragEnterCount.current = 0
-      setIsDragOver(false)
+  const resetDragState = useCallback(() => {
+    dragEnterCount.current = 0
+    setIsDragOver(false)
+    if (dragActive.current) {
+      dragActive.current = false
       window.islandApi.setDragActive(false)
     }
   }, [])
 
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    if (!e.dataTransfer.types.includes('Files')) return
-    e.preventDefault() // required to allow drop
-  }, [])
-
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    dragEnterCount.current = 0
-    setIsDragOver(false)
-    window.islandApi.setDragActive(false)
-
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length === 0) return // non-file drop (text, link, etc.)
-
-    // D-012: addFromDrop accepts a File object; preload derives path via webUtils.getPathForFile.
-    // Process all dropped files sequentially (fire-and-forget; errors visible in ShelfList).
-    for (const file of files) {
-      // ponytail: no error UI here — ShelfList re-fetches after drop; add Toast in T-025+
-      void window.islandApi.addFromDrop(file)
+  // Native window drag listeners for robust state cleanup
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent): void => {
+      if (!e.dataTransfer?.types.includes('Files')) return
+      e.preventDefault()
+      dragEnterCount.current += 1
+      if (!dragActive.current) {
+        dragActive.current = true
+        setIsDragOver(true)
+        window.islandApi.setDragActive(true)
+      }
     }
-  }, [])
+
+    const handleDragOver = (e: DragEvent): void => {
+      if (!e.dataTransfer?.types.includes('Files')) return
+      e.preventDefault()
+    }
+
+    const handleDragLeave = (e: DragEvent): void => {
+      if (!e.dataTransfer?.types.includes('Files')) return
+      e.preventDefault()
+      dragEnterCount.current -= 1
+      if (dragEnterCount.current <= 0) {
+        resetDragState()
+      }
+    }
+
+    const handleDrop = async (e: DragEvent): Promise<void> => {
+      e.preventDefault()
+      resetDragState()
+
+      const files = Array.from(e.dataTransfer?.files ?? [])
+      if (files.length === 0) return
+
+      await Promise.allSettled(files.map((file) => window.islandApi.addFromDrop(file)))
+      setShelfVersion((v) => v + 1)
+    }
+
+    const handleDragEnd = (): void => {
+      resetDragState()
+    }
+
+    const handleBlur = (): void => {
+      resetDragState()
+    }
+
+    window.addEventListener('dragenter', handleDragEnter)
+    window.addEventListener('dragover', handleDragOver)
+    window.addEventListener('dragleave', handleDragLeave)
+    window.addEventListener('drop', handleDrop)
+    window.addEventListener('dragend', handleDragEnd)
+    window.addEventListener('blur', handleBlur)
+
+    return () => {
+      window.removeEventListener('dragenter', handleDragEnter)
+      window.removeEventListener('dragover', handleDragOver)
+      window.removeEventListener('dragleave', handleDragLeave)
+      window.removeEventListener('drop', handleDrop)
+      window.removeEventListener('dragend', handleDragEnd)
+      window.removeEventListener('blur', handleBlur)
+    }
+  }, [resetDragState])
+
+  // Reset drag state when mode collapses
+  useEffect(() => {
+    if (mode === 'collapsed') {
+      resetDragState()
+    }
+  }, [mode, resetDragState])
 
   return (
     // Full-window flex root: the pill/panel is centered by layout, not fixed offsets (B-001).
@@ -127,12 +163,8 @@ function App(): JSX.Element {
       key={mode}
       data-mode={mode}
       className={`island-enter-${mode} relative flex h-full w-full items-center justify-center`}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
     >
-      {mode === 'collapsed' ? <IslandPill /> : <ExpandedView />}
+      {mode === 'collapsed' ? <IslandPill /> : <ExpandedView shelfVersion={shelfVersion} />}
       {isDragOver && <DropOverlay />}
     </div>
   )

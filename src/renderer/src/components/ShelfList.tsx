@@ -12,7 +12,11 @@ interface PreviewModal {
   name: string
 }
 
-export function ShelfList(): JSX.Element {
+export interface ShelfListProps {
+  version: number
+}
+
+export function ShelfList({ version }: ShelfListProps): JSX.Element {
   const [items, setItems] = useState<ShelfItemMetadata[]>([])
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -37,7 +41,7 @@ export function ShelfList(): JSX.Element {
 
   useEffect(() => {
     void loadItems()
-  }, [loadItems])
+  }, [loadItems, version])
 
   const handleReveal = useCallback(async (id: string) => {
     await window.islandApi.revealShelfItem(id)
