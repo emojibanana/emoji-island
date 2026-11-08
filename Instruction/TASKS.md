@@ -357,6 +357,28 @@
 *   **Acceptance Criteria:** Artwork appears when available; fallback appears when missing; oversized/unsupported/zero-size artwork degrades safely; non-ASCII title/artist still works; controls still work; no metadata logged; gates pass.
 *   **Verification:** `manual_check_id`: M-008
 
+### T-025f-spike: Shelf Drag-Out Gesture Spike
+*   **Depends On:** T-025d, owner-approved D-014/IPC_SPEC amendment
+*   **Hours:** Agent: 1.0 | Review: 1.0 | Human manual: 1.0 | Est: 3.0
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-012, D-013, D-014, D-022), IPC_SPEC, UI_SPEC, This task card.
+*   **Files:** `src/shared/types.ts`, `src/shared/schemas.ts`, `src/preload/index.ts`, `src/main/ipcHandlers.ts`, `src/main/services/shelf.ts`, `src/renderer/src/components/ShelfItem.tsx`
+*   **read_files:** `Instruction/DECISIONS.md`, `Instruction/IPC_SPEC.md`, `Instruction/UI_SPEC.md`, `Instruction/TESTING.md`, `src/main/services/shelfPreview.ts`, `src/renderer/src/components/ShelfList.tsx`, `src/renderer/src/App.tsx`
+*   **commit:** `feat(shelf): prototipe drag-out single-file tanpa auto-remove`
+*   **Steps:**
+    1. Add typed preload method `dragOutShelfItem(id: string): Promise<Env<void>>` only if owner-approved D-014/IPC_SPEC amendment exists.
+    2. Add main IPC handler `shelf:dragOut` validating payload with existing `ShelfIdSchema`.
+    3. Resolve shelf file from store metadata and `userData/shelf` only.
+    4. Enforce containment, lstat/realpath, regular file, and existence checks.
+    5. Call `event.sender.startDrag` with the validated shelf file path. Do not return the path in the envelope.
+    6. Make `ShelfItem` draggable for single-file drag-out.
+    7. Do not remove, mark taken, TTL, or mutate shelf metadata after drag-out.
+    8. Do not implement multi-file drag-out.
+    9. Do not change auto-expand/drop-in behavior.
+    10. Do not log file paths, file names, file contents, or media metadata.
+*   **Acceptance Criteria:** Single shelf item can begin native drag to external target; shelf item remains after drag; missing file produces safe error; cancel does not corrupt shelf; no renderer-supplied path; no auto-remove; gates pass.
+*   **Verification:** `manual_check_id`: M-021, M-023, M-025, M-026. M-022 is optional but recommended.
+
 # Tasks: Milestone 3 & 4
 
 ---

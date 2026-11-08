@@ -41,6 +41,11 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-018` | Symlink | Drop a symlink/junction. | Rejected (`PATH_INVALID`). | | |
 | `M-019` | AI errors | No key; stop 9router; wrong model. | Inline error text, app stays responsive. | | |
 | `M-020` | Settings | Change coordinates, hotkey, endpoint. | Persisted after restart; invalid values rejected. | | |
+| `M-021` | Shelf Drag-Out to Explorer | From Files tab, drag one shelf item to an Explorer folder. | Explorer receives a file with correct name/size; shelf item remains. | | |
+| `M-022` | Shelf Drag-Out to Google Drive | Drag one shelf item to Google Drive/browser target. | Target receives file; upload may continue after drag; shelf item remains. Do not treat drag completion as upload completion. | | |
+| `M-023` | Shelf Drag-Out Missing File | Delete the stored shelf file outside the UI, then attempt drag-out from Files tab. | Safe error, no crash, metadata not removed. | | |
+| `M-025` | Shelf Drag-Out Gesture Reliability | Start drag from a ShelfItem at least 20 times on Windows. | Native drag starts consistently; if not, record platform limitation and use fallback. | | |
+| `M-026` | Shelf Drag-Out Cancel | Start drag from Files tab, then drop on empty area/cancel. | Shelf remains intact; UI recovers; no crash. | | |
 
 ## 4. Security & Audit
 *   **Dependency Audit:** Run `npm audit` on CI.
