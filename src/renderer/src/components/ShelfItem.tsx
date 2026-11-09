@@ -1,7 +1,7 @@
 // T-023 / UI_SPEC §3: ShelfItem — displays one shelf entry with action menu.
 // Actions: Reveal in Explorer, Copy Path, Remove, Preview (image only).
 // Accessible: keyboard-reachable, aria labels, visible focus rings, no color-only indicators.
-import { useState } from 'react'
+import { useState, type DragEvent } from 'react'
 import { FolderOpen, Copy, Trash2, Eye, File, Image } from 'lucide-react'
 import type { ShelfItemMetadata } from '../../../shared/types'
 
@@ -25,12 +25,29 @@ function formatBytes(bytes: number): string {
 
 export function ShelfItem({ item, onReveal, onCopyPath, onRemove, onPreview }: ShelfItemProps): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [dragFailed, setDragFailed] = useState(false)
   const image = isImage(item.mimeType)
+
+  // T-025f-spike / D-014 amendment: single-file drag-out.
+  // Cancel the default HTML5 drag so main can start the native one via webContents.startDrag.
+  // The renderer only sends the item id — never a filesystem path.
+  const handleDragStart = async (e: DragEvent<HTMLLIElement>): Promise<void> => {
+    e.preventDefault()
+    setDragFailed(false)
+    try {
+      const res = await window.islandApi.dragOutShelfItem(item.id)
+      if (!res.ok) setDragFailed(true)
+    } catch {
+      setDragFailed(true)
+    }
+  }
 
   return (
     <li
-      className="rounded-lg border border-white/[0.08] bg-white/[0.04] text-[13px] text-[#F5F5F5] overflow-hidden"
+      className="rounded-lg border border-white/[0.08] bg-white/[0.04] text-[13px] text-[#F5F5F5] overflow-hidden cursor-grab"
       aria-label={`Shelf item: ${item.originalName}`}
+      draggable
+      onDragStart={(e) => { void handleDragStart(e) }}
     >
       {/* Main item row */}
       <div className="flex items-center gap-2 px-3 py-2 hover:bg-white/[0.07] transition-colors motion-reduce:transition-none">
@@ -56,6 +73,13 @@ export function ShelfItem({ item, onReveal, onCopyPath, onRemove, onPreview }: S
           •••
         </button>
       </div>
+
+      {/* T-025f-spike: safe, non-sensitive drag-out failure feedback (no paths/names). */}
+      {dragFailed && (
+        <p role="alert" className="px-3 pb-2 pt-0.5 text-[11px] text-[#FF6B6B]">
+          Drag-out is not available for this item.
+        </p>
+      )}
 
       {/* Inline action panel */}
       {menuOpen && (

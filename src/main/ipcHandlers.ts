@@ -3,8 +3,10 @@
 // T-020-Lb / D-008 Locked: Media IPC handlers — media:getState and media:control.
 // T-022 / D-012: Shelf IPC handlers — addFromDrop, list, remove, reveal, copyPath.
 // T-023 / D-013: shelf:getPreview handler.
+// T-025f-spike / D-014 amendment: shelf:dragOut handler.
 import { ipcMain } from 'electron'
 import log from 'electron-log'
+import { join } from 'path'
 import {
   WindowSetDragActiveSchema,
   WindowSetInputActiveSchema,
@@ -20,6 +22,10 @@ import type { AppStore } from './services/store'
 import { createWeatherService } from './services/weather'
 import type { MediaService } from './services/media'
 import * as shelf from './services/shelf'
+
+// T-025f-spike: app-bundled drag icon. Never a user file path.
+// Main bundles to out/main/index.js, so this resolves the same as services/tray.ts.
+const DRAG_ICON_PATH = join(__dirname, '../../resources/tray-icon.png')
 
 export function registerWindowHandlers(controller: FocusController): void {
   ipcMain.on('window:setInputActive', (_event, payload: unknown) => {
@@ -220,4 +226,25 @@ export function registerShelfHandlers(store: AppStore): void {
       return { ok: true, data: result.data, error: null }
     }
   )
+
+  // T-025f-spike / D-014 amendment: shelf:dragOut — native drag-out of one shelf file.
+  // Resolution is synchronous so startDrag runs in the same turn as the renderer gesture.
+  // ponytail: spike scope — single file, shelf item stays, no consume/TTL/multi-file.
+  ipcMain.handle('shelf:dragOut', (event, payload: unknown): IpcEnvelope<void> => {
+    const parsed = ShelfIdSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
+    }
+
+    const resolved = shelf.resolveDragFilePath(store, parsed.data.id)
+    if (!resolved.ok) {
+      log.warn(`[shelf] dragOut rejected: ${resolved.code}`) // error code only, no path/name
+      return { ok: false, data: null, error: { code: resolved.code, message: resolved.message } }
+    }
+
+    // The resolved path stays in main: startDrag only, never returned in the envelope.
+    // Success here means the drag started — not that the external target copied/uploaded it.
+    event.sender.startDrag({ file: resolved.data, icon: DRAG_ICON_PATH })
+    return { ok: true, data: null, error: null }
+  })
 }

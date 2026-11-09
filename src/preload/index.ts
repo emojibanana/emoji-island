@@ -95,6 +95,10 @@ const islandApi = {
   getShelfPreview: (id: string): Env<PreviewResponse> =>
     ipcRenderer.invoke('shelf:getPreview', { id }),
 
+  /** T-025f-spike / D-014 amendment: start a native drag for one shelf item. */
+  dragOutShelfItem: (id: string): Env<void> =>
+    ipcRenderer.invoke('shelf:dragOut', { id }),
+
   // -- AI Chat ---------------------------------------------------------------
   getAiStatus: (): Env<AiStatus> =>
     ipcRenderer.invoke('ai:getStatus'),

@@ -1,5 +1,5 @@
 // src/preload/index.test.ts
-// Verifies islandApi surface: exactly the 20 IPC channels, no forbidden keys.
+// Verifies islandApi surface: exactly 21 keys (20 IPC channels + onMediaStateChanged event sub), no forbidden keys.
 // Uses vi.mock to stub Electron — preload cannot run in jsdom without it.
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 
@@ -59,6 +59,7 @@ const EXPECTED_KEYS = [
   'revealShelfItem',
   'copyShelfPath',
   'getShelfPreview',
+  'dragOutShelfItem',
   // AI Chat
   'getAiStatus',
   'getAiHistory',
@@ -69,8 +70,8 @@ const EXPECTED_KEYS = [
 const FORBIDDEN_KEYS = ['ipcRenderer', 'require', 'process', 'send', 'invoke', 'on']
 
 describe('islandApi surface', () => {
-  it('exposes exactly 20 keys (19 IPC channels + onMediaStateChanged)', () => {
-    // 19 channels per spec + onMediaStateChanged (event sub)
+  it('exposes exactly 21 keys (20 IPC channels + onMediaStateChanged)', () => {
+    // 20 channels per spec + onMediaStateChanged (event sub)
     expect(Object.keys(islandApi)).toHaveLength(EXPECTED_KEYS.length)
   })
 
@@ -165,6 +166,11 @@ describe('islandApi invoke channels', () => {
   it('getShelfPreview calls invoke with shelf:getPreview', async () => {
     await (islandApi.getShelfPreview as (id: string) => Promise<unknown>)('id-1')
     expect(mockInvoke).toHaveBeenCalledWith('shelf:getPreview', { id: 'id-1' })
+  })
+
+  it('dragOutShelfItem calls invoke with shelf:dragOut', async () => {
+    await (islandApi.dragOutShelfItem as (id: string) => Promise<unknown>)('id-1')
+    expect(mockInvoke).toHaveBeenCalledWith('shelf:dragOut', { id: 'id-1' })
   })
 
   it('getAiStatus calls invoke with ai:getStatus', async () => {

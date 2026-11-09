@@ -3,7 +3,7 @@
 // sanitizes filename, stream-copies to temp, atomic rename. No path logging.
 
 import { lstat, realpath, unlink, rename } from 'fs/promises'
-import { createReadStream, createWriteStream, mkdirSync, existsSync } from 'fs'
+import { createReadStream, createWriteStream, mkdirSync, existsSync, lstatSync, realpathSync } from 'fs'
 import { createHash, randomUUID } from 'crypto'
 import { join, extname, basename, resolve, sep } from 'path'
 import { app, shell, clipboard } from 'electron'
@@ -235,4 +235,45 @@ export async function copyItemPath(store: AppStore, id: string): Promise<Result<
   clipboard.writeText(filePath)
 
   return { ok: true, data: undefined }
+}
+
+// T-025f-spike / D-014 amendment: resolve a shelf file for native drag-out.
+// Main-only: the resolved absolute path is never returned to the renderer and never logged.
+// Synchronous on purpose — webContents.startDrag must run in the same main-process turn as
+// the renderer's dragstart gesture (Electron native-file-drag-drop pattern), so no async hops.
+export function resolveDragFilePath(store: AppStore, id: string): Result<string> {
+  const item = store.listShelf().find((i) => i.id === id)
+  if (!item) {
+    return { ok: false, code: 'VALIDATION_ERROR', message: 'Item not found' }
+  }
+
+  const root = shelfDir()
+  if (!isInsideShelfDir(root, item.relativePath)) {
+    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
+  }
+  const filePath = join(root, item.relativePath)
+
+  let realPath: string
+  try {
+    const stats = lstatSync(filePath)
+    if (stats.isSymbolicLink()) {
+      return { ok: false, code: 'PATH_INVALID', message: 'Symlinks rejected' }
+    }
+    if (!stats.isFile()) {
+      return { ok: false, code: 'PATH_INVALID', message: 'Not a regular file' }
+    }
+    realPath = realpathSync(filePath)
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+      return { ok: false, code: 'PATH_INVALID', message: 'Shelf file missing' }
+    }
+    return { ok: false, code: 'STORAGE_ERROR', message: 'Shelf file not accessible' }
+  }
+
+  // Junction / symlinked parent: the real path must still land inside the shelf root.
+  if (!isInsideShelfDir(realpathSync(root), realPath)) {
+    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
+  }
+
+  return { ok: true, data: realPath }
 }
