@@ -1,5 +1,6 @@
-// T-023 / UI_SPEC §3 & §5: ShelfList — scrollable list of shelf items.
+// T-025g / UI_SPEC §3 & §5: ShelfList — scrollable list of shelf items.
 // Fetches via islandApi.listShelf(); shows loading, empty, error, preview modal states.
+// Drag-out failure is surfaced once here as a single status line so item rows stay fixed-height.
 import { useState, useEffect, useCallback } from 'react'
 import type { ShelfItemMetadata } from '../../../shared/types'
 import { ShelfItem } from './ShelfItem'
@@ -25,6 +26,7 @@ export function ShelfList({ version }: ShelfListProps): JSX.Element {
 
   const loadItems = useCallback(async () => {
     setLoadState('loading')
+    setDragFailed(false)
     try {
       const res = await window.islandApi.listShelf()
       if (res.ok && res.data !== null) {
@@ -44,12 +46,8 @@ export function ShelfList({ version }: ShelfListProps): JSX.Element {
     void loadItems()
   }, [loadItems, version])
 
-  const handleReveal = useCallback(async (id: string) => {
-    await window.islandApi.revealShelfItem(id)
-  }, [])
-
-  const handleCopyPath = useCallback(async (id: string) => {
-    await window.islandApi.copyShelfPath(id)
+  const handleDragFailed = useCallback(() => {
+    setDragFailed(true)
   }, [])
 
   const handleRemove = useCallback(async (id: string) => {
@@ -85,6 +83,12 @@ export function ShelfList({ version }: ShelfListProps): JSX.Element {
 
   return (
     <>
+      {dragFailed && (
+        <p role="status" aria-live="polite" className="mb-2 text-[11px] text-[#FF6B6B]">
+          Drag-out is not available for this item.
+        </p>
+      )}
+
       {items.length === 0 ? (
         <p role="status" aria-live="polite" className="py-8 text-center text-[12px] text-[#A3A3A3]">
           No items in shelf. Drag a file over the island to add it.
@@ -98,10 +102,9 @@ export function ShelfList({ version }: ShelfListProps): JSX.Element {
             <ShelfItem
               key={item.id}
               item={item}
-              onReveal={handleReveal}
-              onCopyPath={handleCopyPath}
               onRemove={handleRemove}
               onPreview={handlePreview}
+              onDragFailed={handleDragFailed}
             />
           ))}
         </ul>
