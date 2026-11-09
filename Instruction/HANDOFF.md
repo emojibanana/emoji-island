@@ -32,8 +32,8 @@ One task per session, one commit per task. The agent never creates milestone tag
 ## Progress snapshot (the human updates this after each task)
 
 Done: T-001 to T-025d (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; T-025b media tab wiring done; T-025c media UTF-8 encoding done; T-025d-inv media artwork feasibility investigation done; T-025d media artwork support done after human M-008 retest).
-Next: human manual check T-025f-spike (M-021, M-023, M-025, M-026; M-022 optional). If gesture passes, mark T-025f-spike done and decide whether to continue to Phase 1 polish or move to M3. If gesture fails, evaluate owner-approved send/on spike variant before fallback.
-Known scope decision: Shelf drag-out gesture via IPC invoke is UNVERIFIED on Windows. Native drag reliability is the deciding factor for this spike.
+Next: T-025g (Shelf UI Simplification), then T-025h (Shelf IPC Surface Reduction + Self-Drop Guard).
+Known UI defect being fixed: inline shelf action menu can clip Remove and shift layout when multiple menus/errors appear. T-025g replaces it with icon-only actions. Backend reveal/copyPath removal and self-drop guard are deferred to T-025h.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.

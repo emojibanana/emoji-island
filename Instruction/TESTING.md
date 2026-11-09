@@ -30,8 +30,8 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-007` | Weather | Disconnect internet. | Weather UI displays offline badge. | ✅ | |
 | `M-008` | Media (Locked) | Play music in Spotify. Test play, pause, next, previous. | UI updates within 2 s. Controls work. | | |
 | `M-009` | Media (Degraded) | Close media app. | UI states "Media unavailable" or "No media playing". Buttons disabled. | | |
-| `M-010` | Shelf Drop | Drag file <100 MB over pill. Drop. | Island expands on dragenter. File appears in list with preview. | ✅ | |
-| `M-011` | Shelf Actions | Click Reveal in Explorer. Click Copy Path. | Explorer opens to file. Clipboard contains correct path. | ✅ | |
+| `M-010` | Files Tab & Inline Actions | Drop a file, open Files tab. Click an image item. Click a non-image item. Use Remove icon. Use Preview icon for image. Drag an item out. | Item renders as single row with icon-only actions. No three-dot menu. Image click/icon opens preview. Non-image click does nothing. Remove icon deletes item. Drag-out starts native drag. No layout clipping or shifting. |  | |
+| `M-011` | Shelf Remove Integrity | Remove a shelf item. Check Files tab and userData/shelf. Try removing when stored file is missing outside UI. | Metadata and physical file are removed for normal item. Missing stored file produces safe error, no crash, metadata not silently corrupted. No .tmp remains. |  | |
 | `M-012` | OS Scaling | Change Windows display scale to 125% and 150%. | Island scales properly via Chromium DIP, layout doesn't break. | | |
 | `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). | | |
 | `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | | |
@@ -46,6 +46,7 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-023` | Shelf Drag-Out Missing File | Delete the stored shelf file outside the UI, then attempt drag-out from Files tab. | Safe error, no crash, metadata not removed. | | |
 | `M-025` | Shelf Drag-Out Gesture Reliability | Start drag from a ShelfItem at least 20 times on Windows. | Native drag starts consistently; if not, record platform limitation and use fallback. | | |
 | `M-026` | Shelf Drag-Out Cancel | Start drag from Files tab, then drop on empty area/cancel. | Shelf remains intact; UI recovers; no crash. | | |
+| `M-028` | Shelf Self-Drop Guard | Drag a shelf item from Files tab and drop it back onto the island. | No duplicate item is created. Existing item remains. No .tmp remains. No crash. | | |
 
 ## 4. Security & Audit
 *   **Dependency Audit:** Run `npm audit` on CI.

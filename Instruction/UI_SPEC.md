@@ -21,7 +21,7 @@
 *   **`ClockCard`:** Displays current local time (HH:MM) and date.
 *   **`WeatherCard`:** Displays temperature, humidity, and condition icon.
 *   **`MediaCard`:** Shows track title, artist, and playback controls (play/pause/prev/next).
-*   **`ShelfList` & `ShelfItem`:** Scrollable list of dropped files. Each item shows an icon or image preview, filename, and an action menu (Reveal, Copy Path, Delete).
+*   **`ShelfList` & `ShelfItem`:** Shelf items are rendered as compact single-row entries. Each row contains a file-type icon, truncated original name, human-readable size, an optional preview icon for supported images, and a remove icon. There is no three-dot inline menu and no floating action menu. Icon buttons have no visible text label but must expose accessible aria-labels. Clicking an image item opens preview. Clicking a non-image item performs no action. The whole row is draggable for shelf drag-out. Action buttons must not initiate row drag and must stop click propagation. Drag-out failure feedback is shown as a single non-sensitive status message outside the item rows to avoid variable-height layout shifts.
 *   **`AiChat` & `MessageBubble`:** Scrollable conversation view. Input field at the bottom.
 *   **`SettingsForm`:** Inputs for coordinates, hotkey, AI endpoint, AI model, AI key, and a reduced motion toggle.
 *   **`ErrorBanner` & `Toast`:** Transient feedback elements. Auto-dismiss after 4s except blocking errors, which stay until dismissed.

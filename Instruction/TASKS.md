@@ -381,6 +381,30 @@
 *   **Acceptance Criteria:** Single shelf item can begin native drag to external target; shelf item remains after drag; missing file produces safe error; cancel does not corrupt shelf; no renderer-supplied path; no auto-remove; preload surface test is updated to 21 keys and all gates pass.
 *   **Verification:** `manual_check_id`: M-021, M-023, M-025, M-026. M-022 is optional but recommended.
 
+### T-025g: Shelf UI Simplification
+
+*   **Depends On:** T-025f-spike
+*   **Hours:** Agent: 0.75 | Review: 0.5 | Human manual: 0.5 | Est: 1.75
+*   **Tier:** any
+*   **Context Pack:** AGENTS.md, UI_SPEC, DECISIONS (D-010, D-012, D-013, D-014), This task card.
+*   **Files:** `src/renderer/src/components/ShelfItem.tsx`, `src/renderer/src/components/ShelfList.tsx`
+*   **read_files:** `src/shared/types.ts`, `src/preload/index.ts`, `src/main/ipcHandlers.ts`, `src/main/services/shelf.ts`, `Instruction/UI_SPEC.md`, `Instruction/TESTING.md`, `Instruction/DECISIONS.md`
+*   **commit:** `fix(ui): sederhanakan UI shelf menjadi icon action tanpa menu inline`
+*   **Steps:**
+    1. Remove the inline action menu / three-dot disclosure from ShelfItem.
+    2. Render each shelf item as a single row: file icon, truncated name, size, optional preview icon, remove icon.
+    3. Preview icon appears only for supported image MIME types.
+    4. Remove icon is always present.
+    5. Icon buttons have no visible text label but must have accessible aria-labels.
+    6. Clicking an image item opens preview. Clicking a non-image item does nothing.
+    7. Keep the whole item draggable for shelf drag-out.
+    8. Action buttons must not start item drag and must not trigger item click propagation.
+    9. Move drag-out failure feedback out of per-item variable-height layout into a single non-sensitive ShelfList status region.
+    10. Do not remove backend reveal/copyPath IPC in this task.
+    11. Do not log file paths, file names, file contents, or media metadata.
+*   **Acceptance Criteria:** No inline menu; no clipped Remove action; no layout shift from menus/errors; image preview works via click/icon; remove works via icon; non-image click is no-op; drag-out remains functional; accessibility preserved; gates pass.
+*   **Verification:** `manual_check_id`: M-010
+
 # Tasks: Milestone 3 & 4
 
 ---
