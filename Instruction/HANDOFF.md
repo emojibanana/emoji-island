@@ -31,9 +31,11 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 
-Done: T-001 to T-025d ...
+Done: T-001 to T-025d (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; T-025b media tab wiring done; T-025c media UTF-8 encoding done; T-025d-inv media artwork feasibility investigation done; T-025d media artwork support done after human M-008 retest).
 Next: T-025f-spike (Shelf Drag-Out Gesture Spike) only after owner records D-014/IPC_SPEC amendment and TESTING.md manual checks.
-Known scope decision: shelf drag-out is a post-M2 enhancement outside D-022 Minimum Demo Scope. Phase 1 is single-file, persistent shelf, no auto-remove. Multi-file, TTL, consume lifecycle, and auto-switch Files are deferred.
+Waiting: none for M2 correction. Shelf drag-out is a post-M2 enhancement outside D-022 Minimum Demo Scope.
+Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
+Known scope decision: Phase 1 shelf drag-out is single-file, persistent shelf, no auto-remove, no TTL, no multi-file, and no auto-switch Files. If gesture is unreliable, fallback is Reveal in Explorer / Copy Path.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
