@@ -35,7 +35,7 @@ Done: T-001 to T-025d (T-007b skipped; D-008 Locked; T-020 uses the Locked varia
 Next: T-025f-spike (Shelf Drag-Out Gesture Spike) only after owner records D-014/IPC_SPEC amendment and TESTING.md manual checks.
 Waiting: none for M2 correction. Shelf drag-out is a post-M2 enhancement outside D-022 Minimum Demo Scope.
 Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known scope decision: Phase 1 shelf drag-out is single-file, persistent shelf, no auto-remove, no TTL, no multi-file, and no auto-switch Files. If gesture is unreliable, fallback is Reveal in Explorer / Copy Path.
+Known scope decision: Phase 1 shelf drag-out is single-file, persistent shelf, no auto-remove, no TTL, no multi-file, and no auto-switch Files. If gesture is unreliable, fallback is Reveal in Explorer / Copy Path. T-025f-spike Files list includes src/preload/index.test.ts so the frozen islandApi surface test can be updated atomically with the implementation. IPC_SPEC count is synchronized to 21 islandApi keys / 20 request channels.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
