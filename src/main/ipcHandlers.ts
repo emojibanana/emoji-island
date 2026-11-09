@@ -1,7 +1,7 @@
 // T-012 / D-010: Window IPC handlers. Fire-and-forget for input/drag, invoke for setMode.
 // T-014 / D-016: Weather IPC — handlers never throw; failures degrade to stale/offline.
 // T-020-Lb / D-008 Locked: Media IPC handlers — media:getState and media:control.
-// T-022 / D-012: Shelf IPC handlers — addFromDrop, list, remove, reveal, copyPath.
+// T-022 / D-012 / T-025h: Shelf IPC handlers — addFromDrop, list, remove.
 // T-023 / D-013: shelf:getPreview handler.
 // T-025f-spike / D-014 amendment: shelf:dragOut handler.
 import { ipcMain } from 'electron'
@@ -178,32 +178,6 @@ export function registerShelfHandlers(store: AppStore): void {
     }
 
     const result = await shelf.removeItem(store, parsed.data.id)
-    if (!result.ok) {
-      return { ok: false, data: null, error: { code: result.code, message: result.message } }
-    }
-    return { ok: true, data: null, error: null }
-  })
-
-  ipcMain.handle('shelf:reveal', async (_event, payload: unknown): Promise<IpcEnvelope<void>> => {
-    const parsed = ShelfIdSchema.safeParse(payload)
-    if (!parsed.success) {
-      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
-    }
-
-    const result = await shelf.revealItem(store, parsed.data.id)
-    if (!result.ok) {
-      return { ok: false, data: null, error: { code: result.code, message: result.message } }
-    }
-    return { ok: true, data: null, error: null }
-  })
-
-  ipcMain.handle('shelf:copyPath', async (_event, payload: unknown): Promise<IpcEnvelope<void>> => {
-    const parsed = ShelfIdSchema.safeParse(payload)
-    if (!parsed.success) {
-      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid id' } }
-    }
-
-    const result = await shelf.copyItemPath(store, parsed.data.id)
     if (!result.ok) {
       return { ok: false, data: null, error: { code: result.code, message: result.message } }
     }

@@ -86,12 +86,6 @@ const islandApi = {
   removeShelfItem: (id: string): Env<void> =>
     ipcRenderer.invoke('shelf:remove', { id }),
 
-  revealShelfItem: (id: string): Env<void> =>
-    ipcRenderer.invoke('shelf:reveal', { id }),
-
-  copyShelfPath: (id: string): Env<void> =>
-    ipcRenderer.invoke('shelf:copyPath', { id }),
-
   getShelfPreview: (id: string): Env<PreviewResponse> =>
     ipcRenderer.invoke('shelf:getPreview', { id }),
 

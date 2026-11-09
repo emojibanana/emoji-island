@@ -1,5 +1,5 @@
 // src/preload/index.test.ts
-// Verifies islandApi surface: exactly 18 request/response channels + onMediaStateChanged = 19 islandApi keys., no forbidden keys.
+// Verifies islandApi surface: exactly 18 IPC channels + onMediaStateChanged = 19 islandApi keys, no forbidden keys.
 // Uses vi.mock to stub Electron — preload cannot run in jsdom without it.
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 
@@ -56,8 +56,6 @@ const EXPECTED_KEYS = [
   'listShelf',
   'addFromDrop',
   'removeShelfItem',
-  'revealShelfItem',
-  'copyShelfPath',
   'getShelfPreview',
   'dragOutShelfItem',
   // AI Chat
@@ -70,8 +68,8 @@ const EXPECTED_KEYS = [
 const FORBIDDEN_KEYS = ['ipcRenderer', 'require', 'process', 'send', 'invoke', 'on']
 
 describe('islandApi surface', () => {
-  it('exposes exactly 21 keys (20 IPC channels + onMediaStateChanged)', () => {
-    // 20 channels per spec + onMediaStateChanged (event sub)
+  it('exposes exactly 19 keys (18 IPC channels + onMediaStateChanged)', () => {
+    // 18 channels per spec + onMediaStateChanged (event sub)
     expect(Object.keys(islandApi)).toHaveLength(EXPECTED_KEYS.length)
   })
 
@@ -151,16 +149,6 @@ describe('islandApi invoke channels', () => {
   it('removeShelfItem calls invoke with shelf:remove', async () => {
     await (islandApi.removeShelfItem as (id: string) => Promise<unknown>)('id-1')
     expect(mockInvoke).toHaveBeenCalledWith('shelf:remove', { id: 'id-1' })
-  })
-
-  it('revealShelfItem calls invoke with shelf:reveal', async () => {
-    await (islandApi.revealShelfItem as (id: string) => Promise<unknown>)('id-1')
-    expect(mockInvoke).toHaveBeenCalledWith('shelf:reveal', { id: 'id-1' })
-  })
-
-  it('copyShelfPath calls invoke with shelf:copyPath', async () => {
-    await (islandApi.copyShelfPath as (id: string) => Promise<unknown>)('id-1')
-    expect(mockInvoke).toHaveBeenCalledWith('shelf:copyPath', { id: 'id-1' })
   })
 
   it('getShelfPreview calls invoke with shelf:getPreview', async () => {

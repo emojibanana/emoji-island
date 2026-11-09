@@ -6,7 +6,7 @@ import { lstat, realpath, unlink, rename } from 'fs/promises'
 import { createReadStream, createWriteStream, mkdirSync, existsSync, lstatSync, realpathSync } from 'fs'
 import { createHash, randomUUID } from 'crypto'
 import { join, extname, basename, resolve, sep } from 'path'
-import { app, shell, clipboard } from 'electron'
+import { app } from 'electron'
 import type { ShelfItemMetadata, ErrorCode } from '../../shared/types'
 import {
   sanitizeFilename,
@@ -87,7 +87,21 @@ async function addFromDropInner(
       return { ok: false, code: 'PATH_INVALID', message: 'Junctions rejected' }
     }
 
-    // 2. Check capacity (50 items, 500 MB total, 100 MB per file)
+    // 2. T-025h / D-014 amendment: main-side self-drop guard.
+    // A shelf file dragged out and dropped back onto the island resolves inside userData/shelf.
+    // Never re-copy, never add metadata: return the existing item or reject. No path/name logging.
+    const shelfRoot = shelfDir()
+    const realRoot = existsSync(shelfRoot) ? realpathSync(shelfRoot) : shelfRoot
+    if (isInsideShelfDir(shelfRoot, realPath) || isInsideShelfDir(realRoot, realPath)) {
+      const storedName = basename(realPath).toLowerCase()
+      const dupes = store.listShelf().filter((i) => i.storedFileName.toLowerCase() === storedName)
+      const existing = dupes.length === 1 ? dupes[0] : undefined
+      return existing
+        ? { ok: true, data: existing }
+        : { ok: false, code: 'PATH_INVALID', message: 'Shelf file cannot be re-added' }
+    }
+
+    // 3. Check capacity (50 items, 500 MB total, 100 MB per file)
     const currentItems = store.listShelf()
     const fileSize = stats.size
     const cap = canAddItem(currentItems, fileSize)
@@ -201,40 +215,6 @@ export async function removeItem(store: AppStore, id: string): Promise<Result<vo
   } catch {
     return { ok: false, code: 'STORAGE_ERROR', message: 'Remove failed' }
   }
-}
-
-export async function revealItem(store: AppStore, id: string): Promise<Result<void>> {
-  const items = store.listShelf()
-  const item = items.find((i) => i.id === id)
-
-  if (!item) {
-    return { ok: false, code: 'VALIDATION_ERROR', message: 'Item not found' }
-  }
-
-  const filePath = join(shelfDir(), item.storedFileName)
-  if (!isInsideShelfDir(shelfDir(), item.storedFileName)) {
-    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
-  }
-  shell.showItemInFolder(filePath)
-
-  return { ok: true, data: undefined }
-}
-
-export async function copyItemPath(store: AppStore, id: string): Promise<Result<void>> {
-  const items = store.listShelf()
-  const item = items.find((i) => i.id === id)
-
-  if (!item) {
-    return { ok: false, code: 'VALIDATION_ERROR', message: 'Item not found' }
-  }
-
-  const filePath = join(shelfDir(), item.storedFileName)
-  if (!isInsideShelfDir(shelfDir(), item.storedFileName)) {
-    return { ok: false, code: 'PATH_INVALID', message: 'Path outside shelf directory' }
-  }
-  clipboard.writeText(filePath)
-
-  return { ok: true, data: undefined }
 }
 
 // T-025f-spike / D-014 amendment: resolve a shelf file for native drag-out.
