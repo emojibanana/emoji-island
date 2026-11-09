@@ -95,8 +95,6 @@ The preload exposes a frozen typed `islandApi`. `window:setInputActive` and `win
 *   **`shelf:list`** -> `IpcResponse<ShelfItemMetadata[]>`
 *   **`shelf:addFromDrop`** -> `IpcResponse<ShelfItemMetadata>`
 *   **`shelf:remove`** -> `IpcResponse<void>`
-*   **`shelf:reveal`** -> `IpcResponse<void>`
-*   **`shelf:copyPath`** -> `IpcResponse<void>`
 *   **`shelf:getPreview`** -> `IpcResponse<{ dataUrl: string; mimeType: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif' }>`
     *   The data URL is generated on demand and never persisted. Non-image or > 2 MB returns `UNSUPPORTED_TYPE` or `FILE_TOO_LARGE`.
 *   **`shelf:dragOut`** —> `invoke —> payload: { id: UUID } —> response: IpcEnvelope<void>` `Main resolves the shelf item by id, validates containment inside userData/shelf, verifies the stored file is a regular existing file, and initiates native drag via webContents.startDrag. Renderer never supplies a filesystem path. Success of startDrag does not imply the external target completed copying/uploading. Shelf item remains in the shelf after drag-out.`

@@ -53,8 +53,8 @@
 | T-025c | Media Bridge UTF-8 Encoding Hotfix | done | 36de383 |
 | T-025d-inv | Media Artwork Feasibility Investigation | done | c298a34 |
 | T-025d | Media Artwork Support | done | 8e34049 |
-| T-025f-spike | Shelf Drag-Out Gesture Spike | manual-pending | - |
-| T-025g | Shelf UI Simplification | todo | - |
+| T-025f-spike | Shelf Drag-Out Gesture Spike | done | - |
+| T-025g | Shelf UI Simplification | done | - |
 | T-025h | Shelf IPC Surface Reduction + Self-Drop Guard | todo | - |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
