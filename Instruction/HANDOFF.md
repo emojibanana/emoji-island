@@ -32,10 +32,8 @@ One task per session, one commit per task. The agent never creates milestone tag
 ## Progress snapshot (the human updates this after each task)
 
 Done: T-001 to T-025d (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; T-025b media tab wiring done; T-025c media UTF-8 encoding done; T-025d-inv media artwork feasibility investigation done; T-025d media artwork support done after human M-008 retest).
-Next: T-025f-spike (Shelf Drag-Out Gesture Spike) only after owner records D-014/IPC_SPEC amendment and TESTING.md manual checks.
-Waiting: none for M2 correction. Shelf drag-out is a post-M2 enhancement outside D-022 Minimum Demo Scope.
-Owner commit-language override: from T-020-Lb onward, commit messages use Indonesian descriptions while keeping Conventional Commits type/scope in English.
-Known scope decision: Phase 1 shelf drag-out is single-file, persistent shelf, no auto-remove, no TTL, no multi-file, and no auto-switch Files. If gesture is unreliable, fallback is Reveal in Explorer / Copy Path. T-025f-spike Files list includes src/preload/index.test.ts so the frozen islandApi surface test can be updated atomically with the implementation. IPC_SPEC count is synchronized to 21 islandApi keys / 20 request channels.
+Next: human manual check T-025f-spike (M-021, M-023, M-025, M-026; M-022 optional). If gesture passes, mark T-025f-spike done and decide whether to continue to Phase 1 polish or move to M3. If gesture fails, evaluate owner-approved send/on spike variant before fallback.
+Known scope decision: Shelf drag-out gesture via IPC invoke is UNVERIFIED on Windows. Native drag reliability is the deciding factor for this spike.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.

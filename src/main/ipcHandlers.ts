@@ -244,7 +244,17 @@ export function registerShelfHandlers(store: AppStore): void {
 
     // The resolved path stays in main: startDrag only, never returned in the envelope.
     // Success here means the drag started — not that the external target copied/uploaded it.
+      try {
     event.sender.startDrag({ file: resolved.data, icon: DRAG_ICON_PATH })
-    return { ok: true, data: null, error: null }
-  })
+  } catch {
+    log.warn('[shelf] dragOut start failed')
+    return {
+      ok: false,
+      data: null,
+      error: { code: 'STORAGE_ERROR', message: 'Drag-out failed' },
+    }
+  }
+
+  return { ok: true, data: null, error: null }
+    })
 }
