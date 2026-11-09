@@ -1,5 +1,5 @@
 // src/preload/index.test.ts
-// Verifies islandApi surface: exactly 21 keys (20 IPC channels + onMediaStateChanged event sub), no forbidden keys.
+// Verifies islandApi surface: exactly 18 request/response channels + onMediaStateChanged = 19 islandApi keys., no forbidden keys.
 // Uses vi.mock to stub Electron — preload cannot run in jsdom without it.
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 

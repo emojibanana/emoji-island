@@ -1,16 +1,17 @@
-// T-023 / UI_SPEC §3: ShelfItem — displays one shelf entry with action menu.
-// Actions: Reveal in Explorer, Copy Path, Remove, Preview (image only).
-// Accessible: keyboard-reachable, aria labels, visible focus rings, no color-only indicators.
-import { useState, type DragEvent } from 'react'
-import { FolderOpen, Copy, Trash2, Eye, File, Image } from 'lucide-react'
+// T-025g / UI_SPEC §3: compact single-row shelf item with icon-only actions.
+// No inline menu. Preview icon only for supported images; remove icon always.
+// Whole row stays draggable for shelf drag-out (D-014): the renderer sends only
+// the item id, never a filesystem path. Drag-out failure is reported to ShelfList
+// so rows keep a fixed height.
+import type { DragEvent } from 'react'
+import { Eye, File, Image, Trash2 } from 'lucide-react'
 import type { ShelfItemMetadata } from '../../../shared/types'
 
 export interface ShelfItemProps {
   item: ShelfItemMetadata
-  onReveal: (id: string) => void
-  onCopyPath: (id: string) => void
   onRemove: (id: string) => void
   onPreview: (id: string) => void
+  onDragFailed: () => void
 }
 
 function isImage(mimeType: string): boolean {
@@ -23,121 +24,61 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1048576).toFixed(1)} MB`
 }
 
-export function ShelfItem({ item, onReveal, onCopyPath, onRemove, onPreview }: ShelfItemProps): JSX.Element {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [dragFailed, setDragFailed] = useState(false)
+export function ShelfItem({ item, onRemove, onPreview, onDragFailed }: ShelfItemProps): JSX.Element {
   const image = isImage(item.mimeType)
 
-  // T-025f-spike / D-014 amendment: single-file drag-out.
-  // Cancel the default HTML5 drag so main can start the native one via webContents.startDrag.
-  // The renderer only sends the item id — never a filesystem path.
-  const handleDragStart = async (e: DragEvent<HTMLLIElement>): Promise<void> => {
-    e.preventDefault()
-    setDragFailed(false)
+  const handleDragStart = async (event: DragEvent<HTMLLIElement>): Promise<void> => {
+    event.preventDefault()
     try {
-      const res = await window.islandApi.dragOutShelfItem(item.id)
-      if (!res.ok) setDragFailed(true)
+      const result = await window.islandApi.dragOutShelfItem(item.id)
+      if (!result.ok) onDragFailed()
     } catch {
-      setDragFailed(true)
+      onDragFailed()
     }
   }
 
+  const body = (
+    <>
+      <span className="shrink-0 text-[#A3A3A3]" aria-hidden="true">
+        {image ? <Image className="h-4 w-4" /> : <File className="h-4 w-4" />}
+      </span>
+      <span className="min-w-0 flex-1 truncate" title={item.originalName}>{item.originalName}</span>
+      <span className="shrink-0 text-[11px] text-[#A3A3A3]">{formatBytes(item.sizeBytes)}</span>
+    </>
+  )
+
   return (
     <li
-      className="rounded-lg border border-white/[0.08] bg-white/[0.04] text-[13px] text-[#F5F5F5] overflow-hidden cursor-grab"
+      className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-[13px] text-[#F5F5F5] cursor-grab hover:bg-white/[0.07] transition-colors motion-reduce:transition-none"
       aria-label={`Shelf item: ${item.originalName}`}
       draggable
-      onDragStart={(e) => { void handleDragStart(e) }}
+      onDragStart={(event) => { void handleDragStart(event) }}
     >
-      {/* Main item row */}
-      <div className="flex items-center gap-2 px-3 py-2 hover:bg-white/[0.07] transition-colors motion-reduce:transition-none">
-        {/* File type icon */}
-        <span className="shrink-0 text-[#A3A3A3]" aria-hidden="true">
-          {image ? <Image className="h-4 w-4" /> : <File className="h-4 w-4" />}
-        </span>
-
-        {/* Name + size */}
-        <span className="min-w-0 flex-1 truncate" title={item.originalName}>
-          {item.originalName}
-        </span>
-        <span className="shrink-0 text-[11px] text-[#A3A3A3]">{formatBytes(item.sizeBytes)}</span>
-
-        {/* Action menu toggle */}
+      {image ? (
         <button
-          aria-label={`Actions for ${item.originalName}`}
-          aria-expanded={menuOpen}
-          aria-haspopup="menu"
-          onClick={() => setMenuOpen((v) => !v)}
-          className="shrink-0 rounded px-1.5 py-0.5 text-[#A3A3A3] hover:bg-white/[0.1] hover:text-[#F5F5F5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C9CFF]"
-        >
-          •••
-        </button>
-      </div>
+          type="button"
+          className="-my-2 -ml-3 flex min-w-0 flex-1 items-center gap-2 self-stretch py-2 pl-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#7C9CFF]"
+          onClick={(event) => { event.stopPropagation(); onPreview(item.id) }}
+          onDragStart={(event) => event.stopPropagation()}
+        >{body}</button>
+      ) : <span className="flex min-w-0 flex-1 items-center gap-2">{body}</span>}
 
-      {/* T-025f-spike: safe, non-sensitive drag-out failure feedback (no paths/names). */}
-      {dragFailed && (
-        <p role="alert" className="px-3 pb-2 pt-0.5 text-[11px] text-[#FF6B6B]">
-          Drag-out is not available for this item.
-        </p>
+      {image && (
+        <button
+          type="button"
+          aria-label="Preview image"
+          className="shrink-0 rounded p-1 text-[#A3A3A3] hover:bg-white/[0.1] hover:text-[#F5F5F5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C9CFF]"
+          onClick={(event) => { event.stopPropagation(); onPreview(item.id) }}
+          onDragStart={(event) => event.stopPropagation()}
+        ><Eye className="h-4 w-4" aria-hidden="true" /></button>
       )}
-
-      {/* Inline action panel */}
-      {menuOpen && (
-        <div className="border-t border-white/[0.08] bg-white/[0.02]">
-          <ul
-            role="menu"
-            aria-label={`Actions for ${item.originalName}`}
-            className="py-1"
-          >
-            <ActionItem
-              icon={<FolderOpen className="h-3.5 w-3.5" />}
-              label="Reveal in Explorer"
-              onClick={() => { onReveal(item.id); setMenuOpen(false) }}
-            />
-            <ActionItem
-              icon={<Copy className="h-3.5 w-3.5" />}
-              label="Copy Path"
-              onClick={() => { onCopyPath(item.id); setMenuOpen(false) }}
-            />
-            {image && (
-              <ActionItem
-                icon={<Eye className="h-3.5 w-3.5" />}
-                label="Preview"
-                onClick={() => { onPreview(item.id); setMenuOpen(false) }}
-              />
-            )}
-            <li role="separator" className="my-1 border-t border-white/[0.08]" />
-            <ActionItem
-              icon={<Trash2 className="h-3.5 w-3.5 text-[#FF6B6B]" />}
-              label="Remove"
-              className="text-[#FF6B6B]"
-              onClick={() => { onRemove(item.id); setMenuOpen(false) }}
-            />
-          </ul>
-        </div>
-      )}
-    </li>
-  )
-}
-
-interface ActionItemProps {
-  icon: JSX.Element
-  label: string
-  onClick: () => void
-  className?: string
-}
-
-function ActionItem({ icon, label, onClick, className = '' }: ActionItemProps): JSX.Element {
-  return (
-    <li role="none">
       <button
-        role="menuitem"
-        onClick={onClick}
-        className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] text-[#F5F5F5] hover:bg-white/[0.1] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#7C9CFF] ${className}`}
-      >
-        {icon}
-        {label}
-      </button>
+        type="button"
+        aria-label="Remove item"
+        className="shrink-0 rounded p-1 text-[#FF6B6B] hover:bg-white/[0.1] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C9CFF]"
+        onClick={(event) => { event.stopPropagation(); onRemove(item.id) }}
+        onDragStart={(event) => event.stopPropagation()}
+      ><Trash2 className="h-4 w-4" aria-hidden="true" /></button>
     </li>
   )
 }

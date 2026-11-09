@@ -21,6 +21,7 @@ export function ShelfList({ version }: ShelfListProps): JSX.Element {
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [preview, setPreview] = useState<PreviewModal | null>(null)
+  const [dragFailed, setDragFailed] = useState(false)
 
   const loadItems = useCallback(async () => {
     setLoadState('loading')

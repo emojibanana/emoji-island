@@ -27,3 +27,28 @@
 | D-022 | Cut priority (first to cut within v0.1): landing page, E2E tests, true drag-out, AI streaming, weather city search, advanced thumbnails, full media control. NOT cuttable: single instance lock, hotkey, overlay shell, clock, basic weather, shelf (copy/list/reveal/copy path/delete), MockProvider chat, basic packaging, README, LICENSE. | Protects the demo. | Locked |
 | D-023 | MVP Scope: v0.1 in = clock/weather, media (Locked or Degraded variant), shelf, AI chat (MockProvider only), tray, hotkey, single instance, settings core (location, hotkey, reducedMotion). v0.2 = real OpenAI-compatible adapter + AI settings. Future = Gemini adapter, voice, true drag-out, multi-monitor, fullscreen auto-hide, launch at login, macOS/Linux. | Thin vertical slice boundaries. | Locked |
 | D-024 | Version Scope: v0.1 ships MockProvider only plus Settings core (location, hotkey, reducedMotion). The real OpenAI-compatible adapter (T-027, T-028, T-030) is v0.2 and is NOT part of the v0.1 buffered total. Official calendar target: 7-8 weeks at 14 h/week. | Ensures v0.1 delivers the fastest viable Hero Moment. | Locked |
+
+### D-014 amendment — owner-approved shelf surface reduction and self-drop guard
+
+This amendment removes two shelf channels from the frozen typed `islandApi` surface:
+
+- `shelf:reveal`
+- `shelf:copyPath`
+
+Corresponding preload methods are removed:
+
+- `revealShelfItem`
+- `copyShelfPath`
+
+After this amendment and the existing `shelf:dragOut` addition, the frozen `islandApi` surface contains 19 keys: 18 request/response channels plus `onMediaStateChanged`.
+
+This amendment also defines self-drop behavior for `shelf:addFromDrop`:
+
+- Main must detect when the resolved source path is inside `userData/shelf`.
+- Such drops are self-drops from the island back to the island.
+- Main must not create a duplicate shelf item for a self-drop.
+- If a matching existing shelf metadata item can be identified safely, main may return that existing item.
+- If no matching item can be identified, main must reject with a safe `PATH_INVALID` error.
+- Renderer must never supply filesystem paths.
+- No filesystem path, file name, file content, or media metadata may be logged.
+- No new IPC channel is introduced by this amendment.

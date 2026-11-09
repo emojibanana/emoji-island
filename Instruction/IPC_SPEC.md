@@ -45,10 +45,10 @@ const Mode = z.enum(['collapsed', 'expanded']);
 window:setMode        // in: z.object({ mode: Mode })
 window:setInputActive // in: z.object({ active: z.boolean() })
 window:setDragActive  // in: z.object({ active: z.boolean() })
-shelf:addFromDrop     // in: z.object({ sourcePath: z.string().min(3).max(1024) })
+shelf:addFromDrop     // in: z.object({ sourcePath: z.string().min(3).max(1024) }) 
+/*Self-drop guard:
+If the resolved source path is inside userData/shelf, main must not copy it again. Main may return an existing matching shelf item when it can be identified safely from existing metadata. Otherwise main must reject with PATH_INVALID. The response must not contain filesystem paths. No path, file name, file content, or media metadata is logged.*/
 shelf:remove          // in: z.object({ id: z.string().uuid() })
-shelf:reveal          // in: z.object({ id: z.string().uuid() })
-shelf:copyPath        // in: z.object({ id: z.string().uuid() })
 shelf:getPreview      // in: z.object({ id: z.string().uuid() })
 ai:send               // in: z.object({ content: z.string().trim().min(1).max(4000) })
 media:control         // in: z.object({ action: z.enum(['play','pause','next','previous']) })

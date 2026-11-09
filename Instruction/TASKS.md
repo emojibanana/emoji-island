@@ -402,8 +402,33 @@
     9. Move drag-out failure feedback out of per-item variable-height layout into a single non-sensitive ShelfList status region.
     10. Do not remove backend reveal/copyPath IPC in this task.
     11. Do not log file paths, file names, file contents, or media metadata.
-*   **Acceptance Criteria:** No inline menu; no clipped Remove action; no layout shift from menus/errors; image preview works via click/icon; remove works via icon; non-image click is no-op; drag-out remains functional; accessibility preserved; gates pass.
+*   **Acceptance Criteria:** No inline menu; no clipped Remove action; no layout shift from menus/errors; image preview works via click/    icon; remove works via icon; non-image click is no-op; drag-out remains functional; accessibility preserved; gates pass.
 *   **Verification:** `manual_check_id`: M-010
+
+### T-025h: Shelf IPC Surface Reduction + Self-Drop Guard
+
+*   **Depends On:** T-025g, owner-approved D-014 amendment
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Human manual: 0.5 | Est: 3.0
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-012, D-013, D-014, D-015), IPC_SPEC, DATA_MODEL, UI_SPEC, This task card.
+*   **Files:** `src/shared/types.ts`, `src/shared/schemas.ts`, `src/preload/index.ts`, `src/preload/index.test.ts`, `src/main/ipcHandlers.ts`, `src/main/services/shelf.ts`
+*   **read_files:** `src/main/services/shelfPreview.ts`, `src/main/services/store.ts`, `src/renderer/src/components/ShelfItem.tsx`, `src/renderer/src/components/ShelfList.tsx`, `Instruction/DECISIONS.md`, `Instruction/IPC_SPEC.md`, `Instruction/DATA_MODEL.md`, `Instruction/UI_SPEC.md`, `Instruction/TESTING.md`
+*   **commit:** `refactor(shelf): hapus reveal/copy path dan tambahkan self-drop guard`
+*   **Steps:**
+    1. Confirm owner-approved D-014 amendment exists before editing.
+    2. Remove revealShelfItem and copyShelfPath from shared types/schemas if present there.
+    3. Remove shelf:reveal and shelf:copyPath handlers from main.
+    4. Remove corresponding preload methods.
+    5. Update preload surface test from 21 keys to 19 keys by removing revealShelfItem and copyShelfPath.
+    6. Add main-side self-drop guard to shelf:addFromDrop.
+    7. Self-drop guard must detect source path inside userData/shelf.
+    8. Self-drop must not create duplicate metadata or physical file.
+    9. If matching existing metadata can be identified safely, return existing metadata. Otherwise reject with PATH_INVALID.
+    10. Do not log paths, names, contents, or media metadata.
+    11. Do not add new IPC channels.
+    12. Do not modify renderer unless a compile error proves it still references removed methods; if renderer changes are required, stop and report scope blocker.
+*   **Acceptance Criteria:** reveal/copyPath absent from shared/preload/main/test; islandApi surface is 19 keys; self-drop from island to island does not duplicate; normal external drop still works; missing file safe; gates pass.
+*   **Verification:** `manual_check_id`: M-010, M-011, M-021, M-023, M-026, M-028
 
 # Tasks: Milestone 3 & 4
 

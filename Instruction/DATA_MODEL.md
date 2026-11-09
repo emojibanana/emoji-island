@@ -115,3 +115,5 @@ All types are exported in `src/shared/types.ts` and validated in the Main Proces
 *   Seed defaults: Jakarta (-6.2, 106.8), `Ctrl+Alt+Space`, `reducedMotion=false`, `aiEndpoint=null`, `aiModel=null`, `aiKeyPersisted=false`, empty arrays.
 *   ChatMessage `model` for Mock = `'mock-v1'`; for real adapter = the configured `aiModel` (no default value).
 *   ER note: entities are independent collections; there are no relational links.
+
+Shelf self-drop guard uses existing shelf metadata and main-resolved source path. It does not require renderer-supplied paths. If a persistent source identity field such as sourcePathHash already exists, it may be reused for duplicate detection. If it does not exist, do not add one in T-025h; implement self-drop guard using main-side shelf-directory containment and existing metadata matching only.
