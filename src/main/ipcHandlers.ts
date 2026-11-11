@@ -4,10 +4,13 @@
 // T-022 / D-012 / T-025h: Shelf IPC handlers — addFromDrop, list, remove.
 // T-023 / D-013: shelf:getPreview handler.
 // T-025f-spike / D-014 amendment: shelf:dragOut handler.
+// T-026a / D-006: AI Chat handlers — ai:getStatus, ai:getHistory, ai:send, ai:clear (mock only, D-024).
 import { ipcMain } from 'electron'
 import log from 'electron-log'
+import { randomUUID } from 'crypto'
 import { join } from 'path'
 import {
+  AiSendSchema,
   WindowSetDragActiveSchema,
   WindowSetInputActiveSchema,
   WindowSetModeSchema,
@@ -15,8 +18,9 @@ import {
   ShelfAddFromDropSchema,
   ShelfIdSchema,
 } from '../shared/schemas'
-import type { IpcEnvelope, MediaState, WeatherResult, ShelfItemMetadata } from '../shared/types'
+import type { ChatMessage, IpcEnvelope, MediaState, WeatherResult, ShelfItemMetadata } from '../shared/types'
 import * as shelfPreview from './services/shelfPreview'
+import { createAiService, type AiStatus } from './services/ai'
 import type { FocusController } from './services/focus-controller'
 import type { AppStore } from './services/store'
 import { createWeatherService } from './services/weather'
@@ -231,4 +235,35 @@ export function registerShelfHandlers(store: AppStore): void {
 
   return { ok: true, data: null, error: null }
     })
+}
+
+// T-026a / D-006 / D-024: AI Chat IPC handlers over the in-process MockProvider.
+// v0.1 keeps chat history in memory (card T-026a: no new persistence fields), so the store
+// is only the mandated registration call site and has nothing to inject yet.
+export function registerAiHandlers(_store: AppStore): void {
+  // Composition root: the service itself stays Electron-free (see services/ai.ts).
+  const service = createAiService({ now: () => Date.now(), newId: () => randomUUID() })
+
+  ipcMain.handle('ai:getStatus', (): IpcEnvelope<AiStatus> => {
+    return { ok: true, data: service.getStatus(), error: null }
+  })
+
+  ipcMain.handle('ai:getHistory', (): IpcEnvelope<ChatMessage[]> => {
+    return { ok: true, data: service.getHistory(), error: null }
+  })
+
+  // IPC_SPEC §4: ai:send returns the assistant message. MockProvider runs in-process and
+  // cannot fail; the PROVIDER_ERROR envelope belongs to the real adapter (T-028).
+  ipcMain.handle('ai:send', (_event, payload: unknown): IpcEnvelope<ChatMessage> => {
+    const parsed = AiSendSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid ai:send payload' } }
+    }
+    return { ok: true, data: service.send(parsed.data.content), error: null }
+  })
+
+  ipcMain.handle('ai:clear', (): IpcEnvelope<void> => {
+    service.clear()
+    return { ok: true, data: null, error: null }
+  })
 }

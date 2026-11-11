@@ -11,7 +11,7 @@ import { AppStore } from './services/store'
 import { createTray, destroyTray, setTrayTooltip } from './services/tray'
 import { registerHotkey, unregisterHotkey } from './services/hotkey'
 import { FocusController, type IslandMode } from './services/focus-controller'
-import { registerMediaHandlers, registerShelfHandlers, registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
+import { registerAiHandlers, registerMediaHandlers, registerShelfHandlers, registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
 import { createMediaService } from './services/media'
 
 const COLLAPSED = { width: 280, height: 40 } as const
@@ -125,6 +125,7 @@ if (!app.requestSingleInstanceLock()) {
     registerWindowHandlers(focusController)
     registerWeatherHandlers(store)
     registerShelfHandlers(store)
+    registerAiHandlers(store)
 
     mainWindow = createWindow()
 
