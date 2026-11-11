@@ -52,3 +52,23 @@ This amendment also defines self-drop behavior for `shelf:addFromDrop`:
 - Renderer must never supply filesystem paths.
 - No filesystem path, file name, file content, or media metadata may be logged.
 - No new IPC channel is introduced by this amendment.
+
+### D-008 amendment — owner-approved media session discovery poll
+
+The locked media bridge model remains:
+- one persistent Windows PowerShell 5.1 child process;
+- never pwsh;
+- newline-delimited JSON over stdio;
+- Playing-first session selection;
+- AUMID allowlist;
+- no media metadata logging;
+- ~700 ms re-poll after a media command.
+
+This amendment changes only the idle/discovery behavior:
+- while no usable media session is present, the bridge may perform a low-frequency discovery poll every 5 seconds;
+- once a usable session is present, active polling returns to the existing 3-second cadence;
+- polling must not spawn additional PowerShell processes;
+- unavailable state must remain safe and non-crashing;
+- no title, artist, album, artwork, path, or other media metadata may be logged.
+
+Reason: the previous “poll only while a session exists” behavior prevented newly started media sessions from being detected until the app was restarted.

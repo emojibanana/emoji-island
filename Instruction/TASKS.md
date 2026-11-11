@@ -430,6 +430,26 @@
 *   **Acceptance Criteria:** reveal/copyPath absent from shared/preload/main/test; islandApi surface is 19 keys; self-drop from island to island does not duplicate; normal external drop still works; missing file safe; gates pass.
 *   **Verification:** `manual_check_id`: M-010, M-011, M-021, M-023, M-026, M-028
 
+### T-025i: Media Session Discovery Poll Fix
+*   **Depends On:** T-025h, owner-approved D-008 amendment
+*   **Hours:** Agent: 0.5 | Review: 0.5 | Human manual: 0.5 | Est: 1.5
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008), IPC_SPEC, TESTING, This task card.
+*   **Files:** `src/main/services/media-bridge.ts`
+*   **read_files:** `src/main/services/media.ts`, `scripts/smtc-bridge.ps1`, `src/main/ipcHandlers.ts`, `src/shared/types.ts`, `Instruction/DECISIONS.md`, `Instruction/IPC_SPEC.md`, `Instruction/TESTING.md`
+*   **commit:** `fix(media): tambahkan discovery poll saat tidak ada sesi media`
+*   **Steps:**
+    1. Confirm owner-approved D-008 amendment exists before editing.
+    2. Add low-frequency discovery polling while no usable media session is present.
+    3. Preserve active polling at ~3000 ms while a session exists.
+    4. Preserve ~700 ms re-poll after media commands.
+    5. Preserve one persistent PowerShell 5.1 bridge process.
+    6. Do not spawn new PowerShell processes.
+    7. Do not log media metadata.
+    8. Do not change renderer, preload, shared, IPC channels, CSP, dependencies, or PowerShell bridge unless a scope blocker is reported.
+*   **Acceptance Criteria:** Starting Island with no media, then starting music later, causes the track to appear within the discovery poll window without restarting Island. Stopping music returns unavailable. Starting music again is detected again. Gates pass.
+*   **Verification:** `manual_check_id`: M-008b
+
 # Tasks: Milestone 3 & 4
 
 ---

@@ -32,8 +32,8 @@ One task per session, one commit per task. The agent never creates milestone tag
 ## Progress snapshot (the human updates this after each task)
 
 Done: T-001 to T-025d (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; T-025b media tab wiring done; T-025c media UTF-8 encoding done; T-025d-inv media artwork feasibility investigation done; T-025d media artwork support done after human M-008 retest).
-Next: T-025h (Shelf IPC Surface Reduction + Self-Drop Guard) after T-025g passes.
-Known scope decision: shelf reveal/copyPath are removed from user-facing UI in T-025g and from IPC/preload/shared in T-025h. Self-drop guard is main-side only. No auto-remove/TTL/multi-file/consume lifecycle is approved.
+Next: T-025i (Media Session Discovery Poll Fix). Do not start M3 until media newly-started-session detection is verified.
+Known media bug: media bridge currently stops polling when no session exists, so media started after Island launch is not discovered until restart. T-025i adds owner-approved discovery poll.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.

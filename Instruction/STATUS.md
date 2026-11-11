@@ -53,9 +53,10 @@
 | T-025c | Media Bridge UTF-8 Encoding Hotfix | done | 36de383 |
 | T-025d-inv | Media Artwork Feasibility Investigation | done | c298a34 |
 | T-025d | Media Artwork Support | done | 8e34049 |
-| T-025f-spike | Shelf Drag-Out Gesture Spike | done | - |
-| T-025g | Shelf UI Simplification | done | - |
-| T-025h | Shelf IPC Surface Reduction + Self-Drop Guard | todo | - |
+| T-025f-spike | Shelf Drag-Out Gesture Spike | done | 58342d9 |
+| T-025g | Shelf UI Simplification | done | 738fb4e |
+| T-025h | Shelf IPC Surface Reduction + Self-Drop Guard | done | bfbab0e |
+| T-025i | Media Session Discovery Poll Fix | todo | - |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
 | T-026b | AiChat UI & Focus active | todo | - |
@@ -110,3 +111,4 @@
 *   T-025f-spike: Single-file shelf drag-out prototype implemented in 4eebd37. Adds typed islandApi.dragOutShelfItem(id) and main shelf:dragOut handler per owner-approved D-014 amendment. Renderer sends only UUID id; main resolves the shelf file synchronously with containment, lstatSync/realpathSync, symlink/directory/missing-file rejection, and calls webContents.startDrag using bundled resources/tray-icon.png. No filesystem path is returned to renderer or logged; only error code is logged. Shelf item remains after drag-out; no auto-remove, TTL, multi-file, consume lifecycle, or auto-switch Files. Preload surface test was updated from 20 to 21 keys in the same implementation commit. Automated gates pass: typecheck OK, vitest 216/216, lint OK, build OK, forbidden-names grep empty. Gesture reliability for renderer dragstart -> IPC invoke -> main startDrag remains UNVERIFIED on Windows and is the spike blocker; human manual checks M-021, M-023, M-025, and M-026 are required, with M-022 optional. If M-025 fails, owner should first evaluate an ipcRenderer.send/ipcMain.on gesture variant before accepting Reveal/Copy Path as fallback. Status manual-pending.
 *   T-025g: Renderer-only shelf UI simplification. Removes inline three-dot menu that caused clipped Remove actions and layout shifts. Replaces it with icon-only Preview and Remove actions, image-click preview, non-image no-op, and persistent single-row layout. Backend shelf:reveal and shelf:copyPath remain temporarily unused and are scheduled for removal in T-025h. Drag-out remains whole-item draggable. Status todo.
 *   T-025h: Removes shelf:reveal and shelf:copyPath from the frozen islandApi surface under owner-approved D-014 amendment. Updates preload surface test from 21 keys to 19 keys. Adds main-side self-drop guard so dragging a shelf item back onto the island does not create duplicate shelf metadata or physical files. Renderer must not supply filesystem paths. No new IPC channel is introduced. Status todo until human manual checks M-010, M-011, M-021, M-023, M-026, and M-028 pass.
+*   T-025i: Fixes media session discovery regression where newly started media after Island launch remained unavailable because polling stopped when no session existed. Adds owner-approved 5-second discovery poll while unavailable, preserves 3-second active poll and 700-ms re-poll, preserves D-008 persistent PowerShell bridge model, and logs no media metadata. Status todo until human M-008b passes.
