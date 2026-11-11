@@ -21,6 +21,7 @@ function scriptPath(): string {
 
 const MAX_RESTARTS = 3
 const RESTART_DELAY_MS = 2000
+const DISCOVERY_POLL_MS = 5000
 const UNAVAILABLE_STATE: MediaState = {
   title: null,
   artist: null,
@@ -80,11 +81,9 @@ export function createMediaBridge(onStateChanged: MediaStateChangedCallback): Me
       const state = responseToState(resp)
       hasActiveSession = state.status !== 'unavailable'
       onStateChanged(state)
-      // D-008: poll every 3 s only while a session exists.
-      if (hasActiveSession) {
-        schedulePoll(3000)
-      }
-      // If no session, stop polling; the bridge stays alive awaiting restart cues.
+      // D-008: poll every 3 s while a session exists, and discover new
+      // sessions every 5 s while unavailable.
+      schedulePoll(hasActiveSession ? 3000 : DISCOVERY_POLL_MS)
     }).catch(() => {
       if (!disposed) onStateChanged(UNAVAILABLE_STATE)
     })
