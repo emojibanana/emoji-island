@@ -56,7 +56,7 @@
 | T-025f-spike | Shelf Drag-Out Gesture Spike | done | 58342d9 |
 | T-025g | Shelf UI Simplification | done | 738fb4e |
 | T-025h | Shelf IPC Surface Reduction + Self-Drop Guard | done | bfbab0e |
-| T-025i | Media Session Discovery Poll Fix | todo | - |
+| T-025i | Media Session Discovery Poll Fix | done | d9bfd85 |
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | todo | - |
 | T-026b | AiChat UI & Focus active | todo | - |
