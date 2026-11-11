@@ -30,10 +30,11 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-
-Done: T-001 to T-025d (T-007b skipped; D-008 Locked; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; T-025b media tab wiring done; T-025c media UTF-8 encoding done; T-025d-inv media artwork feasibility investigation done; T-025d media artwork support done after human M-008 retest).
-Next: T-025i (Media Session Discovery Poll Fix). Do not start M3 until media newly-started-session detection is verified.
-Known media bug: media bridge currently stops polling when no session exists, so media started after Island launch is not discovered until restart. T-025i adds owner-approved discovery poll.
+Done: T-001 to T-025i (T-007b skipped; D-008 Locked with owner-approved discovery poll amendment; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; post-M2 corrections T-025b/T-025c/T-025d/T-025f-spike/T-025g/T-025h/T-025i done).
+Next: T-026a (MockProvider & History Store) or the next official M3 task from Instruction/TASKS.md.
+Waiting: none for M2/post-M2 media correction.
+Known follow-up: UI overhaul ideas are recorded in Instruction/BACKLOG_UI_OVERHAUL_V2.md and should be evaluated after M3/M4, not before core v0.1 features are complete.
+Known media behavior: media session discovery now uses owner-approved low-frequency polling while unavailable; do not change polling/re-poll behavior without a new owner decision.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
