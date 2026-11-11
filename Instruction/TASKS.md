@@ -460,11 +460,12 @@
 *   **Hours:** Agent: 2.0 | Review: 1.0 | Est: 3.0
 *   **Tier:** strong
 *   **Context Pack:** AGENTS.md, DECISIONS (D-006), This task card.
-*   **Files:** `src/main/services/ai.ts`, `src/main/ipcHandlers.ts`, `src/main/services/ai.test.ts`
+*   **Files:** `src/main/services/ai.ts`, `src/main/ipcHandlers.ts`, `src/main/services/ai.test.ts`, `src/main/index.ts`
 *   **read_files:** `src/shared/types.ts`
 *   **commit:** `feat(ai): implement mock provider and history store`
-*   **Steps:** Build MockProvider (returns "Mock reply: " + first 80 chars within 1s). Implement chat history array (max 50) and context builder (last 8). Wire `ai:getStatus`, `ai:getHistory`, `ai:send`, `ai:clear`.
+*   **Steps:** Build MockProvider (returns "Mock reply: " + first 80 chars within 1s). Implement chat history array (max 50) and context builder (last 8). Wire `ai:getStatus`, `ai:getHistory`, `ai:send`, `ai:clear`. Call `registerAiHandlers(store)` from the main bootstrap so the AI IPC handlers are active.
 *   **Verification:** `automated_command`: `npx vitest run src/main/services/ai.test.ts`
+*   Owner-approved registration call-site amendment: src/main/index.ts is added because the original card omitted the bootstrap registration point.
 
 ### T-026b: AI Chat UI & Focus Reporting
 *   **Depends On:** T-026a
