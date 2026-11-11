@@ -20,7 +20,7 @@ import {
 } from '../shared/schemas'
 import type { ChatMessage, IpcEnvelope, MediaState, WeatherResult, ShelfItemMetadata } from '../shared/types'
 import * as shelfPreview from './services/shelfPreview'
-import { createAiService, type AiStatus } from './services/ai'
+import { createAiService, type AiStatus, type ChatStorePort } from './services/ai'
 import type { FocusController } from './services/focus-controller'
 import type { AppStore } from './services/store'
 import { createWeatherService } from './services/weather'
@@ -238,32 +238,56 @@ export function registerShelfHandlers(store: AppStore): void {
 }
 
 // T-026a / D-006 / D-024: AI Chat IPC handlers over the in-process MockProvider.
-// v0.1 keeps chat history in memory (card T-026a: no new persistence fields), so the store
-// is only the mandated registration call site and has nothing to inject yet.
-export function registerAiHandlers(_store: AppStore): void {
+// History is store-backed: AppStore owns chatMessages and its 50-message cap (DATA_MODEL §2).
+export function registerAiHandlers(store: AppStore): void {
   // Composition root: the service itself stays Electron-free (see services/ai.ts).
-  const service = createAiService({ now: () => Date.now(), newId: () => randomUUID() })
+  const chatStore: ChatStorePort = {
+    getMessages: () => store.get('chatMessages'),
+    pushMessage: (message) => store.pushChat(message),
+    clearMessages: () => store.set('chatMessages', []),
+  }
+  const service = createAiService({ now: () => Date.now(), newId: () => randomUUID(), chatStore })
 
   ipcMain.handle('ai:getStatus', (): IpcEnvelope<AiStatus> => {
     return { ok: true, data: service.getStatus(), error: null }
   })
 
   ipcMain.handle('ai:getHistory', (): IpcEnvelope<ChatMessage[]> => {
-    return { ok: true, data: service.getHistory(), error: null }
+    try {
+      return { ok: true, data: service.getHistory(), error: null }
+    } catch (err) {
+      return aiFailure('ai:getHistory', err)
+    }
   })
 
-  // IPC_SPEC §4: ai:send returns the assistant message. MockProvider runs in-process and
-  // cannot fail; the PROVIDER_ERROR envelope belongs to the real adapter (T-028).
+  // IPC_SPEC §4: ai:send returns the assistant message. The mock provider runs in-process
+  // and cannot fail on its own; only storage reads/writes can, hence the try/catch below.
   ipcMain.handle('ai:send', (_event, payload: unknown): IpcEnvelope<ChatMessage> => {
     const parsed = AiSendSchema.safeParse(payload)
     if (!parsed.success) {
       return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid ai:send payload' } }
     }
-    return { ok: true, data: service.send(parsed.data.content), error: null }
+    try {
+      return { ok: true, data: service.send(parsed.data.content), error: null }
+    } catch (err) {
+      return aiFailure('ai:send', err)
+    }
   })
 
   ipcMain.handle('ai:clear', (): IpcEnvelope<void> => {
-    service.clear()
-    return { ok: true, data: null, error: null }
+    try {
+      service.clear()
+      return { ok: true, data: null, error: null }
+    } catch (err) {
+      return aiFailure('ai:clear', err)
+    }
   })
+}
+
+// Storage failure is a normal state (disk/file errors): generic envelope, and only the error
+// message is logged — never chat content, ids, model, endpoint or paths.
+function aiFailure<T>(channel: string, error: unknown): IpcEnvelope<T> {
+  const message = error instanceof Error ? error.message : 'unknown'
+  log.error(`${channel} failed: ${message}`)
+  return { ok: false, data: null, error: { code: 'STORAGE_ERROR', message: 'Chat history unavailable' } }
 }
