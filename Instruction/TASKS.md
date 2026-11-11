@@ -463,7 +463,7 @@
 *   **Files:** `src/main/services/ai.ts`, `src/main/ipcHandlers.ts`, `src/main/services/ai.test.ts`, `src/main/index.ts`
 *   **read_files:** `src/shared/types.ts`
 *   **commit:** `feat(ai): implement mock provider and history store`
-*   **Steps:** Build MockProvider (returns "Mock reply: " + first 80 chars within 1s). Implement chat history array (max 50) and context builder (last 8). Wire `ai:getStatus`, `ai:getHistory`, `ai:send`, `ai:clear`. Call `registerAiHandlers(store)` from the main bootstrap so the AI IPC handlers are active.
+*   **Steps:** Build MockProvider (returns "Mock reply: " + first 80 chars within 1s). Implement chat history array (max 50) and context builder (last 8). Wire `ai:getStatus`, `ai:getHistory`, `ai:send`, `ai:clear`. Call `registerAiHandlers(store)` from the main bootstrap so the AI IPC handlers are active. History must be store-backed via existing `AppStore` `chatMessages` storage, not in-memory. Use existing `store.get('chatMessages')`, `store.pushChat()`, and `store.set('chatMessages', [])`; do not add new persistence fields or new store methods unless a scope blocker is reported.
 *   **Verification:** `automated_command`: `npx vitest run src/main/services/ai.test.ts`
 *   Owner-approved registration call-site amendment: src/main/index.ts is added because the original card omitted the bootstrap registration point.
 
