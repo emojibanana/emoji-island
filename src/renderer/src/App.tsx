@@ -12,6 +12,7 @@ import { WeatherCard } from './components/WeatherCard'
 import { TabBar, TABS } from './components/TabBar'
 import { ShelfList } from './components/ShelfList'
 import { MediaCard } from './components/MediaCard'
+import { AiChat } from './components/AiChat'
 import { useWeather } from './hooks/use-weather'
 
 const COLLAPSED_WIDTH = 280 // D-017
@@ -51,6 +52,9 @@ function ExpandedView({ shelfVersion }: { shelfVersion: number }): JSX.Element {
         )}
         {activeTab === 'media' && <MediaCard />}
         {activeTab === 'files' && <ShelfList version={shelfVersion} />}
+        {/* key={activeTab} above remounts the panel per tab, so AiChat's unmount
+            clears window:setInputActive when the user switches away. */}
+        {activeTab === 'ai' && <AiChat />}
       </section>
     </main>
   )

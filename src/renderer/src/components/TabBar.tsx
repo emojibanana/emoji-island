@@ -1,5 +1,5 @@
 import { useRef, type KeyboardEvent } from 'react'
-import { Clock, FolderOpen, Music, type LucideIcon } from 'lucide-react'
+import { Clock, FolderOpen, MessageSquare, Music, type LucideIcon } from 'lucide-react'
 
 export interface Tab {
   id: string
@@ -22,6 +22,11 @@ export const TABS: Tab[] = [
     id: 'files',
     label: 'Files',
     icon: FolderOpen,
+  },
+  {
+    id: 'ai',
+    label: 'AI',
+    icon: MessageSquare,
   },
 ]
 
