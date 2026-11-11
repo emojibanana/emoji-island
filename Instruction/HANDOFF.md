@@ -31,10 +31,10 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 Done: T-001 to T-025i (T-007b skipped; D-008 Locked with owner-approved discovery poll amendment; T-020 uses the Locked variant: T-020-La and T-020-Lb; T-020-D is n/a while D-008 remains Locked; M2 Media & File Shelf complete; post-M2 corrections T-025b/T-025c/T-025d/T-025f-spike/T-025g/T-025h/T-025i done).
-Next: T-026a (MockProvider & History Store) or the next official M3 task from Instruction/TASKS.md.
+Next: T-026b (AI Chat UI & Focus Reporting).
 Waiting: none for M2/post-M2 media correction.
 Known follow-up: UI overhaul ideas are recorded in Instruction/BACKLOG_UI_OVERHAUL_V2.md and should be evaluated after M3/M4, not before core v0.1 features are complete.
-Known media behavior: media session discovery now uses owner-approved low-frequency polling while unavailable; do not change polling/re-poll behavior without a new owner decision.
+Known follow-up: T-026a is done. Separate privacy/logging hardening remains for shelf:list and media:getState raw error.message logging; queue as T-026c before M4 packaging, not inside T-026b unless owner explicitly expands scope.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
