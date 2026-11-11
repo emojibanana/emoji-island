@@ -255,8 +255,8 @@ export function registerAiHandlers(store: AppStore): void {
   ipcMain.handle('ai:getHistory', (): IpcEnvelope<ChatMessage[]> => {
     try {
       return { ok: true, data: service.getHistory(), error: null }
-    } catch (err) {
-      return aiFailure('ai:getHistory', err)
+    } catch {
+      return aiFailure('ai:getHistory')
     }
   })
 
@@ -269,8 +269,8 @@ export function registerAiHandlers(store: AppStore): void {
     }
     try {
       return { ok: true, data: service.send(parsed.data.content), error: null }
-    } catch (err) {
-      return aiFailure('ai:send', err)
+    } catch {
+      return aiFailure('ai:send')
     }
   })
 
@@ -278,16 +278,15 @@ export function registerAiHandlers(store: AppStore): void {
     try {
       service.clear()
       return { ok: true, data: null, error: null }
-    } catch (err) {
-      return aiFailure('ai:clear', err)
+    } catch {
+      return aiFailure('ai:clear')
     }
   })
 }
 
-// Storage failure is a normal state (disk/file errors): generic envelope, and only the error
-// message is logged — never chat content, ids, model, endpoint or paths.
-function aiFailure<T>(channel: string, error: unknown): IpcEnvelope<T> {
-  const message = error instanceof Error ? error.message : 'unknown'
-  log.error(`${channel} failed: ${message}`)
+// Storage failure is a normal state (disk/file errors). Log the channel only: electron-store
+// errors can carry filesystem paths, so the raw error never reaches the log.
+function aiFailure<T>(channel: string): IpcEnvelope<T> {
+  log.error(`[ai] ${channel} failed: STORAGE_ERROR`)
   return { ok: false, data: null, error: { code: 'STORAGE_ERROR', message: 'Chat history unavailable' } }
 }
