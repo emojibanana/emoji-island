@@ -478,6 +478,22 @@
 *   **Steps:** Implement `AiChat` and `MessageBubble`. Wire inputs to `window:setInputActive` (true on focus/text, false on blur/empty) to suspend window collapse. Register the tab in TabBar and App.tsx.
 *   **Verification:** `manual_check_id`: M-014 (Mock part)
 
+### T-026c: IPC Error Logging Privacy Hardening
+*   **Depends On:** T-026b
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-008 amendment, D-012), This task card.
+*   **Files:** `src/main/ipcHandlers.ts`, `src/main/ipcHandlers.privacy.test.ts`
+*   **read_files:** `src/main/ipcHandlers.ts`
+*   **commit:** `fix(ipc): remove raw error messages from shelf and media handler logs`
+*   **Steps:**
+    1. In `shelf:list` and `media:getState` handlers, replace raw `error.message` logging with the channel name and a fixed error code only.
+    2. Return the same generic envelope messages as `registerAiHandlers` does.
+    3. Add a test that forces each handler to throw an error containing a fake path, a fake media title and a fake key, and asserts the log call arguments contain none of them.
+    4. Search all of `src/main` for other log calls that print raw errors. If one is outside `ipcHandlers.ts`, STOP and report it; do not widen scope.
+*   **Acceptance Criteria:** no raw `error.message`, file path, media metadata or key reaches any log call in the two handlers; the test passes; typecheck, vitest, lint, build pass.
+*   **Verification:** `automated_command`: `npx vitest run src/main/ipcHandlers.privacy.test.ts`
+
 ### T-027: AI Endpoint Validator & HTTP Client [v0.2]
 *   **Depends On:** T-026a
 *   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
@@ -523,7 +539,7 @@
 *   **Verification:** `manual_check_id`: M-019, M-020
 
 ### T-031: Wrap Milestone 3
-*   **Depends On:** T-029
+*   **Depends On:** T-029 & T-026c
 *   **Hours:** Agent: 0.5 | Review: 1.0 | Est: 1.5
 *   **Tier:** any
 *   **Context Pack:** AGENTS.md, This task card.

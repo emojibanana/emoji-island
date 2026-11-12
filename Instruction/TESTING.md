@@ -35,9 +35,9 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-011` | Shelf Remove Integrity | Remove a shelf item. Check Files tab and userData/shelf. Try removing when stored file is missing outside UI. | Metadata and physical file are removed for normal item. Missing stored file produces safe error, no crash, metadata not silently corrupted. No .tmp remains. | ✅ | |
 | `M-012` | OS Scaling | Change Windows display scale to 125% and 150%. | Island scales properly via Chromium DIP, layout doesn't break. | | |
 | `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). | | |
-| `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | | |
+| `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | ✅ | |
 | `M-015` | webUtils | Drop a file; check log. | Absolute path received, sandbox still true. | | Confirm PASS recorded in D-012 |
-| `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | ✅ | Waits for T-024. Unproven whether Windows sends drag events to a non-focusable window |
+| `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | ✅ | Passed in T-024: drag events reach the collapsed window.  |
 | `M-017` | Shelf limits | Drop 51st item; drop file > 100 MB. | Rejected with error banner, nothing copied. | ✅ | |
 | `M-018` | Symlink | Drop a symlink/junction. | Rejected (`PATH_INVALID`). | ✅ | |
 | `M-019` | AI errors | No key; stop 9router; wrong model. | Inline error text, app stays responsive. | | |
