@@ -143,7 +143,8 @@ if (!app.requestSingleInstanceLock()) {
     const res = registerHotkey(accel, toggleIsland, globalShortcut)
     if (!res.ok) {
       hotkeyFailed = true
-      log.warn(`hotkey registration failed: ${res.error}`)
+      // T-026e: fixed message only — res.error can be a raw exception message; never the accelerator.
+      log.warn('hotkey registration failed')
       setTrayTooltip('Emoji Island - hotkey unavailable, use the tray icon')
     }
   })

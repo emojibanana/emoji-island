@@ -64,9 +64,9 @@ export function registerWindowHandlers(controller: FocusController): void {
   })
 }
 
-function weatherFailure(channel: string, error: unknown): IpcEnvelope<WeatherResult> {
-  const message = error instanceof Error ? error.message : 'unknown'
-  log.error(`${channel} failed: ${message}`) // no payload dump (never logs coordinates/settings)
+function weatherFailure(channel: string): IpcEnvelope<WeatherResult> {
+  // T-026e: channel + fixed code only — error.message can carry the request URL and coordinates.
+  log.error(`${channel} failed: UNKNOWN_ERROR`)
   return { ok: false, data: null, error: { code: 'UNKNOWN_ERROR', message: 'Weather unavailable' } }
 }
 
@@ -92,16 +92,16 @@ export function registerWeatherHandlers(store: AppStore): void {
   ipcMain.handle('weather:get', (): IpcEnvelope<WeatherResult> => {
     try {
       return { ok: true, data: service.getWeather(), error: null }
-    } catch (error) {
-      return weatherFailure('weather:get', error)
+    } catch {
+      return weatherFailure('weather:get')
     }
   })
 
   ipcMain.handle('weather:refresh', async (): Promise<IpcEnvelope<WeatherResult>> => {
     try {
       return { ok: true, data: await service.refreshWeather(), error: null }
-    } catch (error) {
-      return weatherFailure('weather:refresh', error)
+    } catch {
+      return weatherFailure('weather:refresh')
     }
   })
 }
