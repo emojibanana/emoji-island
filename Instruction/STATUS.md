@@ -60,8 +60,8 @@
 | **M3** | **AI Chat & Settings** | | |
 | T-026a | MockProvider & History | done | 45b3728 |
 | T-026b | AiChat UI & Focus active | done | 8aae2c7 |
-| T-026c | IPC Error Logging Privacy Hardening | done | - |
-| T-026d | Spec Sync After Shelf Drag-Out | todo | - |
+| T-026c | IPC Error Logging Privacy Hardening | done | 656b068 |
+| T-026d | Spec Sync After Shelf Drag-Out | done | - |
 | T-027 | Endpoint Validator [v0.2] | deferred (v0.2)| - |
 | T-028 | Real Adapter Wire [v0.2] | deferred (v0.2)| - |
 | T-029 | Settings Core UI | todo | - |
