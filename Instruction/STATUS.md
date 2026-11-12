@@ -65,7 +65,7 @@
 | T-026e | Log Hygiene for Weather and Hotkey Handlers | done | 33f4203 |
 | T-027 | Endpoint Validator [v0.2] | deferred (v0.2)| - |
 | T-028 | Real Adapter Wire [v0.2] | deferred (v0.2)| - |
-| T-029a | Settings IPC & Hotkey Re-registration Core | todo | - |
+| T-029a | Settings IPC & Hotkey Re-registration Core | done | 0e74475 |
 | T-029b | Settings UI Tab | todo | - |
 | T-030 | Settings AI Config [v0.2] | deferred (v0.2)| - |
 | T-031 | Wrap M3 | todo | - |
@@ -129,4 +129,5 @@ T-026d docs sync completed across 582418f and follow-up TESTING.md commit 40e783
 Closing note: Related manual checks are marked passed in Instruction/TESTING.md. Status done.
 *   T-026e: Weather and hotkey logging hygiene completed in 33f4203. Weather failure paths and hotkey registration failure paths now log only channel plus fixed error code. No URL, query string, coordinates, provider response body, raw error.message, raw error object, or unnecessary shortcut string is logged. Privacy regression tests extended in src/main/ipcHandlers.privacy.test.ts. Verification: targeted privacy test OK, typecheck OK, vitest OK, lint OK, build OK, forbidden-names grep empty. No weather cache behavior, hotkey behavior, settings behavior, renderer, preload, shared, scripts, dependencies, CSP, or Electron security flags changed. Status done.
 *   T-029a: Main-side settings core. Implements/completes settings:get and settings:update using existing shared/preload contracts. Supports v0.1 core settings only: location mode, latitude, longitude, hotkey, reducedMotion. Must not add AI endpoint/model/key handling. Must not manually clear weatherCache on location change; weather service owns cache invalidation. Hotkey re-registration must keep old hotkey on failure and return VALIDATION_ERROR "Hotkey unavailable". Logging must follow T-026e hygiene: fixed codes only, no raw error.message. Status todo.
+*   T-029a: Settings IPC core and hotkey re-registration implemented in <hash-T-029a>. settings:get and settings:update use existing shared/preload contracts and support v0.1 core settings only: locationMode, latitude, longitude, hotkey, reducedMotion. No AI endpoint/model/key handling was added. Location updates do not manually clear weatherCache; weather cache invalidation remains owned by existing weather service logic. Hotkey re-registration keeps old hotkey on failure and returns VALIDATION_ERROR "Hotkey unavailable". Logging follows T-026e hygiene with fixed codes only. Tests pass: settings handler test OK, typecheck OK, vitest OK, lint OK, build OK, forbidden-names grep empty. Renderer Settings UI remains deferred to T-029b. Status done.
 *   T-029b: Renderer-side Settings UI tab. Adds Settings tab and SettingsForm for core v0.1 settings only: location, hotkey, reducedMotion. AI endpoint/model/key fields remain deferred to T-030/v0.2 and must not be rendered. Uses typed islandApi only. Must preserve accessibility and safe error display. Status todo.
