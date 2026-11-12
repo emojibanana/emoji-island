@@ -44,6 +44,7 @@ One task per session, one commit per task. The agent never creates milestone tag
 - Next: T-029 (core settings UI), then T-026c (privacy and logging hardening), then T-031 (wrap M3), then M4 (T-032, T-033, T-034a, T-034b). T-027, T-028, T-030 stay deferred (v0.2).
 - Follow-up before M4: T-026c (no raw `error.message` logging in `shelf:list` and `media:getState`; logs must contain no file paths, media metadata, chat content or keys) and a docs sync (PRD, IPC_SPEC, TESTING, README still describe Reveal/Copy Path and "no drag-out").
 - Follow-up after M4: UI ideas in `Instruction/BACKLOG_UI_OVERHAUL_V2.md`.
+Known follow-up: T-026c hardened shelf:list and media:getState only. Other raw error.message logging remains in hotkey registration and weather failure paths; queue as separate privacy/logging hardening task.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.
