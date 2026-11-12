@@ -11,7 +11,7 @@ import { AppStore } from './services/store'
 import { createTray, destroyTray, setTrayTooltip } from './services/tray'
 import { registerHotkey, unregisterHotkey } from './services/hotkey'
 import { FocusController, type IslandMode } from './services/focus-controller'
-import { registerAiHandlers, registerMediaHandlers, registerShelfHandlers, registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
+import { registerAiHandlers, registerMediaHandlers, registerSettingsHandlers, registerShelfHandlers, registerWeatherHandlers, registerWindowHandlers } from './ipcHandlers'
 import { createMediaService } from './services/media'
 
 const COLLAPSED = { width: 280, height: 40 } as const
@@ -126,6 +126,8 @@ if (!app.requestSingleInstanceLock()) {
     registerWeatherHandlers(store)
     registerShelfHandlers(store)
     registerAiHandlers(store)
+    // T-029a / D-011: settings:update re-binds the global hotkey; the tray toggle stays the fallback.
+    registerSettingsHandlers(store, { api: globalShortcut, onToggle: toggleIsland })
 
     mainWindow = createWindow()
 

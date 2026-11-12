@@ -5,12 +5,14 @@
 // T-023 / D-013: shelf:getPreview handler.
 // T-025f-spike / D-014 amendment: shelf:dragOut handler.
 // T-026a / D-006: AI Chat handlers — ai:getStatus, ai:getHistory, ai:send, ai:clear (mock only, D-024).
+// T-029a / D-011: Settings handlers — settings:get, settings:update with safe hotkey rebind.
 import { ipcMain } from 'electron'
 import log from 'electron-log'
 import { randomUUID } from 'crypto'
 import { join } from 'path'
 import {
   AiSendSchema,
+  SettingsPatchSchema,
   WindowSetDragActiveSchema,
   WindowSetInputActiveSchema,
   WindowSetModeSchema,
@@ -18,11 +20,12 @@ import {
   ShelfAddFromDropSchema,
   ShelfIdSchema,
 } from '../shared/schemas'
-import type { ChatMessage, IpcEnvelope, MediaState, WeatherResult, ShelfItemMetadata } from '../shared/types'
+import type { AppSettings, ChatMessage, IpcEnvelope, MediaState, SettingsView, WeatherResult, ShelfItemMetadata } from '../shared/types'
 import * as shelfPreview from './services/shelfPreview'
 import { createAiService, type AiStatus, type ChatStorePort } from './services/ai'
 import type { FocusController } from './services/focus-controller'
 import type { AppStore } from './services/store'
+import { rebindHotkey, type ShortcutApi } from './services/hotkey'
 import { createWeatherService } from './services/weather'
 import type { MediaService } from './services/media'
 import * as shelf from './services/shelf'
@@ -61,6 +64,79 @@ export function registerWindowHandlers(controller: FocusController): void {
     }
     controller.setMode(result.data.mode)
     return { ok: true, data: null, error: null }
+  })
+}
+
+// T-029a / D-011: core v0.1 settings only. AI endpoint/model/key stay out of this task (T-030/v0.2),
+// so picking the core keys means an AI-carrying patch is dropped instead of persisted.
+const CoreSettingsPatchSchema = SettingsPatchSchema.pick({
+  locationMode: true,
+  latitude: true,
+  longitude: true,
+  hotkey: true,
+  reducedMotion: true,
+})
+
+export interface SettingsHotkeyPort {
+  /** Injected so this module stays Electron-free and unit-testable (same pattern as services/hotkey.ts). */
+  api: ShortcutApi
+  onToggle: () => void
+}
+
+function settingsFailure<T>(channel: string): IpcEnvelope<T> {
+  // T-026e: channel + fixed code only — raw store errors can carry filesystem paths.
+  log.error(`${channel} failed: STORAGE_ERROR`)
+  return { ok: false, data: null, error: { code: 'STORAGE_ERROR', message: 'Settings unavailable' } }
+}
+
+export function registerSettingsHandlers(store: AppStore, hotkey: SettingsHotkeyPort): void {
+  ipcMain.handle('settings:get', (): IpcEnvelope<SettingsView> => {
+    try {
+      const settings = store.get('settings')
+      // IPC_SPEC §Settings: the key itself never leaves main — only whether one exists (safeStorage or memory).
+      return { ok: true, data: { ...settings, aiKeyPresent: store.getApiKey() !== null }, error: null }
+    } catch {
+      return settingsFailure('settings:get')
+    }
+  })
+
+  ipcMain.handle('settings:update', (_event, payload: unknown): IpcEnvelope<AppSettings> => {
+    const parsed = CoreSettingsPatchSchema.safeParse(payload)
+    if (!parsed.success) {
+      return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Invalid settings payload' } }
+    }
+
+    let current: AppSettings
+    try {
+      current = store.get('settings')
+    } catch {
+      return settingsFailure('settings:update')
+    }
+
+    const next: AppSettings = { ...current, ...parsed.data, updatedAt: Date.now() }
+
+    if (next.hotkey !== current.hotkey) {
+      // D-011/T-011: bind the new accelerator first and release the old one only on success, so a
+      // failed rebind never leaves the app without a toggle path (the tray toggle stays as fallback).
+      const rebound = rebindHotkey(next.hotkey, hotkey.onToggle, hotkey.api)
+      if (!rebound.ok) {
+        // T-026e: fixed message only — rebound.error can be a raw OS/accelerator message.
+        log.warn('settings:update hotkey rebind failed')
+        return { ok: false, data: null, error: { code: 'VALIDATION_ERROR', message: 'Hotkey unavailable' } }
+      }
+    }
+
+    try {
+      // weatherCache is deliberately untouched: services/weather.ts ignores a cache whose
+      // coordinates no longer match settings (DATA_MODEL: Settings "determines location").
+      store.set('settings', next)
+    } catch {
+      // Storage failed after the shortcut moved: put the old binding back so store and runtime agree.
+      if (next.hotkey !== current.hotkey) rebindHotkey(current.hotkey, hotkey.onToggle, hotkey.api)
+      return settingsFailure('settings:update')
+    }
+
+    return { ok: true, data: next, error: null }
   })
 }
 
