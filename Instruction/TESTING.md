@@ -28,20 +28,20 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-005` | Single Instance | Launch app. Launch it again. | Second instance quits immediately; first instance expands/focuses. | ✅ | |
 | `M-006` | Tray | Right-click tray icon. | Shows Show/Hide and Quit. Quit unregisters hotkeys and kills process. | ✅ | |
 | `M-007` | Weather | Disconnect internet. | Weather UI displays offline badge. | ✅ | |
-| `M-008` | Media (Locked) | Play music in Spotify. Test play, pause, next, previous. | UI updates within 2 s. Controls work. | ✅ | |
+| `M-008` | Media (Locked) | Play music in Spotify. Test play, pause, next, previous. | UI updates within 2 s. Controls work. | ✅ | Owner retest for T-025d artwork passed: Spotify artwork renders; non-ASCII title/artist OK; controls OK; no orphan PowerShell; logs clean. |
 | `M-008b` | Media Session Discovery | Launch Island with no media playing. Start music in an allowlisted app, e.g. Spotify. Wait up to 10 seconds. Stop music. Start music again without restarting Island. | Newly started media appears without restarting Island. Unavailable state returns after stop. Second start is also detected. Controls work. No orphan powershell.exe. No media metadata logged. | ✅ | |
 | `M-009` | Media (Degraded) | Close media app. | UI states "Media unavailable" or "No media playing". Buttons disabled. | ✅ | |
 | `M-010` | Files Tab & Inline Actions | Drop a file, open Files tab. Click an image item. Click a non-image item. Use Remove icon. Use Preview icon for image. Drag an item out. | Item renders as single row with icon-only actions. No three-dot menu. Image click/icon opens preview. Non-image click does nothing. Remove icon deletes item. Drag-out starts native drag. No layout clipping or shifting. | ✅ | |
 | `M-011` | Shelf Remove Integrity | Remove a shelf item. Check Files tab and userData/shelf. Try removing when stored file is missing outside UI. | Metadata and physical file are removed for normal item. Missing stored file produces safe error, no crash, metadata not silently corrupted. No .tmp remains. | ✅ | |
 | `M-012` | OS Scaling | Change Windows display scale to 125% and 150%. | Island scales properly via Chromium DIP, layout doesn't break. | | |
 | `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). | | |
-| `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | ✅ | |
-| `M-015` | webUtils | Drop a file; check log. | Absolute path received, sandbox still true. | | Confirm PASS recorded in D-012 |
+| `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | ✅ | Mock part passed (T-026b). Full hero moment run-through at T-034a. |
+| `M-015` | webUtils | Drop a file; check log. | Absolute path received, sandbox still true. | ✅ | Recorded PASS in D-012 (T-005). |
 | `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | ✅ | Passed in T-024: drag events reach the collapsed window. |
 | `M-017` | Shelf limits | Drop 51st item; drop file > 100 MB. | Rejected with error banner, nothing copied. | ✅ | |
 | `M-018` | Symlink | Drop a symlink/junction. | Rejected (`PATH_INVALID`). | ✅ | |
 | `M-019` | AI errors | No key; stop 9router; wrong model. | Inline error text, app stays responsive. | | |
-| `M-020` | Settings | Change coordinates, hotkey, endpoint. | Persisted after restart; invalid values rejected. | | |
+| `M-020` | Settings | Change coordinates, hotkey, and reduced motion. Restart app. Try invalid coordinates and unavailable hotkey. | Values persist after restart; invalid values rejected with safe error; failed hotkey keeps old hotkey and shows unavailable notice; weather cache is not manually cleared by settings; no AI endpoint/model/key fields are present in v0.1. | | |
 | `M-021` | Shelf Drag-Out to Explorer | From Files tab, drag one shelf item to an Explorer folder. | Explorer receives a file with correct name/size; shelf item remains. | ✅ | |
 | `M-022` | Shelf Drag-Out to Google Drive | Drag one shelf item to Google Drive/browser target. | Target receives file; upload may continue after drag; shelf item remains. Do not treat drag completion as upload completion. | ✅ | |
 | `M-023` | Shelf Drag-Out Missing File | Delete the stored shelf file outside the UI, then attempt drag-out from Files tab. | Safe error, no crash, metadata not removed. | ✅ | |

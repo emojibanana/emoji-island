@@ -39,12 +39,12 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-- Done: T-001 to T-026a. M2 wrapped at T-025. Post-M2 corrections done: T-025b, T-025c, T-025d-inv, T-025d, T-025f-spike, T-025g, T-025h, T-025i. T-007b skipped. T-020 uses the Locked variant (La/Lb), T-020-D is n/a.
-- Manual-pending: T-026b (AI chat UI), waiting for M-014 (Mock part).
-- Next: T-029 (core settings UI), then T-026c (privacy and logging hardening), then T-031 (wrap M3), then M4 (T-032, T-033, T-034a, T-034b). T-027, T-028, T-030 stay deferred (v0.2).
-- Follow-up before M4: T-026c (no raw `error.message` logging in `shelf:list` and `media:getState`; logs must contain no file paths, media metadata, chat content or keys) and a docs sync (PRD, IPC_SPEC, TESTING, README still describe Reveal/Copy Path and "no drag-out").
-- Follow-up after M4: UI ideas in `Instruction/BACKLOG_UI_OVERHAUL_V2.md`.
-Known follow-up: T-026c hardened shelf:list and media:getState only. Other raw error.message logging remains in hotkey registration and weather failure paths; queue as separate privacy/logging hardening task.
+- Done: T-001 to T-026d, including post-M2 corrections T-025b to T-025i, T-026a, T-026b, T-026c, and T-026d. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
+- Manual-pending: none for completed tasks, subject to TESTING.md evidence verification.
+- Next: T-026e (Log Hygiene for Weather and Hotkey Handlers), then T-029a (Settings IPC & Hotkey Re-registration Core), then T-029b (Settings UI Tab), then T-031 (Wrap M3), then M4. T-027, T-028, and T-030 remain deferred v0.2.
+- Follow-up at T-034a: update TASKS.md traceability table for FR-012b/c superseded and FR-012e/f drag-out/self-drop guard.
+- Follow-up after M4: UI overhaul ideas in Instruction/BACKLOG_UI_OVERHAUL_V2.md.
+- Known follow-up: T-026c hardened shelf:list and media:getState only. T-026e hardens remaining weather and hotkey raw-error logging before M3 wrap.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.

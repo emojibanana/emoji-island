@@ -23,7 +23,7 @@
 *   **`MediaCard`:** Shows track title, artist, and playback controls (play/pause/prev/next).
 *   **`ShelfList` & `ShelfItem`:** Shelf items are rendered as compact single-row entries. Each row contains a file-type icon, truncated original name, human-readable size, an optional preview icon for supported images, and a remove icon. There is no three-dot inline menu, floating action menu, or additional file-manager actions beyond Remove. Icon buttons have no visible text label but must expose accessible aria-labels. Clicking an image item opens preview. Clicking a non-image item performs no action. The whole row is draggable for shelf drag-out. Action buttons must not initiate row drag and must stop click propagation. Drag-out failure feedback is shown as a single non-sensitive status message outside the item rows to avoid variable-height layout shifts.
 *   **`AiChat` & `MessageBubble`:** Scrollable conversation view. Input field at the bottom.
-*   **`SettingsForm`:** Inputs for coordinates, hotkey, AI endpoint, AI model, AI key, and a reduced motion toggle.
+*   **`SettingsForm`:** For v0.1, inputs are limited to coordinates, hotkey, and reduced motion. AI endpoint, AI model, and AI key inputs are deferred to v0.2/T-030 and must not be rendered in the core Settings task.
 *   **`ErrorBanner` & `Toast`:** Transient feedback elements. Auto-dismiss after 4s except blocking errors, which stay until dismissed.
 
 ## 4. Animations & Transitions

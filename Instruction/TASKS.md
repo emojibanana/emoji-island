@@ -515,6 +515,27 @@
 *   **Acceptance Criteria:** no stale reveal or copy-path wording remains in PRD, DECISIONS and UI_SPEC; the D-014 amendment is no longer a broken table row; existing history in STATUS notes is untouched.
 *   **Verification:** `automated_command`: `Select-String -Path Instruction\PRD.md,Instruction\DECISIONS.md,Instruction\UI_SPEC.md -Pattern "reveal/copy","copy/list/reveal","reveal in explorer","copy path"` must print nothing.
 
+### T-026e: Log Hygiene for Weather and Hotkey Handlers
+*   **Depends On:** T-026c
+*   **Hours:** Agent: 1.0 | Review: 1.0 | Est: 2.0
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, DECISIONS (D-011, D-016, D-015), This task card.
+*   **Files:** `src/main/ipcHandlers.ts`, `src/main/index.ts`, `src/main/ipcHandlers.privacy.test.ts`
+*   **read_files:** `src/main/services/weather.ts`, `src/main/services/hotkey.ts`, `src/shared/types.ts`, `src/shared/schemas.ts`, `Instruction/DECISIONS.md`, `Instruction/IPC_SPEC.md`, `Instruction/TESTING.md`
+*   **commit:** `fix(ipc): log kode error tetap untuk weather dan hotkey`
+*   **Steps:**
+    1. Confirm T-026c is done and its privacy test pattern exists before editing.
+    2. In weather failure paths, replace raw error logging with channel name plus fixed error code only.
+    3. Never log URL, query string, coordinates, provider response body, raw `error.message`, or raw error object.
+    4. In hotkey registration failure path in `src/main/index.ts`, log only a fixed error code or generic failure message.
+    5. Do not log raw shortcut strings if they are not required for diagnosis.
+    6. Extend `src/main/ipcHandlers.privacy.test.ts` with tests that force weather and hotkey failures containing fake coordinates, fake URL fragments, and fake raw error text, then assert no log call receives those strings.
+    7. Search all of `src/main` for other raw error logging. If a finding is outside the allowed files, STOP and report it; do not widen scope.
+    8. Preserve existing IPC envelope behavior and error codes.
+    9. Do not change weather cache behavior, hotkey behavior, settings behavior, renderer, preload, shared, scripts, dependencies, CSP, or Electron security flags.
+*   **Acceptance Criteria:** No raw error text, URL, coordinates, query string, provider response body, or shortcut diagnostic string reaches a log call in weather failure or hotkey registration failure paths; privacy tests pass; typecheck, vitest, lint, build pass.
+*   **Verification:** `automated_command`: `npx vitest run src/main/ipcHandlers.privacy.test.ts`
+
 ### T-027: AI Endpoint Validator & HTTP Client [v0.2]
 *   **Depends On:** T-026a
 *   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
@@ -537,15 +558,74 @@
 *   **Steps:** Provider selection: use real adapter ONLY if `aiEndpoint` and `aiModel` are set; otherwise MockProvider. On real-adapter failure, return error envelope (DO NOT silently switch to Mock). Handle error states inline in UI.
 *   **Verification:** `manual_check_id`: M-019
 
-### T-029: Settings UI (Core Settings)
-*   **Depends On:** T-026a
+### T-029: Settings Core UI — split into T-029a/T-029b
+
+*   **Status:** split; do not implement as one task.
+*   **Replacement:** T-029a and T-029b.
+*   **Reason:** Original card mixed main settings IPC, hotkey re-registration, bootstrap wiring, and renderer Settings UI. Split reduces scope and keeps each task within safe edit boundaries.
+
+### T-029a: Settings IPC & Hotkey Re-registration Core
+*   **Depends On:** T-026e
 *   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
 *   **Tier:** strong
-*   **Context Pack:** AGENTS.md, DATA_MODEL, This task card.
-*   **Files:** `src/renderer/src/components/SettingsForm.tsx`, `src/main/ipcHandlers.ts`, `src/renderer/src/App.tsx`, `src/renderer/src/components/TabBar.tsx`
-*   **read_files:** `src/main/services/store.ts`, `src/main/services/hotkey.ts`
-*   **commit:** `feat(settings): build settings ui for location and hotkey`
-*   **Steps:** Implement `SettingsForm` for location and hotkey. Add `settings:get` and `settings:update` in `ipcHandlers.ts`. Re-register shortcut dynamically; if hotkey fails, keep old hotkey and return VALIDATION_ERROR "Hotkey unavailable". Register the tab in TabBar and App.tsx.
+*   **Context Pack:** AGENTS.md, DECISIONS (D-011, D-015, D-016), IPC_SPEC, DATA_MODEL, This task card.
+*   **Files:** `src/main/ipcHandlers.ts`, `src/main/services/hotkey.ts`, `src/main/index.ts`, `src/main/ipcHandlers.settings.test.ts`
+*   **read_files:** `src/main/services/store.ts`, `src/main/services/weather.ts`, `src/shared/types.ts`, `src/shared/schemas.ts`, `src/preload/index.ts`, `Instruction/IPC_SPEC.md`, `Instruction/DATA_MODEL.md`, `Instruction/DECISIONS.md`
+*   **commit:** `feat(settings): implement settings handlers dan hotkey re-registration`
+*   **Steps:**
+    1. Confirm existing preload surface already exposes typed settings methods, e.g. `getSettings` and `updateSettings`, and existing IPC_SPEC defines `settings:get` / `settings:update`. If not, STOP and report a scope blocker.
+    2. Implement or complete `settings:get` handler returning stored settings according to existing shared types/schemas.
+    3. Implement or complete `settings:update` handler validating payload with existing schemas only. Do not invent forbidden type/schema names.
+    4. Support core v0.1 settings only: location mode, latitude, longitude, hotkey, and reducedMotion. Do not add AI endpoint, AI model, or AI key handling; those belong to T-030/v0.2.
+    5. When location changes, do not manually clear or overwrite `weatherCache`. Weather cache invalidation is already owned by weather service logic. Duplicate invalidation is forbidden.
+    6. When hotkey changes, re-register the global shortcut dynamically.
+    7. If new hotkey registration fails, keep the old hotkey active and return `VALIDATION_ERROR` with message `"Hotkey unavailable"`.
+    8. Hotkey failure logging must follow T-026e hygiene: log only channel/fixed code, never raw error.message.
+    9. Wire `registerSettingsHandlers(...)` from main bootstrap if not already wired.
+    10. Add tests in `src/main/ipcHandlers.settings.test.ts` covering:
+        - valid settings update persists;
+        - invalid coordinates rejected;
+        - invalid hotkey rejected or falls back safely;
+        - failed new hotkey keeps old hotkey;
+        - settings location update does not clear weatherCache;
+        - no raw error.message logged in hotkey failure path.
+    11. Do not modify renderer, preload, shared, scripts, package.json, lockfiles, dependencies, CSS, CSP, Electron security flags, or docs.
+*   **Acceptance Criteria:** `settings:get` and `settings:update` work through typed existing preload surface; core settings validate correctly; hotkey re-registration keeps old hotkey on failure; weatherCache is not manually cleared by settings update; privacy/logging hygiene preserved; tests and gates pass.
+*   **Verification:** `automated_command`: `npx vitest run src/main/ipcHandlers.settings.test.ts`
+
+### T-029b: Settings UI Tab
+
+*   **Depends On:** T-029a
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
+*   **Tier:** strong
+*   **Context Pack:** AGENTS.md, UI_SPEC, DATA_MODEL, This task card.
+*   **Files:** `src/renderer/src/components/SettingsForm.tsx`, `src/renderer/src/App.tsx`, `src/renderer/src/components/TabBar.tsx`
+*   **read_files:** `src/preload/index.ts`, `src/shared/types.ts`, `src/main/ipcHandlers.ts`, `Instruction/UI_SPEC.md`, `Instruction/DATA_MODEL.md`, `Instruction/TESTING.md`
+*   **commit:** `feat(ui): bangun tab settings core`
+*   **Steps:**
+    1. Confirm T-029a is done and `settings:get` / `settings:update` are active in main.
+    2. Add a Settings tab to TabBar using an existing lucide-react icon already available in the project. Do not add dependencies.
+    3. Render `SettingsForm` in App.tsx when active tab is settings.
+    4. Implement core v0.1 settings UI only:
+        - location mode;
+        - latitude;
+        - longitude;
+        - hotkey;
+        - reducedMotion.
+    5. Do not render AI endpoint, AI model, or AI key fields. Those are deferred to T-030/v0.2.
+    6. Use typed `window.islandApi` methods only. Do not call `ipcRenderer` directly.
+    7. Load current settings on mount using existing typed settings API.
+    8. Save settings through existing typed update API.
+    9. Show safe validation/error messages only. Do not display raw filesystem paths, provider URLs, coordinates in error logs, chat content, API keys, endpoints, models, or media metadata.
+    10. If hotkey update fails, show `"Hotkey unavailable"` or equivalent safe error and preserve current working hotkey state in UI according to main response.
+    11. Preserve accessibility:
+        - labeled inputs;
+        - keyboard reachable;
+        - visible focus rings;
+        - no color-only status;
+        - respects prefers-reduced-motion.
+    12. Do not modify main, preload, shared, scripts, package.json, lockfiles, dependencies, CSS, CSP, Electron security flags, or docs.
+*   **Acceptance Criteria:** Settings tab appears; core settings can be viewed and updated; AI config fields are absent in v0.1; invalid values produce safe errors; hotkey failure does not crash or silently replace working hotkey; accessibility preserved; gates pass.
 *   **Verification:** `manual_check_id`: M-003, M-020
 
 ### T-030: Settings UI (AI Config) [v0.2]
@@ -560,7 +640,7 @@
 *   **Verification:** `manual_check_id`: M-019, M-020
 
 ### T-031: Wrap Milestone 3
-*   **Depends On:** T-029, T-026c, & T-026d
+*   **Depends On:** T-029a, T-029b, T-026c, T-026d, T-026e
 *   **Hours:** Agent: 0.5 | Review: 1.0 | Est: 1.5
 *   **Tier:** any
 *   **Context Pack:** AGENTS.md, This task card.
