@@ -113,11 +113,11 @@ export function registerMediaHandlers(mediaService: MediaService): void {
   ipcMain.handle('media:getState', (): IpcEnvelope<MediaState> => {
     try {
       return { ok: true, data: mediaService.getState(), error: null }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'unknown'
-      log.error(`media:getState failed: ${message}`)
-      return { ok: false, data: null, error: { code: 'MEDIA_UNAVAILABLE', message: 'Media unavailable' } }
-    }
+    } catch {
+          // T-026c: channel + fixed code only — no error.message (may carry metadata/paths).
+          log.error('media:getState failed: MEDIA_UNAVAILABLE')
+          return { ok: false, data: null, error: { code: 'MEDIA_UNAVAILABLE', message: 'Media unavailable' } }
+        }
   })
 
   ipcMain.handle('media:control', async (_event, payload: unknown): Promise<IpcEnvelope<void>> => {
@@ -155,11 +155,11 @@ export function registerShelfHandlers(store: AppStore): void {
   ipcMain.handle('shelf:list', (): IpcEnvelope<ShelfItemMetadata[]> => {
     try {
       return { ok: true, data: shelf.listItems(store), error: null }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'unknown'
-      log.error(`shelf:list failed: ${message}`)
-      return { ok: false, data: null, error: { code: 'STORAGE_ERROR', message: 'List failed' } }
-    }
+    } catch {
+          // T-026c: channel + fixed code only — no error.message (may carry paths/names).
+          log.error('shelf:list failed: STORAGE_ERROR')
+          return { ok: false, data: null, error: { code: 'STORAGE_ERROR', message: 'List failed' } }
+        }
   })
 
   ipcMain.handle('shelf:addFromDrop', async (_event, payload: unknown): Promise<IpcEnvelope<ShelfItemMetadata>> => {
