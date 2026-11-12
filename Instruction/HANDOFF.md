@@ -41,7 +41,7 @@ One task per session, one commit per task. The agent never creates milestone tag
 ## Progress snapshot (the human updates this after each task)
 - Done: T-001 to T-026d, including post-M2 corrections T-025b to T-025i, T-026a, T-026b, T-026c, and T-026d. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
 - Manual-pending: none for completed tasks, subject to TESTING.md evidence verification.
-- Next: T-026e (Log Hygiene for Weather and Hotkey Handlers), then T-029a (Settings IPC & Hotkey Re-registration Core), then T-029b (Settings UI Tab), then T-031 (Wrap M3), then M4. T-027, T-028, and T-030 remain deferred v0.2.
+- Next: T-029a (Settings IPC & Hotkey Re-registration Core), then T-029b (Settings UI Tab), then T-031 (Wrap M3), then M4. T-027, T-028, and T-030 remain deferred v0.2.
 - Follow-up at T-034a: update TASKS.md traceability table for FR-012b/c superseded and FR-012e/f drag-out/self-drop guard.
 - Follow-up after M4: UI overhaul ideas in Instruction/BACKLOG_UI_OVERHAUL_V2.md.
 - Known follow-up: T-026c hardened shelf:list and media:getState only. T-026e hardens remaining weather and hotkey raw-error logging before M3 wrap.
