@@ -494,6 +494,27 @@
 *   **Acceptance Criteria:** no raw `error.message`, file path, media metadata or key reaches any log call in the two handlers; the test passes; typecheck, vitest, lint, build pass.
 *   **Verification:** `automated_command`: `npx vitest run src/main/ipcHandlers.privacy.test.ts`
 
+### T-026d: Spec Sync After Shelf Drag-Out (docs only)
+*   **Depends On:** T-026b
+*   **Hours:** Agent: 1.0 | Review: 1.0 | Est: 2.0
+*   **Tier:** any
+*   **Context Pack:** AGENTS.md, DECISIONS (D-014 amendments, D-022, D-023), This task card.
+*   **Files:** `Instruction/PRD.md`, `Instruction/DECISIONS.md`, `Instruction/TESTING.md`, `Instruction/STATUS.md`, `Instruction/UI_SPEC.md`
+*   **read_files:** `Instruction/PRD.md`, `Instruction/DECISIONS.md`
+*   **commit:** `docs: sync spec with shelf drag-out and removed reveal and copy path`
+*   **Steps:**
+    1. PRD Non-Goals: replace "true drag-out" with "multi-file drag-out, auto-remove or TTL for shelf items, consume-on-drop lifecycle".
+    2. PRD: keep IDs stable. Rewrite FR-012b as "FR-012b: superseded by FR-012e." and FR-012c as "FR-012c: superseded by FR-012f." Add FR-012e (Drag-Out: Given a shelf item in the Files tab, When the user drags it onto an Explorer folder or another app that accepts files, Then the file is copied there with its stored name and the shelf item remains; single file only) and FR-012f (Self-Drop Guard: Given a shelf item, When it is dragged back onto the island, Then no duplicate item or file is created).
+    3. PRD user flow 2 and the "NOT cuttable" line: replace reveal/copy path with add, list, preview, remove (drag-out is implemented and tested but not part of the minimum).
+    4. DECISIONS D-022: change the shelf item in the NOT-cuttable list to "add/list/preview/remove". D-023: move single-file shelf drag-out into the v0.1 scope (post-M2 enhancement, M-021 and M-025 passed); keep multi-file drag-out in Future.
+    5. DECISIONS: move the table row at the D-014 amendment (a two-cell row that breaks the table) out of the table into its own "### D-014 amendment" section. Add "(see D-008 amendment below)" after the polling sentence in the D-008 row.
+    6. TESTING: in M-016 replace the Notes with "Passed in T-024: drag events reach the collapsed window." Do NOT invent M-024 or M-027; report whether they exist.
+    7. STATUS: append one closing line (never delete or rewrite existing text) to the notes of T-025d, T-025f-spike, T-025g, T-025h only where TESTING.md shows the related manual checks passed. For any other case, do not edit; list it in your reply as "owner to confirm".
+    8. UI_SPEC: change only lines that still describe a Reveal or Copy Path action menu (ShelfItem). Do not touch other sections.
+    9. Do not edit TASKS.md (the traceability table is updated in T-034a), README, source code or package.json.
+*   **Acceptance Criteria:** no stale reveal or copy-path wording remains in PRD, DECISIONS and UI_SPEC; the D-014 amendment is no longer a broken table row; existing history in STATUS notes is untouched.
+*   **Verification:** `automated_command`: `Select-String -Path Instruction\PRD.md,Instruction\DECISIONS.md,Instruction\UI_SPEC.md -Pattern "reveal/copy","copy/list/reveal","reveal in explorer","copy path"` must print nothing.
+
 ### T-027: AI Endpoint Validator & HTTP Client [v0.2]
 *   **Depends On:** T-026a
 *   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
@@ -539,7 +560,7 @@
 *   **Verification:** `manual_check_id`: M-019, M-020
 
 ### T-031: Wrap Milestone 3
-*   **Depends On:** T-029 & T-026c
+*   **Depends On:** T-029, T-026c, & T-026d
 *   **Hours:** Agent: 0.5 | Review: 1.0 | Est: 1.5
 *   **Tier:** any
 *   **Context Pack:** AGENTS.md, This task card.

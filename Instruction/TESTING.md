@@ -37,7 +37,7 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). | | |
 | `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | ✅ | |
 | `M-015` | webUtils | Drop a file; check log. | Absolute path received, sandbox still true. | | Confirm PASS recorded in D-012 |
-| `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | ✅ | Passed in T-024: drag events reach the collapsed window.  |
+| `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | ✅ | Passed in T-024: drag events reach the collapsed window. |
 | `M-017` | Shelf limits | Drop 51st item; drop file > 100 MB. | Rejected with error banner, nothing copied. | ✅ | |
 | `M-018` | Symlink | Drop a symlink/junction. | Rejected (`PATH_INVALID`). | ✅ | |
 | `M-019` | AI errors | No key; stop 9router; wrong model. | Inline error text, app stays responsive. | | |

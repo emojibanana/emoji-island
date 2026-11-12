@@ -12,7 +12,7 @@
 *   **Success Metric 2:** The 3-minute demo (FR-020) passes under Degraded media status.
 
 ## 3. Non-Goals
-Multi-monitor and fullscreen auto-hide; macOS/Linux; true drag-out; voice, tool calling, shell, file access, system control by AI; Gemini adapter; launch at login; light theme; telemetry; accounts.
+Multi-monitor and fullscreen auto-hide; macOS/Linux; multi-file drag-out, auto-remove or TTL for shelf items, consume-on-drop lifecycle; voice, tool calling, shell, file access, system control by AI; Gemini adapter; launch at login; light theme; telemetry; accounts.
 
 ## 4. Functional Requirements (FR)
 
@@ -46,9 +46,11 @@ Multi-monitor and fullscreen auto-hide; macOS/Linux; true drag-out; voice, tool 
     *   *Given* a valid file <= 100 MB, *When* dropped, *Then* it is copied to `userData/shelf` and listed.
 *   **FR-011 [Shelf Limits]:** *Given* the shelf has 50 items or 500 MB, or the file exceeds 100 MB, *When* a drop occurs, *Then* the drop is rejected with an error banner (`FILE_TOO_LARGE` or `VALIDATION_ERROR`) and nothing is copied.
 *   **FR-012a [Image Preview]:** *Given* a PNG/JPEG/WebP/GIF item <= 2 MB, *Then* a thumbnail is shown; otherwise a generic icon.
-*   **FR-012b [Reveal]:** *Given* a shelf item, *When* "Reveal" is chosen, *Then* Explorer opens with the file selected.
-*   **FR-012c [Copy Path]:** *Given* a shelf item, *When* "Copy path" is chosen, *Then* the path is placed on the clipboard.
+*   **FR-012b:** superseded by FR-012e.
+*   **FR-012c:** superseded by FR-012f.
 *   **FR-012d [Delete]:** *Given* a shelf item, *When* "Delete" is chosen, *Then* the file and its metadata are removed.
+*   **FR-012e [Drag-Out]:** *Given* a shelf item in the Files tab, *When* the user drags it onto an Explorer folder or another app that accepts files, *Then* the file is copied there with its stored name and the shelf item remains; single file only.
+*   **FR-012f [Self-Drop Guard]:** *Given* a shelf item, *When* it is dragged back onto the island, *Then* no duplicate item or file is created.
 
 ### AI Chat & Settings
 *   **FR-013 [Mock Mode - v0.1]:** *Given* no valid AI configuration, *When* the user sends a message, *Then* the `MockProvider` replies with a placeholder text.
@@ -85,7 +87,7 @@ Multi-monitor and fullscreen auto-hide; macOS/Linux; true drag-out; voice, tool 
 
 ## 6. User Flows
 1. Hotkey -> expand -> pick tab -> blur -> collapse.
-2. Drag file -> auto-expand -> drop -> listed -> reveal/copy/delete.
+2. Drag file -> auto-expand -> drop -> add, list, preview, remove.
 3. Settings -> enter config -> send message -> reply or inline error.
 
 ## 7. Edge Cases
@@ -102,4 +104,4 @@ No media session; media app closed mid-playback; offline weather; shelf full; fi
 *   [ASSUMPTION] Reduced-motion follows the Settings toggle.
 
 ## 10. Cut Priority
-Same as D-022. NOT cuttable: single instance lock, hotkey, overlay shell, clock, basic weather, shelf basics (copy/list/reveal/copy path/delete), MockProvider chat, basic packaging, README, LICENSE.
+Same as D-022. NOT cuttable: single instance lock, hotkey, overlay shell, clock, basic weather, shelf basics (add, list, preview, remove), MockProvider chat, basic packaging, README, LICENSE.
