@@ -665,13 +665,45 @@
 
 ### T-032: Packaging, Portable Script & CI
 *   **Depends On:** T-031
-*   **Hours:** Agent: 1.5 | Review: 1.0 | Est: 2.5
+*   **Hours:** Agent: 1.5 | Review: 1.0 | Human manual: 1.0 | Est: 3.5
 *   **Tier:** any
-*   **Context Pack:** AGENTS.md, DECISIONS (D-019), This task card.
+*   **Context Pack:** AGENTS.md, DECISIONS (D-019, D-008, D-013, D-014), This task card.
 *   **Files:** `electron-builder.yml`, `scripts/make-portable-zip.ps1`, `.github/workflows/release.yml`
-*   **read_files:** `package.json`
-*   **commit:** `chore(release): configure electron-builder and github actions`
-*   **Steps:** Configure `electron-builder`. Create PowerShell ZIP fallback script. Add GitHub Actions workflow. [SIZE-EXCEPTION: CI & build scripts]
+*   **read_files:** `package.json`, `package-lock.json`, `src/main/services/media-bridge.ts`, `src/main/index.ts`, `resources/tray-icon.png`, `Instruction/DECISIONS.md`, `Instruction/TESTING.md`, `Instruction/STATUS.md`, `Instruction/HANDOFF.md`
+*   **commit:** `chore(release): configure electron-builder dan github actions`
+*   **Owner packaging decisions:**
+    - `package.json` version remains `0.1.0`.
+    - Release Git tag convention is `v0.1.0`, not `v0.1`.
+    - `appId`: `com.emoji-island.app`
+    - `productName`: `Emoji Island`
+    - executable/artifact base name: `EmojiIsland`
+    - Windows targets: NSIS setup plus unpacked directory for portable ZIP generation.
+    - Portable artifact name: `EmojiIsland-${version}-win-x64-portable.zip`, generated from `dist/win-unpacked`.
+    - CI Node version: `22.x`.
+    - CI behavior:
+      - Pull request: typecheck, vitest, lint, build.
+      - Tag `v*`: same quality gates plus Electron-builder packaging and artifact upload.
+      - No automatic GitHub Release.
+    - Custom packaging icon is deferred. Do not reference `resources/icon.ico` unless it already exists. Runtime tray icon remains `resources/tray-icon.png`.
+    - If packaging requires source-code path changes for `scripts/smtc-bridge.ps1` or `resources/tray-icon.png`, STOP and report a scope blocker. Do not modify source code in T-032.
+*   **Steps:**
+    1. Confirm `electron-builder` is already available as a devDependency or can be invoked without modifying `package.json`/lockfile. If not, STOP and report a dependency scope blocker.
+    2. Inspect `src/main/services/media-bridge.ts` and `src/main/index.ts` to determine how the packaged app resolves `scripts/smtc-bridge.ps1` and `resources/tray-icon.png`.
+    3. Configure `electron-builder.yml` with owner decisions above.
+    4. Ensure Windows build produces:
+       - `dist/EmojiIsland-${version}-setup.exe`
+       - `dist/win-unpacked/`
+    5. Ensure packaging includes the built Electron-vite output and required local resources/scripts without changing source code.
+    6. Ensure `scripts/smtc-bridge.ps1` is available to the packaged app. If the existing source path assumes unpacked files, configure `asarUnpack` or `asar` settings accordingly. If source changes are required, STOP and report.
+    7. Ensure `resources/tray-icon.png` is available to the packaged app. If source changes are required to resolve it from packaged resources, STOP and report.
+    8. Create `scripts/make-portable-zip.ps1` compatible with Windows PowerShell 5.1. It must read version from `package.json` if not supplied and produce `dist/EmojiIsland-${version}-win-x64-portable.zip` from `dist/win-unpacked`.
+    9. Create `.github/workflows/release.yml` using Node 22.x, Windows runner, PR quality gates, and tag-triggered packaging/upload artifacts. No GitHub Release creation.
+    10. Do not run Electron.
+    11. Do not run `npm run dev`.
+    12. Do not run `electron-builder` locally unless explicitly owner-approved later; CI/manual M-013 verifies packaging.
+    13. Do not create, move, or delete git tags.
+    14. Do not push.
+*   **Acceptance Criteria:** Packaging config, portable ZIP script, and CI workflow are committed; existing source path assumptions are respected or a scope blocker is reported; gates pass; no dependency/package.json/lockfile change; no tag/push; manual packaging remains pending for human/CI.
 *   **Verification:** `manual_check_id`: M-013
 
 ### T-033: README & LICENSE
