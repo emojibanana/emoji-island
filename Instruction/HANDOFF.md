@@ -40,7 +40,7 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 - Done: T-001 through T-034b docs wrap. M4 tasks T-032 Packaging, T-033 README & LICENSE, T-034a Final QA & Soft Targets, and T-034b docs wrap are complete. T-034b is manual-pending for owner tag. M3 wrapped at T-031. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
-- Next: Owner creates git tags `m4-done` and `v0.1.0` at this docs wrap commit (T-034b). After tags exist, next actions are post-M4 follow-ups: custom Windows packaging icon (resources/icon.ico) and UI overhaul backlog (Instruction/BACKLOG_UI_OVERHAUL_V2.md).
+Next: Post-M4 follow-ups (custom packaging icon, UI overhaul backlog).
 - Known follow-up: custom packaging icon deferred (create resources/icon.ico then amend electron-builder.yml). UI overhaul backlog in Instruction/BACKLOG_UI_OVERHAUL_V2.md. Multi-file drag-out, auto-remove/TTL, consume-on-drop remain Future/out of scope. Real AI adapter and AI settings remain v0.2.
 
 
