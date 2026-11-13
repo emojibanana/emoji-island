@@ -39,10 +39,9 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-- Done: T-001 through T-031 docs wrap. M3 implementation tasks T-026a, T-026b, T-026c, T-026d, T-026e, T-029a, and T-029b are done. T-031 is manual-pending for the owner tag. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
-- Next:  T-034b (Hero Moment & Wrap M4). Owner creates release tag v0.1.0 only after T-034b is verified.
-- Known follow-up at T-034a: update TASKS.md traceability table for FR-012b/FR-012c superseded and FR-012e/FR-012f drag-out/self-drop guard; run full M-014 hero moment; measure soft targets and record in STATUS.md.
-- Known follow-up after M4: custom Windows packaging icon when resources/icon.ico is ready; UI overhaul ideas remain in Instruction/BACKLOG_UI_OVERHAUL_V2.md.
+- Done: T-001 through T-034b docs wrap. M4 tasks T-032 Packaging, T-033 README & LICENSE, T-034a Final QA & Soft Targets, and T-034b docs wrap are complete. T-034b is manual-pending for owner tag. M3 wrapped at T-031. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
+- Next: Owner creates git tags `m4-done` and `v0.1.0` at this docs wrap commit (T-034b). After tags exist, next actions are post-M4 follow-ups: custom Windows packaging icon (resources/icon.ico) and UI overhaul backlog (Instruction/BACKLOG_UI_OVERHAUL_V2.md).
+- Known follow-up: custom packaging icon deferred (create resources/icon.ico then amend electron-builder.yml). UI overhaul backlog in Instruction/BACKLOG_UI_OVERHAUL_V2.md. Multi-file drag-out, auto-remove/TTL, consume-on-drop remain Future/out of scope. Real AI adapter and AI settings remain v0.2.
 
 
 ## Pitfalls already seen (check for them every time)
