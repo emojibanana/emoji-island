@@ -644,11 +644,21 @@
 *   **Hours:** Agent: 0.5 | Review: 1.0 | Est: 1.5
 *   **Tier:** any
 *   **Context Pack:** AGENTS.md, This task card.
-*   **Files:** `STATUS.md`
-*   **read_files:** `STATUS.md`
+*   **Files:** `Instruction/STATUS.md`, `Instruction/HANDOFF.md`
+*   **read_files:** `Instruction/STATUS.md`, `Instruction/HANDOFF.md`, `Instruction/TASKS.md`, `Instruction/TESTING.md`
 *   **commit:** `chore: wrap milestone 3`
-*   **Steps:** Update STATUS.md. Commit changes, then create git tag `m3-done`.
-*   **Verification:** `automated_command`: `git tag -l "m3-done"`
+*   **Steps:**
+    1. Confirm all M3 tasks are done: T-026a, T-026b, T-026c, T-026d, T-026e, T-029a, T-029b.
+    2. Confirm related manual checks are recorded as passed in TESTING.md where required.
+    3. Update STATUS.md to summarize M3 completion.
+    4. Set T-031 row to `manual-pending` with hash `-`, meaning docs wrap is ready but owner tag is pending.
+    5. Update HANDOFF.md: next action is owner creating tag `m3-done`, then M4/T-032.
+    6. Run automated gates as sanity check.
+    7. Commit docs only.
+    8. Do not create, move, or delete any git tag.
+    9. Do not push.
+*   **Acceptance Criteria:** STATUS.md and HANDOFF.md accurately reflect M3 docs wrap complete, T-031 pending owner tag, no source/package/dependency changes, no tag created by agent, gates pass.
+*   **Verification:** `automated_command`: `npm run typecheck && npx vitest run && npm run lint && npm run build`
 
 ---
 ## Milestone 4 (Delivery & Packaging)
