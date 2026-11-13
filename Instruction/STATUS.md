@@ -72,7 +72,7 @@
 | **M4** | **Delivery & QA** | | |
 | T-032 | Packaging, Portable Script & CI | done | 17e9944 |
 | T-033 | README & LICENSE | done | 981d4a0 |
-| T-034a | Final QA & Soft Targets | todo | - |
+| T-034a | Final QA & Soft Targets | manual-pending | - |
 | T-034b | Hero Moment & Wrap M4 | todo | - |
 
 ## Notes

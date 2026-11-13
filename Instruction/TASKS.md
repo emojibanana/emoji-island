@@ -725,7 +725,16 @@
 *   **Files:** `STATUS.md`
 *   **read_files:** `STATUS.md`
 *   **commit:** `chore: perform full manual qa and record soft targets`
-*   **Steps:** Perform full manual QA checklist (M-001 through M-020). Measure soft targets (CPU idle, polling, memory) and record in `STATUS.md`.
+*   **Steps:**
+    1. Perform full manual QA checklist M-001 through M-020, including full M-014 hero moment run-through.
+    2. Measure soft targets: idle CPU, media polling impact, memory footprint, and startup behavior.
+    3. Record QA results and soft targets in Instruction/STATUS.md.
+    4. Update Instruction/TASKS.md traceability table:
+       - FR-012b and FR-012c marked superseded;
+       - FR-012e single-file drag-out added;
+       - FR-012f self-drop guard added.
+    5. Do not create, move, or delete git tags.
+    6. Do not push.
 *   **Verification:** `manual_check_id`: M-014
 
 ### T-034b: Hero Moment & Wrap M4
