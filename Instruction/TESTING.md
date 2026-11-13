@@ -34,7 +34,7 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-010` | Files Tab & Inline Actions | Drop a file, open Files tab. Click an image item. Click a non-image item. Use Remove icon. Use Preview icon for image. Drag an item out. | Item renders as single row with icon-only actions. No three-dot menu. Image click/icon opens preview. Non-image click does nothing. Remove icon deletes item. Drag-out starts native drag. No layout clipping or shifting. | ✅ | |
 | `M-011` | Shelf Remove Integrity | Remove a shelf item. Check Files tab and userData/shelf. Try removing when stored file is missing outside UI. | Metadata and physical file are removed for normal item. Missing stored file produces safe error, no crash, metadata not silently corrupted. No .tmp remains. | ✅ | |
 | `M-012` | OS Scaling | Change Windows display scale to 125% and 150%. | Island scales properly via Chromium DIP, layout doesn't break. | | |
-| `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). | | |
+| `M-013` | Artifacts | Run NSIS `.exe` and portable `.zip`. | Installs/Runs correctly. SmartScreen warns (expected). | ✅ | |
 | `M-014` | Hero Moment | Follow step-by-step from `UI_SPEC.md` section 7. | Completes in about 10 s seamlessly. | ✅ | Mock part passed (T-026b). Full hero moment run-through at T-034a. |
 | `M-015` | webUtils | Drop a file; check log. | Absolute path received, sandbox still true. | ✅ | Recorded PASS in D-012 (T-005). |
 | `M-016` | Drag auto-expand | Drag a file over collapsed pill. | Island expands <= 200 ms, no collapse while dragging. | ✅ | Passed in T-024: drag events reach the collapsed window. |
