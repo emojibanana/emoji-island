@@ -41,7 +41,7 @@ For features excluded from automated coverage, verification relies on this manua
 | `M-017` | Shelf limits | Drop 51st item; drop file > 100 MB. | Rejected with error banner, nothing copied. | ✅ | |
 | `M-018` | Symlink | Drop a symlink/junction. | Rejected (`PATH_INVALID`). | ✅ | |
 | `M-019` | AI errors | No key; stop 9router; wrong model. | Inline error text, app stays responsive. | | |
-| `M-020` | Settings | Change coordinates, hotkey, and reduced motion. Restart app. Try invalid coordinates and unavailable hotkey. | Values persist after restart; invalid values rejected with safe error; failed hotkey keeps old hotkey and shows unavailable notice; weather cache is not manually cleared by settings; no AI endpoint/model/key fields are present in v0.1. | | |
+| `M-020` | Settings | Change coordinates, hotkey, and reduced motion. Restart app. Try invalid coordinates and unavailable hotkey. | Values persist after restart; invalid values rejected with safe error; failed hotkey keeps old hotkey and shows unavailable notice; weather cache is not manually cleared by settings; no AI endpoint/model/key fields are present in v0.1. | ✅ | |
 | `M-021` | Shelf Drag-Out to Explorer | From Files tab, drag one shelf item to an Explorer folder. | Explorer receives a file with correct name/size; shelf item remains. | ✅ | |
 | `M-022` | Shelf Drag-Out to Google Drive | Drag one shelf item to Google Drive/browser target. | Target receives file; upload may continue after drag; shelf item remains. Do not treat drag completion as upload completion. | ✅ | |
 | `M-023` | Shelf Drag-Out Missing File | Delete the stored shelf file outside the UI, then attempt drag-out from Files tab. | Safe error, no crash, metadata not removed. | ✅ | |
