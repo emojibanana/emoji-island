@@ -40,7 +40,7 @@ One task per session, one commit per task. The agent never creates milestone tag
 
 ## Progress snapshot (the human updates this after each task)
 - Done: T-001 through T-031 docs wrap. M3 implementation tasks T-026a, T-026b, T-026c, T-026d, T-026e, T-029a, and T-029b are done. T-031 is manual-pending for the owner tag. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
-- Next: T-034a (Final QA & Soft Targets), then T-034b (Hero Moment & Wrap M4). Owner creates release tag v0.1.0 only after T-034b is verified.
+- Next:  T-034b (Hero Moment & Wrap M4). Owner creates release tag v0.1.0 only after T-034b is verified.
 - Known follow-up at T-034a: update TASKS.md traceability table for FR-012b/FR-012c superseded and FR-012e/FR-012f drag-out/self-drop guard; run full M-014 hero moment; measure soft targets and record in STATUS.md.
 - Known follow-up after M4: custom Windows packaging icon when resources/icon.ico is ready; UI overhaul ideas remain in Instruction/BACKLOG_UI_OVERHAUL_V2.md.
 
