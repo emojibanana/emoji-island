@@ -10,9 +10,11 @@
 *   `m4-done`: pending
 
 ## Soft Targets (Recorded at M4)
-*   **Idle CPU (%):** pending
-*   **Media Polling CPU (%):** pending
-*   **Memory (MB):** pending
+*   **Idle CPU (%):** 0–0.2% (target <= 3%) — PASS
+*   **Media Polling CPU (%):** 0.2–0.8% (target <= 1.5%) — PASS
+*   **Memory (MB):** 100.9–139.5 MB (target <= 350 MB) — PASS
+*   **Startup behavior:** approximately 2 seconds — PASS
+*   **M-014 Hero Moment:** PASS — human verification
 
 ## Task Ledger
 
@@ -72,7 +74,7 @@
 | **M4** | **Delivery & QA** | | |
 | T-032 | Packaging, Portable Script & CI | done | 17e9944 |
 | T-033 | README & LICENSE | done | 981d4a0 |
-| T-034a | Final QA & Soft Targets | manual-pending | - |
+| T-034a | Final QA & Soft Targets | done | pending |
 | T-034b | Hero Moment & Wrap M4 | todo | - |
 
 ## Notes
