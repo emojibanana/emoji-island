@@ -140,6 +140,14 @@ if (!app.requestSingleInstanceLock()) {
 
     createTray(mainWindow, toggleIsland)
 
+    // M-012: re-apply native bounds when Windows display scaling changes.
+    screen.on?.('display-metrics-changed', () => {
+      if (!mainWindow || mainWindow.isDestroyed() || !focusController) return
+      const size = focusController.getMode() === 'collapsed' ? COLLAPSED : EXPANDED
+      const { x, y } = getTopCenterBounds(size.width)
+      mainWindow.setBounds({ x, y, width: size.width, height: size.height })
+    })
+
     // FR-003 / D-011: register the global hotkey; on failure keep running with a tray fallback.
     const accel = store.get('settings').hotkey ?? 'Ctrl+Alt+Space'
     const res = registerHotkey(accel, toggleIsland, globalShortcut)
