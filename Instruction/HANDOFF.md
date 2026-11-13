@@ -39,12 +39,11 @@ Emoji Island: a Windows 10/11 overlay HUD (an "island" pill at top-center). Elec
 One task per session, one commit per task. The agent never creates milestone tags (the human does). The agent never runs `hermes verify` or starts Electron for tasks with a `manual_check_id`. Verification is either an `automated_command` or a `manual_check_id` in `Instruction/TESTING.md`. STATUS values: todo, doing, done, manual-pending, skipped, n/a, deferred.
 
 ## Progress snapshot (the human updates this after each task)
-- Done: T-001 to T-026d, including post-M2 corrections T-025b to T-025i, T-026a, T-026b, T-026c, and T-026d. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
-- Manual-pending: none for completed tasks, subject to TESTING.md evidence verification.
-- Next: T-031 (Wrap M3), then M4. T-027, T-028, and T-030 remain deferred v0.2.
-- Follow-up at T-034a: update TASKS.md traceability table for FR-012b/c superseded and FR-012e/f drag-out/self-drop guard.
-- Follow-up after M4: UI overhaul ideas in Instruction/BACKLOG_UI_OVERHAUL_V2.md.
-- Known follow-up: T-026c hardened shelf:list and media:getState only. T-026e hardens remaining weather and hotkey raw-error logging before M3 wrap.
+- Done: T-001 through T-031 docs wrap. M3 implementation tasks T-026a, T-026b, T-026c, T-026d, T-026e, T-029a, and T-029b are done. T-031 is manual-pending for the owner tag. M2 wrapped at T-025. T-007b skipped. T-020 uses the Locked variant La/Lb; T-020-D is n/a while D-008 remains Locked.
+- Manual-pending: T-031 owner tag verification; completed-task manual evidence is recorded in TESTING.md.
+Next: T-032 (Packaging, Portable Script & CI), next is Portable Script & CI. T-027, T-028, and T-030 remain deferred v0.2.
+- Known follow-up at T-034a: update TASKS.md traceability table for FR-012b/c superseded and FR-012e/f drag-out/self-drop guard.
+- Follow-up after M4: UI overhaul backlog remains in Instruction/BACKLOG_UI_OVERHAUL_V2.md.
 
 ## Pitfalls already seen (check for them every time)
 1. The agent invents field names. Forbidden names: `locationLat`, `locationLon`, `originalPath`, `addedAt`, `logLevel`, `storedPath`, `AppSettingsSchema`, `WeatherData`, `MediaInfo`. Names must come from `src/shared/types.ts` and the spec.

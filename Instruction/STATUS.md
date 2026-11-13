@@ -68,8 +68,8 @@
 | T-029a | Settings IPC & Hotkey Re-registration Core | done | 0e74475 |
 | T-029b | Settings UI Tab | done | a350779 |
 | T-030 | Settings AI Config [v0.2] | deferred (v0.2)| - |
-| T-031 | Wrap M3 | todo | - |
-| **M4** | **Delivery & QA** | | |
+|| T-031 | Wrap M3 | done | d1824c3 |
+|| **M4** | **Delivery & QA** | | |
 | T-032 | Packaging & CI | todo | - |
 | T-033 | README & LICENSE | todo | - |
 | T-034a | Final QA & Soft Targets | todo | - |
@@ -132,3 +132,5 @@ Closing note: Related manual checks are marked passed in Instruction/TESTING.md.
 *   T-029a: Settings IPC core and hotkey re-registration implemented in <hash-T-029a>. settings:get and settings:update use existing shared/preload contracts and support v0.1 core settings only: locationMode, latitude, longitude, hotkey, reducedMotion. No AI endpoint/model/key handling was added. Location updates do not manually clear weatherCache; weather cache invalidation remains owned by existing weather service logic. Hotkey re-registration keeps old hotkey on failure and returns VALIDATION_ERROR "Hotkey unavailable". Logging follows T-026e hygiene with fixed codes only. Tests pass: settings handler test OK, typecheck OK, vitest OK, lint OK, build OK, forbidden-names grep empty. Renderer Settings UI remains deferred to T-029b. Status done.
 *   T-029b: Renderer-side Settings UI tab. Adds Settings tab and SettingsForm for core v0.1 settings only: location, hotkey, reducedMotion. AI endpoint/model/key fields remain deferred to T-030/v0.2 and must not be rendered. Uses typed islandApi only. Must preserve accessibility and safe error display. Status todo.
 *   T-029b: Settings UI tab implemented in a350779. Renderer-only task adds Settings tab and SettingsForm for v0.1 core settings only: location, hotkey, reducedMotion. AI endpoint/model/key fields remain absent and deferred to T-030/v0.2. Form uses typed islandApi only, shows safe loading/error/success states, preserves accessibility, and does not log sensitive settings errors. Human M-003 and M-020 passed: settings persist after restart, invalid values rejected safely, failed hotkey keeps old hotkey or tray fallback remains, reducedMotion persists, and no AI config fields appear. Verification: typecheck OK, vitest OK, lint OK, build OK, forbidden-names grep empty. Status done.
+*   M3 docs wrap: T-026a MockProvider & store-backed history, T-026b AI Chat UI & focus reporting, T-026c IPC error logging privacy hardening, T-026d shelf drag-out spec sync, T-026e weather/hotkey log hygiene, T-029a settings IPC & hotkey re-registration core, and T-029b settings UI tab are complete. M3 docs wrap is ready; T-031 is manual-pending for owner tag verification. The owner must create git tag m3-done after verifying this docs wrap commit; this task does not claim that tag exists.
+*   T-031: Milestone 3 docs wrap completed in d1824c3. STATUS.md and HANDOFF.md were updated to record M3 completion across T-026a, T-026b, T-026c, T-026d, T-026e, T-029a, and T-029b. Owner created annotated git tag m3-done at d1824c3 after verifying automated gates and clean working tree. No source code, package, dependency, test, script, CSP, Electron security flag, or TASKS.md implementation scope was changed by the wrap commit. Next milestone is M4, starting with T-032 Packaging, Portable Script & CI. Status done.
