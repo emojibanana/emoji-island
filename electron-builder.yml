@@ -1,0 +1,24 @@
+appId: com.emoji-island.app
+productName: Emoji Island
+artifactName: EmojiIsland-${version}-${artifactType}.${ext}
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - out/**/*
+  - resources/tray-icon.png
+extraResources:
+  - from: scripts/smtc-bridge.ps1
+    to: scripts/smtc-bridge.ps1
+win:
+  executableName: EmojiIsland
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: dir
+      arch:
+        - x64
+nsis:
+  artifactName: EmojiIsland-${version}-setup.${ext}
+publish: never

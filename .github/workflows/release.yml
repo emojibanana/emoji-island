@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npx vitest run
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+
+  package:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: quality
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Package Windows artifacts
+        run: npx electron-builder --win nsis dir --publish never
+      - name: Create portable archive
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/make-portable-zip.ps1
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmojiIsland-windows-${{ github.ref_name }}
+          path: |
+            dist/EmojiIsland-*-setup.exe
+            dist/EmojiIsland-*-win-x64-portable.zip
+          if-no-files-found: error
