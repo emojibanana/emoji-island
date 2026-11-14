@@ -745,5 +745,5 @@
 *   **Files:** `STATUS.md`
 *   **read_files:** `README.md`
 *   **commit:** `chore: wrap milestone 4 and project delivery`
-*   **Steps:** Record Hero Moment GIF. Add link to README. Commit and tag `m4-done`.
+*   **Steps:** Record M-014 Hero Moment PASS and soft targets in STATUS.md. Update STATUS.md and HANDOFF.md to record M4 completion (T-032, T-033, T-034a). Commit the wrap. GIF recording of the hero moment is out of scope (owner-created capture via ScreenToGif later); README links to TESTING.md M-014 instead. Owner creates tags `m4-done` and `v0.1.0` after verifying the wrap commit.
 *   **Verification:** `automated_command`: `git tag -l "m4-done"`
