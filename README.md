@@ -51,16 +51,28 @@ The real OpenAI-compatible adapter and AI endpoint/model/key settings are v0.2 w
 
 AI endpoint, model, and key settings are not present in the v0.1 UI.
 
-## Installation
+## Download for Windows
 
-Build CI (T-032) produces two Windows artifacts. Replace `<version>` with the value in `package.json`:
+The easiest way to install Emoji Island is from the **[latest GitHub Release](https://github.com/emojibanana/emoji-island/releases/latest)**.
+
+Download one of these files from the release's **Assets** section:
+
+- **`EmojiIsland-0.1.0-setup.exe`** — recommended for normal installation. Run it and follow the installer.
+- **`EmojiIsland-0.1.0-win-x64-portable.zip`** — no-install version. Extract the ZIP to a folder and run `Emoji Island.exe`.
+
+If the latest release page does not contain downloadable assets yet, open the repository's [Actions](https://github.com/emojibanana/emoji-island/actions) page and download the artifact from the successful packaging workflow, or build from source using the instructions below.
+
+### Windows SmartScreen notice
+
+Release builds are unsigned. Windows SmartScreen may show a warning before installation or first launch. This is expected behavior for unsigned builds. Choose **More info → Run anyway** only if you trust the download source. The project is released under the MIT license and the source is fully auditable; inspect or build from source if you prefer to verify before running.
+
+### Build artifacts
+
+CI (T-032) produces these Windows artifacts for each release tag:
 
 - `EmojiIsland-<version>-setup.exe` — NSIS installer.
 - `EmojiIsland-<version>-win-x64-portable.zip` — portable ZIP, no installation needed.
 
-### Windows SmartScreen notice
-
-Release builds are unsigned. Windows SmartScreen may show a warning before installation or first launch. This is expected behavior for unsigned builds. The project is released under the MIT license and the source is fully auditable; inspect or build from source if you prefer to verify before running.
 
 ## Usage
 
