@@ -60,6 +60,15 @@ Download one of these files from the release's **Assets** section:
 - **`EmojiIsland-0.1.0-setup.exe`** — recommended for normal installation. Run it and follow the installer.
 - **`EmojiIsland-0.1.0-win-x64-portable.zip`** — no-install version. Extract the ZIP to a folder and run `Emoji Island.exe`.
 
+### Direct download links
+
+If you prefer direct links (skip the Release page), use these URLs. They always target the assets from the latest release:
+
+- [Download Emoji Island Installer (.exe)](https://github.com/emojibanana/emoji-island/releases/latest/download/EmojiIsland-0.1.0-setup.exe)
+- [Download Emoji Island Portable (.zip)](https://github.com/emojibanana/emoji-island/releases/latest/download/EmojiIsland-0.1.0-win-x64-portable.zip)
+
+If a link returns 404, the latest release does not contain an asset with that filename yet. Use the [latest release page](https://github.com/emojibanana/emoji-island/releases/latest) to check the available asset names.
+
 If the latest release page does not contain downloadable assets yet, open the repository's [Actions](https://github.com/emojibanana/emoji-island/actions) page and download the artifact from the successful packaging workflow, or build from source using the instructions below.
 
 ### Windows SmartScreen notice
